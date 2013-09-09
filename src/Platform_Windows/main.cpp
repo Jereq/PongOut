@@ -1,0 +1,85 @@
+#include <sstream>
+
+#include <windows.h>
+#include <stdlib.h>
+#include <string.h>
+#include <tchar.h>
+
+#include "PongOutConfig.h"
+
+LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{
+	static char szAppName[] = "PongOut";
+	HWND        hwnd;
+	MSG         msg;
+	WNDCLASSEX  wndClass;
+
+	wndclass.cbSize			= sizeof(wndClass);
+	wndclass.style			= CS_HREDRAW | CS_VREDRAW;
+	wndClass.lpfnWndProc	= WndProc;
+	wndClass.cbClsExtra		= 0;
+	wndClass.cbWndExtra		= 0;
+	wndClass.hInstance		= hInstance;
+	wndClass.hIcon			= LoadIcon(NULL, IDI_APPLICATION);
+	wndClass.hIconSm		= LoadIcon(NULL, IDI_APPLICATION);
+	wndClass.hCursor		= LoadCursor(NULL, IDC_ARROW);
+	wndClass.hbrBackground	= (HBRUSH) GetStockObject(WHITE_BRUSH);
+	wndClass.lpszClassName	= szAppName;
+	wndClass.lpszMenuName	= NULL;
+
+	RegisterClassEx(&wndClass);
+
+	hwnd = CreateWindow(szAppName, "PongOut",
+						WS_OVERLAPPEDWINDOW,
+						CW_USEDEFAULT, CW_USEDEFAULT,
+						CW_USEDEFAULT, CW_USEDEFAULT,
+						NULL, NULL, hInstance, NULL);
+
+	ShowWindow(hwnd, iCmdShow);
+	UpdateWindow(hwnd);
+
+	while (GetMessage(&msg, NULL, 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	return msg.wParam;
+
+	std::cout << argv[0] << " " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_BUGFIX << std::endl;
+
+	return 0;
+}
+
+std::string getVersionString()
+{
+	std::istringstream stream;
+	stream << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_BUGFIX;
+
+	return stream;
+}
+
+LRESULT CALLBACK WndProc(HWND hwnd, UINT, iMsgm WPARAM wParam, LPARAM lParam)
+{
+	PAINSTRUCT	ps;
+	HDC			hdc;
+
+	switch (iMsg)
+	{
+	case WM_PAINT:
+		hdc = BeginPaint(hwnd, &ps);
+		TextOut(hdc, 100, 100, getVersionString().c_str());
+		TextOut(hdc, 100, 120, "Hello World!", 13);
+		TextOut(hdc, 100, 140, "This was compiled on a Windows machine.", 13);
+		EndPaint(hwnd, &ps);
+		return 0;
+
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	}
+
+	return DefWindowProc(hwnd, iMsg, wParam, lParam);
+}
