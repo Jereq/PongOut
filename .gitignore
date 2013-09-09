@@ -11,3 +11,10 @@
 *.lai
 *.la
 *.a
+
+*.*~
+
+/.cproject
+/.project
+/bin/
+/build*/

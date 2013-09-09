@@ -1,0 +1,5 @@
+// The configured options and settings for PongOut
+#define PongOut_VERSION_MAJOR @PongOut_VERSION_MAJOR@
+#define PongOut_VERSION_MINOR @PongOut_VERSION_MINOR@
+#define PongOut_VERSION_BUGFIX @PongOut_VERSION_BUGFIX@
+
