@@ -9,15 +9,15 @@
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
 	static char szAppName[] = "PongOut";
 	HWND        hwnd;
 	MSG         msg;
 	WNDCLASSEX  wndClass;
 
-	wndclass.cbSize			= sizeof(wndClass);
-	wndclass.style			= CS_HREDRAW | CS_VREDRAW;
+	wndClass.cbSize			= sizeof(wndClass);
+	wndClass.style			= CS_HREDRAW | CS_VREDRAW;
 	wndClass.lpfnWndProc	= WndProc;
 	wndClass.cbClsExtra		= 0;
 	wndClass.cbWndExtra		= 0;
@@ -47,34 +47,34 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 	return msg.wParam;
-
-	std::cout << argv[0] << " " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_BUGFIX << std::endl;
-
-	return 0;
 }
 
 std::string getVersionString()
 {
-	std::istringstream stream;
+	std::ostringstream stream;
 	stream << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_BUGFIX;
 
-	return stream;
+	return stream.str();
 }
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT, iMsgm WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
-	PAINSTRUCT	ps;
-	HDC			hdc;
+	PAINTSTRUCT	ps;
+	HDC				hdc;
 
 	switch (iMsg)
 	{
 	case WM_PAINT:
-		hdc = BeginPaint(hwnd, &ps);
-		TextOut(hdc, 100, 100, getVersionString().c_str());
-		TextOut(hdc, 100, 120, "Hello World!", 13);
-		TextOut(hdc, 100, 140, "This was compiled on a Windows machine.", 13);
-		EndPaint(hwnd, &ps);
-		return 0;
+		{
+			std::string version = getVersionString();
+
+			hdc = BeginPaint(hwnd, &ps);
+			TextOut(hdc, 100, 100, version.c_str(), version.length());
+			TextOut(hdc, 100, 120, "Hello World!", 13);
+			TextOut(hdc, 100, 140, "This was compiled on a Windows machine.", 40);
+			EndPaint(hwnd, &ps);
+			return 0;
+		}
 
 	case WM_DESTROY:
 		PostQuitMessage(0);
