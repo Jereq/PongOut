@@ -1,7 +1,9 @@
 #include "Graphics.h"
 #include "PongOutConfig.h"
 
+#include <chrono>
 #include <iostream>
+#include <thread>
 
 int main(int argc, char* argv[])
 {
@@ -12,6 +14,27 @@ int main(int argc, char* argv[])
 	{
 		std::cout << "Failed to initialize graphics." << std::endl;
 		return 1;
+	}
+
+	float previousTime = (float) g.getTime();
+	float currentTime = previousTime;
+	float deltaTime = 0.f;
+
+	std::cout << "Starting to run" << std::endl;
+
+	while (!g.windowClosing())
+	{
+		g.pollEvents();
+
+		const static float FRAME_TIME = 1.f / 60.f;
+		deltaTime = currentTime - previousTime;
+		if (deltaTime < FRAME_TIME)
+		{
+			std::chrono::milliseconds dura((unsigned int)((FRAME_TIME - deltaTime) * 1000.f));
+			std::this_thread::sleep_for(dura);
+		}
+
+		g.swapBuffers();
 	}
 
 	g.destroy();
