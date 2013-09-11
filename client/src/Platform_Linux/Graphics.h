@@ -9,6 +9,7 @@ private:
 	static void errorCallback(int error, const char* description);
 
 	bool openWindow();
+	void initDevIL();
 	void printReport();
 
 public:

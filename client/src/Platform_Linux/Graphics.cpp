@@ -3,6 +3,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <IL/il.h>
+
 #include <cstdio>
 
 void Graphics::errorCallback(int error, const char* description)
@@ -32,6 +34,13 @@ bool Graphics::openWindow()
 	glfwMakeContextCurrent(window);
 
 	return true;
+}
+
+void Graphics::initDevIL()
+{
+	ilInit();
+	ilEnable(IL_ORIGIN_SET);
+	ilOriginFunc(IL_ORIGIN_UPPER_LEFT);
 }
 
 void Graphics::printReport()
@@ -107,6 +116,8 @@ bool Graphics::init()
 
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);
+
+	initDevIL();
 
 	printReport();
 
