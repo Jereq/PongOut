@@ -15,14 +15,19 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	set(WIN32_EXECUTABLE ON)
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
+set(PLATFORM_PATH "Platform_${CMAKE_SYSTEM_NAME}")
+
+add_subdirectory(${PLATFORM_PATH})
+include_directories(${PLATFORM_PATH})
+
+set(EXTRA_LIBS ${EXTRA_LIBS} Graphics)
+
 # Network code is easier if restricted to only Little Endian
 include(TestBigEndian)
 TEST_BIG_ENDIAN(isBigEndian)
 if(isBigEndian)
 	message(FATAL_ERROR "Big Endian machines currently not supported. Contact the developers for added support.")
 endif(isBigEndian)
-
-include_directories("${PROJECT_SOURCE_DIR}/Platform_${CMAKE_SYSTEM_NAME}")
 
 # Configure a header file to pass some of the CMake settings to the source code
 configure_file(
@@ -35,7 +40,11 @@ include_directories("${PROJECT_BINARY_DIR}")
 
 include_directories("${PROJECT_SOURCE_DIR}")
 
-# Add the executable
-add_executable(PongOut "${PROJECT_SOURCE_DIR}/Platform_${CMAKE_SYSTEM_NAME}/main.cpp")
+set(SOURCE_FILES
+	"${PLATFORM_PATH}/main.cpp"
+)
 
-target_link_libraries(PongOut ${LIBRARIES})
+# Add the executable
+add_executable(PongOut ${SOURCE_FILES})
+
+target_link_libraries(PongOut ${EXTRA_LIBS})
