@@ -6,6 +6,7 @@ set(PongOut_VERSION_MAJOR 0)
 set(PongOut_VERSION_MINOR 0)
 set(PongOut_VERSION_PATCH 1)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 add_definitions(
 	-std=c++11
@@ -39,6 +40,14 @@ configure_file(
 include_directories("${PROJECT_BINARY_DIR}")
 
 include_directories("${PROJECT_SOURCE_DIR}")
+
+set(Boost_USE_STATIC_LIBS		ON)
+set(Boost_USE_MULTITHREADED		ON)
+set(Boost_USE_STATIC_RUNTIME	ON)
+find_package(Boost 1.49 COMPONENTS filesystem system REQUIRED)
+
+include_directories("${Boost_INCLUDE_DIRS}")
+set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES})
 
 set(SOURCE_FILES
 	"${PLATFORM_PATH}/main.cpp"

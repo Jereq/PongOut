@@ -4,12 +4,14 @@ find_package(GLFW3 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(DevIL REQUIRED)
+find_package(GLM REQUIRED)
 
 include_directories(
 	${GLFW3_INLCUDE_PATH}
 	${OPENGL_INCLUDE_DIR}
 	${GLEW_INLCUDE_DIRS}
 	${IL_INCLUDE_DIR}
+	${GLM_INCLUDE_DIRS}
 )
 
 set(GRAPHICS_LIBS
@@ -19,5 +21,10 @@ set(GRAPHICS_LIBS
 	${IL_LIBRARIES}
 )
 
-add_library(Graphics Graphics.cpp)
+add_custom_target(CopyShaders ALL
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_CURRENT_SOURCE_DIR}/shaders ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders
+)
+
+add_library(Graphics Graphics.cpp GLSLProgram.cpp)
 target_link_libraries(Graphics ${GRAPHICS_LIBS})

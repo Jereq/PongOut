@@ -1,11 +1,19 @@
 #include "Graphics.h"
 
+#include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <IL/il.h>
 
 #include <cstdio>
+
+const int Graphics::MAJOR_GL_VERSION = 4;
+const int Graphics::MINOR_GL_VERSION = 0;
+
+fs::path Graphics::rootDir;
 
 void Graphics::errorCallback(int error, const char* description)
 {
@@ -15,12 +23,13 @@ void Graphics::errorCallback(int error, const char* description)
 bool Graphics::openWindow()
 {
 	glfwDefaultWindowHints();
-	//glfwOpenWindowHint(GLFW_WINDOW_NO_RESIZE, GL_TRUE);
-	//glfwWindowHint(GLFW_VERSION_MAJOR, 4);
-	//glfwWindowHint(GLFW_VERSION_MINOR, 0);
-	//glfwOpenWindowHint(GLFW_, 8);
-	//glfwOpenWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	//glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	glfwWindowHint(GLFW_DEPTH_BITS, 32);
+	glfwWindowHint(GLFW_SAMPLES, 8);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, MAJOR_GL_VERSION);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, MINOR_GL_VERSION);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	const static size_t WIDTH = 800;
 	const static size_t HEIGHT = 480;
@@ -28,10 +37,36 @@ bool Graphics::openWindow()
 	window = glfwCreateWindow(WIDTH, HEIGHT, "PongOut", nullptr, nullptr);
 	if (!window)
 	{
-		return false;
+		glfwDefaultWindowHints();
+		window = glfwCreateWindow(WIDTH, HEIGHT, "PongOut", nullptr, nullptr);
+
+		if (!window)
+		{
+			return false;
+		}
 	}
 
 	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1);
+
+	return true;
+}
+
+bool Graphics::checkGLVersion(int majorRequiredVersion, int minorRequiredVersion)
+{
+	GLint major, minor;
+	glGetIntegerv(GL_MAJOR_VERSION, &major);
+	glGetIntegerv(GL_MINOR_VERSION, &minor);
+
+	if (major != majorRequiredVersion)
+	{
+		return false;
+	}
+
+	if (minor < minorRequiredVersion)
+	{
+		return false;
+	}
 
 	return true;
 }
@@ -49,35 +84,29 @@ void Graphics::printReport()
 	const GLubyte* vendor = glGetString(GL_VENDOR);
 	const GLubyte* version = glGetString(GL_VERSION);
 	const GLubyte* glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
-	GLint major, minor;
-	glGetIntegerv(GL_MAJOR_VERSION, &major);
-	glGetIntegerv(GL_MINOR_VERSION, &minor);
 
-	fprintf(stdout, "GL Vendor            : %s\n", vendor);
-	fprintf(stdout, "GL Renderer          : %s\n", renderer);
-	fprintf(stdout, "GL Version (string)  : %s\n", version);
-	fprintf(stdout, "GL Version (integer) : %d.%d\n", major, minor);
-	fprintf(stdout, "GLSL Version         : %s\n", glslVersion);
+	fprintf(stdout, "GL Vendor    : %s\n", vendor);
+	fprintf(stdout, "GL Renderer  : %s\n", renderer);
+	fprintf(stdout, "GL Version   : %s\n", version);
+	fprintf(stdout, "GLSL Version : %s\n", glslVersion);
 
-	//int versionMajor = glfwGetWindowParam(GLFW_OPENGL_VERSION_MAJOR);
-	//int versionMinor = glfwGetWindowParam(GLFW_OPENGL_VERSION_MINOR);
-	int forwardCompat = glfwGetWindowAttrib(window, GLFW_OPENGL_FORWARD_COMPAT);
-	int profile = glfwGetWindowAttrib(window, GLFW_OPENGL_PROFILE);
+	const char* glfwVersion = glfwGetVersionString();
+	fprintf(stdout, "GLFW Version : %s\n", glfwVersion);
+}
 
-	printf("\n");
-	//printf("Actual version     : %d.%d\n", versionMajor, versionMinor);
-	printf("Forward compatible : %s\n", (forwardCompat == GL_TRUE) ? "Yes" : "No");
-	printf("Profile            : %s\n", (profile == GLFW_OPENGL_CORE_PROFILE) ? "Core" : (profile == GLFW_OPENGL_COMPAT_PROFILE) ? "Compatibility" : "Unknown");
+bool Graphics::loadRectangleShader()
+{
+	static fs::path vertexShaderPath(rootDir / "shaders/basicRect.vert");
+	static fs::path fragmentShaderPath(rootDir / "shaders/basicRect.frag");
 
-	int glfwVersionMajor, glfwVersionMinor, glfwVersionRevision;
-	glfwGetVersion(&glfwVersionMajor, &glfwVersionMinor, &glfwVersionRevision);
-	printf("\n");
-	printf("GLFW Version : %d.%d.%d\n", glfwVersionMajor, glfwVersionMinor, glfwVersionRevision);
+	if (!rectangleProgram.compileShaderFromFile(vertexShaderPath.string(), GLSLShaderType::VERTEX) ||
+			!rectangleProgram.compileShaderFromFile(fragmentShaderPath.string(), GLSLShaderType::FRAGMENT))
+	{
+		fprintf(stderr, "%s", rectangleProgram.log().c_str());
+		return false;
+	}
 
-	int glVersionMajor = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MAJOR);
-	int glVersionMinor = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MINOR);
-	int glVersionRevision = glfwGetWindowAttrib(window, GLFW_CONTEXT_REVISION);
-	printf("GL Version : %d.%d.%d\n", glVersionMajor, glVersionMinor, glVersionRevision);
+	return true;
 }
 
 Graphics::Graphics()
@@ -114,12 +143,26 @@ bool Graphics::init()
 		return false;
 	}
 
+	if (!checkGLVersion(MAJOR_GL_VERSION, MINOR_GL_VERSION))
+	{
+		fprintf(stderr, "Error: Required OpenGL version not found.\n");
+		fprintf(stderr, "Error: This application requires at least version %d.%d.\n", MAJOR_GL_VERSION, MINOR_GL_VERSION);
+		fprintf(stderr, "Error: Please update your graphics drivers and try again.\n");
+		glfwTerminate();
+		return false;
+	}
+
 	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_CULL_FACE);
 
 	initDevIL();
 
 	printReport();
+
+	if (!loadRectangleShader())
+	{
+		glfwTerminate();
+		return false;
+	}
 
 	return true;
 }
