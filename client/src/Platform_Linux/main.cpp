@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	g.loadImage(Graphics::rootDir / "resources/box_dark_pink.png");
+	g.loadImage(Graphics::rootDir / "resources/box_orange_01.png");
 
 	float previousTime = (float) g.getTime();
 	float currentTime = previousTime;
