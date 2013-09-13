@@ -1,9 +1,13 @@
+#include <iostream>
 #include <sstream>
 
 #include <windows.h>
 #include <stdlib.h>
 #include <string.h>
 #include <tchar.h>
+
+#include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
 
 #include "PongOutConfig.h"
 
@@ -67,11 +71,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		{
 			std::string version = getVersionString();
+			std::string hello = "Hello World!";
+			fs::path programPath(__argv[0]);
 
 			hdc = BeginPaint(hwnd, &ps);
 			TextOut(hdc, 100, 100, version.c_str(), version.length());
-			TextOut(hdc, 100, 120, "Hello World!", 13);
-			TextOut(hdc, 100, 140, "This was compiled on a Windows machine.", 40);
+			TextOut(hdc, 100, 120, hello.c_str(), hello.length());
+			TextOut(hdc, 100, 140, programPath.string().c_str(), programPath.string().length());
 			EndPaint(hwnd, &ps);
 			return 0;
 		}

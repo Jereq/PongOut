@@ -1,1 +1,1 @@
-add_library(Graphics)
+add_library(Graphics Graphics.cpp)

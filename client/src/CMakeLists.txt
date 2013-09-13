@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
+
+# Project name
 project(PongOut)
 
 # The version number
@@ -6,16 +8,25 @@ set(PongOut_VERSION_MAJOR 0)
 set(PongOut_VERSION_MINOR 0)
 set(PongOut_VERSION_PATCH 1)
 
+# Set default configuration type
+if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE RelWithDebInfo)
+endif()
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-add_definitions(
-	-std=c++11
-)
+
+# Handle different OS
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	set(WIN32_EXECUTABLE ON)
-endif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_RELEASE} /MTd")
+	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /MT")
+else()
+	add_definitions(-std=c++11)
+endif()
 
+# Use platform dependent folder for platform dependent code.
 set(PLATFORM_PATH "Platform_${CMAKE_SYSTEM_NAME}")
 
 add_subdirectory(${PLATFORM_PATH})
@@ -41,6 +52,8 @@ include_directories("${PROJECT_BINARY_DIR}")
 
 include_directories("${PROJECT_SOURCE_DIR}")
 
+add_definitions(-DBOOST_ALL_NO_LIB)
+
 set(Boost_USE_STATIC_LIBS		ON)
 set(Boost_USE_MULTITHREADED		ON)
 set(Boost_USE_STATIC_RUNTIME	ON)
@@ -54,12 +67,13 @@ set(SOURCE_FILES
 )
 
 # Add the executable
-add_executable(PongOut ${SOURCE_FILES})
+add_executable(PongOut WIN32 ${SOURCE_FILES})
 
 target_link_libraries(PongOut ${EXTRA_LIBS})
 
 
 add_custom_target(CopyResources ALL
 	${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_CURRENT_SOURCE_DIR}/../resources ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resources
+		${CMAKE_CURRENT_SOURCE_DIR}/../resources ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/resources
 )
+
