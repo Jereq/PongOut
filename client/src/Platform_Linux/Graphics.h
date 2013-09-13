@@ -15,6 +15,12 @@ private:
 
 	GLFWwindow* window;
 	GLSLProgram rectangleProgram;
+	GLuint rectVaoHandle;
+	GLuint rectVboHandles[2];
+
+	std::vector<GLuint> loadedTextureIds;
+
+	glm::mat4 projectionMatrix;
 
 	static void errorCallback(int error, const char* description);
 
@@ -23,6 +29,7 @@ private:
 	void initDevIL();
 	void printReport();
 	bool loadRectangleShader();
+	void initRectMesh();
 
 public:
 	static boost::filesystem::path rootDir;
@@ -32,9 +39,12 @@ public:
 
 	bool init();
 	void destroy();
-	bool windowClosing();
 
+	bool loadImage(const boost::filesystem::path& file);
+
+	bool windowClosing();
 	double getTime();
 	void pollEvents();
-	void swapBuffers();
+
+	void draw();
 };

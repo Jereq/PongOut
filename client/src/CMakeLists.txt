@@ -57,3 +57,9 @@ set(SOURCE_FILES
 add_executable(PongOut ${SOURCE_FILES})
 
 target_link_libraries(PongOut ${EXTRA_LIBS})
+
+
+add_custom_target(CopyResources ALL
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_CURRENT_SOURCE_DIR}/../resources ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resources
+)

@@ -31,6 +31,8 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
+	g.loadImage(Graphics::rootDir / "resources/box_dark_pink.png");
+
 	float previousTime = (float) g.getTime();
 	float currentTime = previousTime;
 	float deltaTime = 0.f;
@@ -49,7 +51,7 @@ int main(int argc, char* argv[])
 			std::this_thread::sleep_for(dura);
 		}
 
-		g.swapBuffers();
+		g.draw();
 	}
 
 	g.destroy();
