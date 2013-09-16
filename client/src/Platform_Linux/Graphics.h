@@ -22,6 +22,8 @@ private:
 
 	glm::mat4 projectionMatrix;
 
+	boost::filesystem::path rootDir;
+
 	static void errorCallback(int error, const char* description);
 
 	bool openWindow();
@@ -32,9 +34,7 @@ private:
 	void initRectMesh();
 
 public:
-	static boost::filesystem::path rootDir;
-
-	Graphics();
+	Graphics(const boost::filesystem::path& _rootDir);
 	virtual ~Graphics();
 
 	bool init();
@@ -42,7 +42,7 @@ public:
 
 	bool loadImage(const boost::filesystem::path& file);
 
-	bool windowClosing();
+	bool windowClosing() const;
 	double getTime();
 	void pollEvents();
 

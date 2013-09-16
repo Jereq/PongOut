@@ -30,7 +30,6 @@ endif()
 set(PLATFORM_PATH "Platform_${CMAKE_SYSTEM_NAME}")
 
 add_subdirectory(${PLATFORM_PATH})
-include_directories(${PLATFORM_PATH})
 
 set(EXTRA_LIBS ${EXTRA_LIBS} Graphics)
 
@@ -63,7 +62,8 @@ include_directories("${Boost_INCLUDE_DIRS}")
 set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES})
 
 set(SOURCE_FILES
-	"${PLATFORM_PATH}/main.cpp"
+	${PLATFORM_SOURCE_FILES}
+	Game.cpp
 )
 
 # Add the executable

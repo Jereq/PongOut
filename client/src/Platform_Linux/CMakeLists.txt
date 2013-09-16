@@ -26,5 +26,18 @@ add_custom_target(CopyShaders ALL
 		${CMAKE_CURRENT_SOURCE_DIR}/shaders ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders
 )
 
-add_library(Graphics Graphics.cpp GLSLProgram.cpp)
+add_library(Graphics
+	Graphics.cpp
+	GLSLProgram.cpp
+	CoreSystemLinux.cpp
+	RendererLinux.cpp
+)
+
 target_link_libraries(Graphics ${GRAPHICS_LIBS})
+
+
+set(PLATFORM_SOURCE_FILES
+	${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/CoreSystemLinux.cpp
+	PARENT_SCOPE
+)

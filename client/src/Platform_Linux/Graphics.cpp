@@ -14,8 +14,6 @@ namespace fs = boost::filesystem;
 const int Graphics::MAJOR_GL_VERSION = 4;
 const int Graphics::MINOR_GL_VERSION = 0;
 
-fs::path Graphics::rootDir;
-
 void Graphics::errorCallback(int error, const char* description)
 {
 	fprintf(stderr, "GLFW error %d: %s\n", error, description);
@@ -169,8 +167,10 @@ void Graphics::initRectMesh()
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 }
 
-Graphics::Graphics()
-	: window(nullptr)
+Graphics::Graphics(const fs::path& _rootDir)
+	: window(nullptr),
+	  rectVaoHandle(0),
+	  rootDir(_rootDir)
 {
 }
 
@@ -275,7 +275,7 @@ bool Graphics::loadImage(const fs::path& file)
 	ilDeleteImage(image);
 }
 
-bool Graphics::windowClosing()
+bool Graphics::windowClosing() const
 {
 	return glfwWindowShouldClose(window) || glfwGetKey(window, GLFW_KEY_ESCAPE);
 }
