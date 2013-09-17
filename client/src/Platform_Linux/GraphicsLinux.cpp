@@ -1,4 +1,4 @@
-#include "Graphics.h"
+#include "GraphicsLinux.h"
 
 #include <boost/filesystem.hpp>
 namespace fs = boost::filesystem;
@@ -11,15 +11,15 @@ namespace fs = boost::filesystem;
 
 #include <cstdio>
 
-const int Graphics::MAJOR_GL_VERSION = 4;
-const int Graphics::MINOR_GL_VERSION = 0;
+const int GraphicsLinux::MAJOR_GL_VERSION = 4;
+const int GraphicsLinux::MINOR_GL_VERSION = 0;
 
-void Graphics::errorCallback(int error, const char* description)
+void GraphicsLinux::errorCallback(int _error, const char* _description)
 {
-	fprintf(stderr, "GLFW error %d: %s\n", error, description);
+	fprintf(stderr, "GLFW error %d: %s\n", _error, _description);
 }
 
-bool Graphics::openWindow()
+bool GraphicsLinux::openWindow()
 {
 	glfwDefaultWindowHints();
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
@@ -51,18 +51,18 @@ bool Graphics::openWindow()
 	return true;
 }
 
-bool Graphics::checkGLVersion(int majorRequiredVersion, int minorRequiredVersion)
+bool GraphicsLinux::checkGLVersion(int _majorRequiredVersion, int _minorRequiredVersion)
 {
 	GLint major, minor;
 	glGetIntegerv(GL_MAJOR_VERSION, &major);
 	glGetIntegerv(GL_MINOR_VERSION, &minor);
 
-	if (major != majorRequiredVersion)
+	if (major != _majorRequiredVersion)
 	{
 		return false;
 	}
 
-	if (minor < minorRequiredVersion)
+	if (minor < _minorRequiredVersion)
 	{
 		return false;
 	}
@@ -70,14 +70,14 @@ bool Graphics::checkGLVersion(int majorRequiredVersion, int minorRequiredVersion
 	return true;
 }
 
-void Graphics::initDevIL()
+void GraphicsLinux::initDevIL()
 {
 	ilInit();
 	ilEnable(IL_ORIGIN_SET);
 	ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
 }
 
-void Graphics::printReport()
+void GraphicsLinux::printReport()
 {
 	const GLubyte* renderer = glGetString(GL_RENDERER);
 	const GLubyte* vendor = glGetString(GL_VENDOR);
@@ -93,7 +93,7 @@ void Graphics::printReport()
 	fprintf(stdout, "GLFW Version : %s\n", glfwVersion);
 }
 
-bool Graphics::loadRectangleShader()
+bool GraphicsLinux::loadRectangleShader()
 {
 	static fs::path vertexShaderPath(rootDir / "shaders/basicRect.vert");
 	static fs::path fragmentShaderPath(rootDir / "shaders/basicRect.frag");
@@ -122,7 +122,7 @@ bool Graphics::loadRectangleShader()
 	return true;
 }
 
-void Graphics::initRectMesh()
+void GraphicsLinux::initRectMesh()
 {
 	glGenBuffers(2, rectVboHandles);
 	GLuint positionBufferHandle = rectVboHandles[0];
@@ -167,18 +167,14 @@ void Graphics::initRectMesh()
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 }
 
-Graphics::Graphics(const fs::path& _rootDir)
+GraphicsLinux::GraphicsLinux(const fs::path& _rootDir)
 	: window(nullptr),
 	  rectVaoHandle(0),
 	  rootDir(_rootDir)
 {
 }
 
-Graphics::~Graphics()
-{
-}
-
-bool Graphics::init()
+bool GraphicsLinux::init()
 {
 	glfwSetErrorCallback(errorCallback);
 	if (!glfwInit())
@@ -233,7 +229,7 @@ bool Graphics::init()
 	return true;
 }
 
-void Graphics::destroy()
+void GraphicsLinux::destroy()
 {
 	if (!loadedTextureIds.empty())
 	{
@@ -250,14 +246,14 @@ void Graphics::destroy()
 	glfwTerminate();
 }
 
-bool Graphics::loadImage(const fs::path& file)
+bool GraphicsLinux::loadImage(const fs::path& _imagePath)
 {
 	ILuint image = ilGenImage();
 	ilBindImage(image);
 
-	if (!ilLoad(IL_PNG, file.string().c_str()))
+	if (!ilLoad(IL_PNG, _imagePath.string().c_str()))
 	{
-		fprintf(stderr, "Failed to load \"%s\"\n", file.string().c_str());
+		fprintf(stderr, "Failed to load \"%s\"\n", _imagePath.string().c_str());
 	}
 
 	GLenum textureUnit = GL_TEXTURE0 + loadedTextureIds.size();
@@ -275,22 +271,7 @@ bool Graphics::loadImage(const fs::path& file)
 	ilDeleteImage(image);
 }
 
-bool Graphics::windowClosing() const
-{
-	return glfwWindowShouldClose(window) || glfwGetKey(window, GLFW_KEY_ESCAPE);
-}
-
-double Graphics::getTime()
-{
-	return glfwGetTime();
-}
-
-void Graphics::pollEvents()
-{
-	glfwPollEvents();
-}
-
-void Graphics::draw()
+void GraphicsLinux::draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -303,4 +284,9 @@ void Graphics::draw()
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	glfwSwapBuffers(window);
+}
+
+bool GraphicsLinux::windowIsClosing() const
+{
+	return glfwWindowShouldClose(window) || glfwGetKey(window, GLFW_KEY_ESCAPE);
 }

@@ -2,7 +2,7 @@
 
 CoreSystemLinux::CoreSystemLinux(const boost::filesystem::path& _rootDir)
 	: rootDir(_rootDir),
-	  renderer(_rootDir)
+	  graphics(_rootDir)
 {
 }
 
@@ -18,7 +18,7 @@ double CoreSystemLinux::getTime() const
 
 bool CoreSystemLinux::windowIsClosing() const
 {
-	return renderer.windowIsClosing();
+	return graphics.windowIsClosing();
 }
 
 void CoreSystemLinux::pollEvents()
@@ -26,7 +26,7 @@ void CoreSystemLinux::pollEvents()
 	glfwPollEvents();
 }
 
-RendererLinux* CoreSystemLinux::getRenderer()
+GraphicsLinux* CoreSystemLinux::getGraphics()
 {
-	return &renderer;
+	return &graphics;
 }

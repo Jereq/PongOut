@@ -1,14 +1,14 @@
 #pragma once
 
 #include "../ICoreSystem.h"
-#include "RendererLinux.h"
+#include "GraphicsLinux.h"
 
 class CoreSystemLinux : public ICoreSystem
 {
 private:
 	boost::filesystem::path rootDir;
 
-	RendererLinux renderer;
+	GraphicsLinux graphics;
 
 public:
 	CoreSystemLinux(const boost::filesystem::path& _rootDir);
@@ -18,5 +18,5 @@ public:
 	virtual bool windowIsClosing() const override;
 	virtual void pollEvents() override;
 
-	virtual RendererLinux* getRenderer() override;
+	virtual GraphicsLinux* getGraphics() override;
 };

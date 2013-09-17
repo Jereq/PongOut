@@ -27,10 +27,9 @@ add_custom_target(CopyShaders ALL
 )
 
 add_library(Graphics
-	Graphics.cpp
+	GraphicsLinux.cpp
 	GLSLProgram.cpp
 	CoreSystemLinux.cpp
-	RendererLinux.cpp
 )
 
 target_link_libraries(Graphics ${GRAPHICS_LIBS})

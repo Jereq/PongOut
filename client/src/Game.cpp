@@ -16,14 +16,14 @@ void Game::run()
 {
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 
-	IRenderer* renderer = system->getRenderer();
-	if (!renderer->init())
+	IGraphics* graphics = system->getGraphics();
+	if (!graphics->init())
 	{
 		printf("Failed to initialize renderer\n");
 		return;
 	}
 
-	renderer->loadImage(system->getRootDir() / "resources/box_orange_01.png");
+	graphics->loadImage(system->getRootDir() / "resources/box_orange_01.png");
 
 	double previousTime = system->getTime();
 	double currentTime = previousTime;
@@ -48,8 +48,8 @@ void Game::run()
 			std::this_thread::sleep_for(dura);
 		}
 
-		renderer->draw();
+		graphics->draw();
 	}
 
-	renderer->destroy();
+	graphics->destroy();
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IRenderer.h"
+#include "IGraphics.h"
 
 #include <boost/filesystem.hpp>
 
@@ -14,5 +14,5 @@ public:
 	virtual bool windowIsClosing() const =0;
 	virtual void pollEvents() =0;
 
-	virtual IRenderer* getRenderer() =0;
+	virtual IGraphics* getGraphics() =0;
 };

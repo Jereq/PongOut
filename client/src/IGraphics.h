@@ -2,10 +2,10 @@
 
 #include <boost/filesystem.hpp>
 
-class IRenderer
+class IGraphics
 {
 public:
-	virtual ~IRenderer() {};
+	virtual ~IGraphics() {};
 
 	virtual bool init() =0;
 	virtual void destroy() =0;
