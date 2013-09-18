@@ -1,0 +1,17 @@
+
+//--- GLOBALS ---//
+
+//--- DESCS ---//
+struct PS
+{
+	float4 position	: SV_POSITION;
+};
+
+//--- PSHADER ---//
+float4 TestPShader(PS input) : SV_TARGET
+{
+	float4 color = input.position;
+	color.w = 1.0f;
+
+	return color;
+}

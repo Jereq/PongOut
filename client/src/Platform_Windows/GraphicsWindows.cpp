@@ -12,7 +12,7 @@ GraphicsWindows::~GraphicsWindows()
 
 }
 
-bool GraphicsWindows::initialize(...)
+bool GraphicsWindows::initialize()
 {
 	bool result = false;
 

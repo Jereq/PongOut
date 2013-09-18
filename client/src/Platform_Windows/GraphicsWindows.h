@@ -12,7 +12,7 @@ public:
 protected:
 
 private:
-	virtual bool initialize(...);
+	virtual bool initialize();
 	D3D*	d3d;
 	HWND	hWnd;
 };

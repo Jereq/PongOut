@@ -10,13 +10,14 @@
 namespace fs = boost::filesystem;
 
 #include "PongOutConfig.h"
-
+#include "GraphicsWindows.h"
+HWND        hwnd;
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
 	static char szAppName[] = "PongOut";
-	HWND        hwnd;
+
 	MSG         msg;
 	WNDCLASSEX  wndClass;
 
@@ -40,9 +41,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 						CW_USEDEFAULT, CW_USEDEFAULT,
 						CW_USEDEFAULT, CW_USEDEFAULT,
 						NULL, NULL, hInstance, NULL);
+	//hwnd = CreateWindowEx(WS_EX_APPWINDOW, szAppName, szAppName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW, 400, 300, 800, 600, NULL, NULL, hInstance, NULL); 
 
 	ShowWindow(hwnd, iCmdShow);
+	//SetForegroundWindow(hwnd);
+	//SetFocus(hwnd);
 	UpdateWindow(hwnd);
+
+	GraphicsWindows* gw = new GraphicsWindows(hwnd);
 
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
