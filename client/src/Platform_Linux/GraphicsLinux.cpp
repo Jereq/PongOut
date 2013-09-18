@@ -271,7 +271,7 @@ bool GraphicsLinux::loadImage(const fs::path& _imagePath)
 	ilDeleteImage(image);
 }
 
-void GraphicsLinux::draw()
+void GraphicsLinux::drawFrame()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

@@ -48,7 +48,7 @@ void Game::run()
 			std::this_thread::sleep_for(dura);
 		}
 
-		graphics->draw();
+		graphics->drawFrame();
 	}
 
 	graphics->destroy();

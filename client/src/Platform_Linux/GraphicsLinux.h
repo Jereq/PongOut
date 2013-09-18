@@ -42,7 +42,7 @@ public:
 	virtual void destroy() override;
 
 	virtual bool loadImage(const boost::filesystem::path& _imagePath) override;
-	virtual void draw() override;
+	virtual void drawFrame() override;
 
 	bool windowIsClosing() const;
 };
