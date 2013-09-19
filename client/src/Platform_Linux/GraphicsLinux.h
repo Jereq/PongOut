@@ -41,7 +41,10 @@ public:
 	virtual bool init() override;
 	virtual void destroy() override;
 
+	virtual bool loadResources(const boost::filesystem::path& _resourceDir) override;
 	virtual bool loadImage(const boost::filesystem::path& _imagePath) override;
+	virtual void addRectangle(glm::vec2 _center, glm::vec2 _size, float _rotation, std::string id) override;
+
 	virtual void drawFrame() override;
 
 	bool windowIsClosing() const;

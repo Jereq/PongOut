@@ -10,6 +10,7 @@ namespace fs = boost::filesystem;
 #include <IL/il.h>
 
 #include <cstdio>
+#include <stdexcept>
 
 const int GraphicsLinux::MAJOR_GL_VERSION = 4;
 const int GraphicsLinux::MINOR_GL_VERSION = 0;
@@ -246,6 +247,12 @@ void GraphicsLinux::destroy()
 	glfwTerminate();
 }
 
+bool GraphicsLinux::loadResources(const boost::filesystem::path& _resourceDir)
+{
+	printf("Pretending to load resources...\n");
+	return fs::exists(_resourceDir) && fs::is_directory(_resourceDir);
+}
+
 bool GraphicsLinux::loadImage(const fs::path& _imagePath)
 {
 	ILuint image = ilGenImage();
@@ -269,6 +276,11 @@ bool GraphicsLinux::loadImage(const fs::path& _imagePath)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 	ilDeleteImage(image);
+}
+
+void GraphicsLinux::addRectangle(glm::vec2 _center, glm::vec2 _size, float _rotation, std::string id)
+{
+	throw std::logic_error("Function not implemented");
 }
 
 void GraphicsLinux::drawFrame()

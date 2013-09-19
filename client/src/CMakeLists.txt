@@ -52,15 +52,24 @@ include_directories("${PROJECT_BINARY_DIR}")
 
 include_directories("${PROJECT_SOURCE_DIR}")
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/")
+
 add_definitions(-DBOOST_ALL_NO_LIB)
 
 set(Boost_USE_STATIC_LIBS		ON)
 set(Boost_USE_MULTITHREADED		ON)
 set(Boost_USE_STATIC_RUNTIME	ON)
-find_package(Boost 1.49 COMPONENTS filesystem system REQUIRED)
 
-include_directories("${Boost_INCLUDE_DIRS}")
-set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES})
+find_package(Boost 1.49 COMPONENTS filesystem system REQUIRED)
+find_package(GLM REQUIRED)
+
+include_directories(
+	${Boost_INCLUDE_DIRS}
+	${GLM_INCLUDE_DIRS}
+)
+set(EXTRA_LIBS ${EXTRA_LIBS}
+	${Boost_LIBRARIES}
+)
 
 set(SOURCE_FILES
 	${PLATFORM_SOURCE_FILES}

@@ -4,14 +4,12 @@ find_package(GLFW3 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(DevIL REQUIRED)
-find_package(GLM REQUIRED)
 
 include_directories(
 	${GLFW3_INLCUDE_PATH}
 	${OPENGL_INCLUDE_DIR}
 	${GLEW_INLCUDE_DIRS}
 	${IL_INCLUDE_DIR}
-	${GLM_INCLUDE_DIRS}
 )
 
 set(GRAPHICS_LIBS
@@ -32,7 +30,9 @@ add_library(Graphics
 	CoreSystemLinux.cpp
 )
 
-target_link_libraries(Graphics ${GRAPHICS_LIBS})
+target_link_libraries(Graphics
+	${GRAPHICS_LIBS}
+)
 
 
 set(PLATFORM_SOURCE_FILES
