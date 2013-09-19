@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Msg sub clases">
+      <UniqueIdentifier>{307ee917-2215-4f2a-9d97-89f314915938}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Msg sub clases">
+      <UniqueIdentifier>{2b857277-c550-4ddd-8f0c-970a57b38534}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -24,21 +30,18 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Chat.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="msgBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PacketHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Chat.h">
+      <Filter>Header Files\Msg sub clases</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Chat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="msgBase.cpp">
@@ -46,6 +49,9 @@
     </ClCompile>
     <ClCompile Include="PacketHandler.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Chat.cpp">
+      <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

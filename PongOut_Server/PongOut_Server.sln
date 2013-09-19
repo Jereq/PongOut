@@ -7,6 +7,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleClient", "SimpleClien
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ComLib", "ComLib\ComLib.vcxproj", "{E6B28C69-F37B-48A5-AC32-175D8FE21993}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClientLib", "ClientLib\ClientLib.vcxproj", "{17D5F5CC-259D-4ECE-9702-954799896DE2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClientEventLib", "ClientEventLib\ClientEventLib.vcxproj", "{CBCACD0A-D942-4BC3-9805-428AECA9D0D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -25,6 +29,14 @@ Global
 		{E6B28C69-F37B-48A5-AC32-175D8FE21993}.Debug|Win32.Build.0 = Debug|Win32
 		{E6B28C69-F37B-48A5-AC32-175D8FE21993}.Release|Win32.ActiveCfg = Release|Win32
 		{E6B28C69-F37B-48A5-AC32-175D8FE21993}.Release|Win32.Build.0 = Release|Win32
+		{17D5F5CC-259D-4ECE-9702-954799896DE2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{17D5F5CC-259D-4ECE-9702-954799896DE2}.Debug|Win32.Build.0 = Debug|Win32
+		{17D5F5CC-259D-4ECE-9702-954799896DE2}.Release|Win32.ActiveCfg = Release|Win32
+		{17D5F5CC-259D-4ECE-9702-954799896DE2}.Release|Win32.Build.0 = Release|Win32
+		{CBCACD0A-D942-4BC3-9805-428AECA9D0D3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CBCACD0A-D942-4BC3-9805-428AECA9D0D3}.Debug|Win32.Build.0 = Debug|Win32
+		{CBCACD0A-D942-4BC3-9805-428AECA9D0D3}.Release|Win32.ActiveCfg = Release|Win32
+		{CBCACD0A-D942-4BC3-9805-428AECA9D0D3}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

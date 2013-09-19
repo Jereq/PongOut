@@ -6,14 +6,13 @@
 #include <iterator>
 
 class msgBase
-{
-public:
-
+{	
+public:	
 	typedef boost::shared_ptr<msgBase> ptr;
 
 	enum class MsgType : std::uint16_t
 	{
-		CHAT,
+		CHAT = 1,
 		LOGIN,
 		LOGOUT,
 		CREATEUSER,
@@ -41,13 +40,13 @@ protected:
 #pragma region pack
 
 template<class T>
-	void pack(const T& _msg, std::back_insert_iterator<std::vector<char>> _dest)
+	static void pack(const T& _msg, std::back_insert_iterator<std::vector<char>> _dest)
 	{
 		std::copy((char*) &_msg, (char*) &_msg + sizeof(T), _dest);
 	}
 
 template<>
-	void pack<std::string>(const std::string& _str, std::back_insert_iterator<std::vector<char>> _dest)
+	static void pack<std::string>(const std::string& _str, std::back_insert_iterator<std::vector<char>> _dest)
 	{
 		std::uint16_t strLen = _str.length();
 
@@ -56,7 +55,7 @@ template<>
 	}
 
 template<>
-	void pack<boost::uuids::uuid>(const boost::uuids::uuid& _uuid, std::back_insert_iterator<std::vector<char>> _dest)
+	static void pack<boost::uuids::uuid>(const boost::uuids::uuid& _uuid, std::back_insert_iterator<std::vector<char>> _dest)
 	{
 		std::copy(_uuid.begin(), _uuid.end(), _dest);
 	}
@@ -65,14 +64,14 @@ template<>
 #pragma region unpack
 
 template<class T>
-	std::vector<char>::const_iterator unpack(T& _msg, std::vector<char>::const_iterator _source)
+	static std::vector<char>::const_iterator unpack(T& _msg, std::vector<char>::const_iterator _source)
 	{
 		std::copy(_source, _source + sizeof(T), (char*)&_msg);
 		return _source + sizeof(T);
 	}
 
 template<>
-	std::vector<char>::const_iterator unpack<std::string>(std::string& _msg, std::vector<char>::const_iterator _source)
+	static std::vector<char>::const_iterator unpack<std::string>(std::string& _msg, std::vector<char>::const_iterator _source)
 	{
 		std::uint16_t len;
 		_source = unpack(len, _source);
@@ -81,7 +80,7 @@ template<>
 	}
 
 template<>
-	std::vector<char>::const_iterator unpack<boost::uuids::uuid>(boost::uuids::uuid& _uuid, std::vector<char>::const_iterator _source)
+	static std::vector<char>::const_iterator unpack<boost::uuids::uuid>(boost::uuids::uuid& _uuid, std::vector<char>::const_iterator _source)
 	{
 		std::copy(_source, _source + boost::uuids::uuid::static_size(), _uuid.begin());
 		return _source + boost::uuids::uuid::static_size();
@@ -89,6 +88,6 @@ template<>
 
 #pragma endregion unpack
 	
-
+	friend class PacketHandler;
 };
 

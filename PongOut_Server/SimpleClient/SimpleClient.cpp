@@ -2,11 +2,16 @@
 //
 
 #include "stdafx.h"
-#include "Client.h"
+#include <Server.h>
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	Client c("127.0.0.1");
+	Server::ptr s(new Server("127.0.0.1", 65000));
+	s->connect();
+
+	for (ever)
+	{
+	}
 
 	system("pause");
 	return 0;

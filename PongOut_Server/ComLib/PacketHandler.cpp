@@ -24,3 +24,11 @@ void PacketHandler::initRegister()
 {
 	registerPacket(msgBase::ptr(new Chat()));
 }
+
+msgBase::header PacketHandler::getMeassageHeader( const std::vector<char>& _buff )
+{
+	msgBase::header	res;
+	std::vector<char>::const_iterator it = _buff.begin();
+	it = msgBase::unpack(res, it);
+	return res;
+}
