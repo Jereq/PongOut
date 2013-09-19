@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PongOut_Server", "PongOut_Server\PongOut_Server.vcxproj", "{807E793E-731A-44A7-91A0-1374BF37774C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleClient", "SimpleClient\SimpleClient.vcxproj", "{9E21AA55-E200-4CD7-B75C-2F3F4B3A1D57}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ComLib", "ComLib\ComLib.vcxproj", "{E6B28C69-F37B-48A5-AC32-175D8FE21993}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{807E793E-731A-44A7-91A0-1374BF37774C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{807E793E-731A-44A7-91A0-1374BF37774C}.Debug|Win32.Build.0 = Debug|Win32
+		{807E793E-731A-44A7-91A0-1374BF37774C}.Release|Win32.ActiveCfg = Release|Win32
+		{807E793E-731A-44A7-91A0-1374BF37774C}.Release|Win32.Build.0 = Release|Win32
+		{9E21AA55-E200-4CD7-B75C-2F3F4B3A1D57}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9E21AA55-E200-4CD7-B75C-2F3F4B3A1D57}.Debug|Win32.Build.0 = Debug|Win32
+		{9E21AA55-E200-4CD7-B75C-2F3F4B3A1D57}.Release|Win32.ActiveCfg = Release|Win32
+		{9E21AA55-E200-4CD7-B75C-2F3F4B3A1D57}.Release|Win32.Build.0 = Release|Win32
+		{E6B28C69-F37B-48A5-AC32-175D8FE21993}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E6B28C69-F37B-48A5-AC32-175D8FE21993}.Debug|Win32.Build.0 = Debug|Win32
+		{E6B28C69-F37B-48A5-AC32-175D8FE21993}.Release|Win32.ActiveCfg = Release|Win32
+		{E6B28C69-F37B-48A5-AC32-175D8FE21993}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
