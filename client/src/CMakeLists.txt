@@ -84,9 +84,16 @@ add_executable(PongOut WIN32 ${SOURCE_FILES})
 
 target_link_libraries(PongOut ${EXTRA_LIBS})
 
+add_subdirectory(test)
+add_custom_target(all_tests ALL
+	DEPENDS PongOut-test
+)
+add_custom_command(TARGET all_tests
+	COMMENT "Run tests"
+	POST_BUILD COMMAND PongOut-test
+)
 
 add_custom_target(CopyResources ALL
 	${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_CURRENT_SOURCE_DIR}/../resources ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/resources
 )
-
