@@ -1,8 +1,8 @@
 /*
  * Map.cpp
  *
- *  Created on: Sep 17, 2013
- *      Author: victor
+ *
+ *
  */
 
 #include "Map.h"
@@ -16,29 +16,51 @@ Map::Map()
 	bgTexturePath 			= NULL;
 }
 
-Map::~Map(){}
-
-void Map::initialize(float _playAreaWidth, float _playAreaHeight, float _frameThickness, string _texturePath)
+Map::~Map()
 {
-	frameThickness 			= _frameThickness;
-	bgTexturePath 			= _texturePath;
-
-	setPlayAreaBounds(_playAreaWidth, _playAreaHeight);
-	initBlockArray(24); //Hardcoded for demo ONLY!!
+	remBlockArray();
 }
 
-void Map::setPlayAreaBounds(float _width, float _height)
+void Map::initialize(	Size _playAreaSize, float _frameThickness,
+						string _bgTexturePath, string _frameTexturePath							)
 {
-	playAreaWidth = _width + frameThickness;
-	playAreaHeight = _height + frameThickness;
+	frameThickness 			= _frameThickness;
+	bgTexturePath 			= _bgTexturePath;
+	frameTexturePath		= _frameTexturePath;
+
+	setPlayAreaBounds(_playAreaSize);
+	initBlockArray(24); //Hardcoded for demo ONLY!!
+	tempSetBlockPos();
+}
+
+void Map::setPlayAreaBounds(Size _size)
+{
+	playAreaSize.width 		= _size.width + frameThickness;
+	playAreaSize.height		= _size.height + frameThickness;
 }
 
 void Map::initBlockArray(int _size)
 {
-	blockList = (Block*)malloc(sizeof(Block) * _size);
+	blockList 				= (Block*)malloc(sizeof(Block) * _size);
+	for(int i = 0; i < _size; i++)
+	{
+		blockList[i] = new Block();
+	}
 }
 void Map::remBlockArray()
 {
 	delete [] blockList;
 }
+void Map::tempSetBlockPos()
+{
+	//Temporary setPos for the blocks, for demo ONLY!
+	for(int i = 0; i < 24; i++)
+	{
+		blockList[i].setPos(Position(i, i));
+	}
+}
 
+void Map::update()
+{
+	//Update things here, fo' s'ho.
+}

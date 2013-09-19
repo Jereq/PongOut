@@ -1,18 +1,33 @@
 /*
  * Block.cpp
  *
- *  Created on: Sep 18, 2013
- *      Author: victor
+ *
+ *
  */
 
 #include "Block.h"
 
-Block::Block() {
-	// TODO Auto-generated constructor stub
-	position = 0.0;
+Block::Block()
+{
+	position 				= NULL;
+	size 					= NULL;
+	health 					= NULL;
 }
 
-Block::~Block() {
-	// TODO Auto-generated destructor stub
-}
+Block::~Block() {}
 
+void Block::initialize(Position _position, Size _size, string _texturePath, int _health)
+{
+	position 				= _position;
+	size 					= _size;
+	texturePath				= _texturePath;
+	health 					= _health;
+}
+void Block::setPos(Position _position)
+{
+	position = _position;
+}
+Position Block::getPos()
+{
+	return position;
+}

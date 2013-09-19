@@ -1,19 +1,37 @@
 /*
  * Block.h
  *
- *  Created on: Sep 18, 2013
- *      Author: victor
+ *
+ *
  */
 
 #ifndef BLOCK_H_
 #define BLOCK_H_
 
-class Block {
+#include <iostream>
+#include <string>
+
+#include "MapResources.h"
+
+using namespace std;
+
+class Block
+{
 public:
 	Block();
 	virtual ~Block();
 
-	float position;
+	void initialize(Position _position, Size _size, string _texturePath, int _health);
+	void setPos(Position _position);
+	Position getPos();
+private:
+	Position 			position;
+	Size				size;
+	string 				texturePath;
+
+	int 				health;
+
+
 };
 
 #endif /* BLOCK_H_ */

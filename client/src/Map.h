@@ -1,8 +1,8 @@
 /*
  * Map.h
  *
- *  Created on: Sep 17, 2013
- *      Author: victor
+ *
+ *
  */
 
 #ifndef MAP_H_
@@ -13,6 +13,7 @@
 #include <string>
 
 #include "Block.h"
+#include "MapResources.h"
 
 using namespace std;
 
@@ -20,8 +21,8 @@ class Map {
 public:
 	Map();
 	virtual ~Map();
-	void initialize(	float _playAreaWidth, float _playAreaHeight,
-						float _frameThickness, string _texturePath		);
+	void initialize(	Size _playAreaSize, float _frameThickness,
+						string _bgTexturePath, string _frameTexturePath							);
 	void update();
 
 private:
@@ -29,11 +30,12 @@ private:
 	void remBlockArray();
 	void tempSetBlockPos();
 
-	void setPlayAreaBounds(float _width, float _height);
+	void setPlayAreaBounds(Size _size);
 
 	Block* 			blockList;
 	string 			bgTexturePath;
 	string			frameTexturePath;
+	Size			playAreaSize;
 
 	float 			playAreaWidth;
 	float			playAreaHeight;
