@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Server.h"
+#include <queue>
 
 
 Server::Server(const std::string _ipAdress, std::uint16_t _port) : addr(_ipAdress), port(_port), soc(io)
@@ -40,14 +41,59 @@ void Server::handleMessage(const boost::system::error_code& _error, size_t _byte
 		throw boost::system::error_code(_error);
 	}
 
-	std::vector<char> fullMeassage(msgBuffer.begin(), msgBuffer.end());
-	msgBuffer.assign(0);	
-	msgBase::header head = handler.getMeassageHeader(fullMeassage);
-	messageActionSwitch(head, fullMeassage);
-	startListen();
+	int readChars = 0;
+
+	for (ever)
+	{
+		if (fullMsgBuffer.size() < sizeof(msgBase::header))
+		{
+			unsigned int missingChars = sizeof(msgBase::header) - fullMsgBuffer.size();
+
+			if ((_bytesTransferred - readChars) >= missingChars)
+			{
+				for (unsigned int i = 0; i < missingChars; i++)
+				{
+					fullMsgBuffer.push_back(msgBuffer[readChars + i]);
+				}
+				readChars += missingChars;
+				head = handler.getMeassageHeader(fullMsgBuffer);			
+			}
+			else
+			{
+				for (unsigned int i = 0; i < (_bytesTransferred - readChars); i++)
+				{
+					fullMsgBuffer.push_back(msgBuffer[readChars + i]);
+				}
+				startListen();
+				return;
+			}
+		}
+
+		unsigned int missingChars = head.length - (fullMsgBuffer.size() - sizeof(msgBase::header));
+
+		if ((_bytesTransferred - readChars) >= missingChars)
+		{
+			for (int i = 0; i < missingChars; i++)
+			{
+				fullMsgBuffer.push_back(msgBuffer[readChars + i]);
+			}
+			readChars += missingChars;
+			messageActionSwitch(head, fullMsgBuffer);
+			fullMsgBuffer.clear();
+		} 
+		else
+		{
+			for (unsigned int i = 0; i < (_bytesTransferred - readChars); i++)
+			{
+				fullMsgBuffer.push_back(msgBuffer[readChars + i]);
+			}
+			startListen();
+			return;
+		}
+	}
 }
 
-void Server::messageActionSwitch( const msgBase::header& _header, const std::vector<char>& _meassage )
+void Server::messageActionSwitch( const msgBase::header& _header, const std::deque<char>& _meassage )
 {
 	msgBase::ptr p = handler.interpretMessage(_header.type, _meassage);
 
@@ -64,6 +110,11 @@ void Server::messageActionSwitch( const msgBase::header& _header, const std::vec
 		std::cerr << "Received unknown packet: " << (int)p->getHeader().type << std::endl;
 		break;
 	}
+}
+
+void Server::sendMessage( std::string _msg )
+{
+
 }
 
 void Server::startIO()

@@ -15,9 +15,9 @@ void PacketHandler::registerPacket( msgBase::ptr _ptr )
 	msgMap.insert(std::pair<msgBase::MsgType, msgBase::ptr>(_ptr->getHeader().type, _ptr));
 }
 
-msgBase::ptr PacketHandler::interpretMessage( msgBase::MsgType _type, const std::vector<char>& _buff )
+msgBase::ptr PacketHandler::interpretMessage( msgBase::MsgType _type, const std::deque<char>& _buff )
 {	
-	return msgMap.at(_type)->createPacket(_buff);
+	return msgMap.at(_type)->interpretPacket(_buff);
 }
 
 void PacketHandler::initRegister()
@@ -29,6 +29,22 @@ msgBase::header PacketHandler::getMeassageHeader( const std::vector<char>& _buff
 {
 	msgBase::header	res;
 	std::vector<char>::const_iterator it = _buff.begin();
+	it = msgBase::unpack(res, it);
+	return res;
+}
+
+msgBase::header PacketHandler::getMeassageHeader( const boost::array<char, 256>& _buff )
+{
+	msgBase::header	res;
+	boost::array<char, 256>::const_iterator it = _buff.begin();
+	it = msgBase::unpack(res, it);
+	return res;
+}
+
+msgBase::header PacketHandler::getMeassageHeader( const std::deque<char>& _buff )
+{
+	msgBase::header	res;
+	std::deque<char>::const_iterator it = _buff.begin();
 	it = msgBase::unpack(res, it);
 	return res;
 }

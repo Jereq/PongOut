@@ -30,10 +30,10 @@ std::vector<char> Chat::getData()
 	return res;
 }
 
-msgBase::ptr Chat::createPacket( const std::vector<char>& _buffer )
+msgBase::ptr Chat::interpretPacket( const std::deque<char>& _buffer )
 {
 	Chat::ptr cp = Chat::ptr(new Chat());
-	std::vector<char>::const_iterator it = _buffer.cbegin();
+	std::deque<char>::const_iterator it = _buffer.cbegin();
 	it = unpack(cp->msgHeader, it);
 	it = unpack(cp->uuid, it);
 	it = unpack(cp->msg, it);

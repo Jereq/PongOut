@@ -22,12 +22,12 @@ public:
 	~Server(void);
 
 	void connect();
-	
+	void sendMessage(std::string _msg);
 
 private:
 
 	void handleMessage(const boost::system::error_code& _error, size_t _bytesTransferred);
-	void messageActionSwitch(const msgBase::header& _header, const std::vector<char>& _meassage);
+	void messageActionSwitch(const msgBase::header& _header, const std::deque<char>& _meassage);
 	void startIO();
 	void startListen();
 
@@ -39,5 +39,8 @@ private:
 	tcp::resolver::iterator resIt;
 	PacketHandler handler;
 	boost::array<char, 256> msgBuffer;
+	std::deque<char> fullMsgBuffer;
+	msgBase::header head;
+
 };
 

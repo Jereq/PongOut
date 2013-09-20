@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <vector>
+#include <deque>
 #include <boost/uuid/uuid.hpp>
 #include <boost/shared_ptr.hpp>
 #include <iterator>
@@ -17,6 +18,7 @@ public:
 		LOGOUT,
 		CREATEUSER,
 		REMINDUSER,
+		GETFRIENDS,
 	};
 
 	struct header
@@ -25,13 +27,24 @@ public:
 		std::uint16_t length;
 	};
 
-	
+	struct userData
+	{
+		std::string userName;
+		boost::uuids::uuid uuid;
+
+		userData() {}
+		userData(std::string _userName, boost::uuids::uuid _uuid)
+		{
+			userName = _userName;
+			uuid = _uuid;
+		}
+	};	
 
 	msgBase(MsgType _type);
 	virtual ~msgBase(void);
 	
 	header getHeader();
-	virtual ptr createPacket(const std::vector<char>& _buffer) = 0;
+	virtual ptr interpretPacket(const std::deque<char>& _buffer) = 0;
 	virtual std::vector<char> getData() = 0;
 	
 protected:
@@ -39,51 +52,95 @@ protected:
 	
 #pragma region pack
 
-template<class T>
-	static void pack(const T& _msg, std::back_insert_iterator<std::vector<char>> _dest)
+private:
+
+template<typename T, typename inIter>
+	class implPack
 	{
-		std::copy((char*) &_msg, (char*) &_msg + sizeof(T), _dest);
+	public:
+		static void _pack(const T& _msg, inIter _dest)
+		{
+
+			std::copy((char*) &_msg, (char*) &_msg + sizeof(T), _dest);
+		}
+	};
+
+template<typename inIter>
+	class implPack<std::string, inIter>
+	{
+	public:
+		static void _pack(const std::string& _str, inIter _dest)
+		{
+			std::uint16_t strLen = _str.length();
+
+			std::copy((char*) &strLen, (char*) &strLen + sizeof(strLen), _dest);
+			std::copy(_str.begin(), _str.end(), _dest);
+		}
+	};
+
+template<typename inIter>
+	class implPack<boost::uuids::uuid, inIter>
+	{
+	public:
+		static void _pack(const boost::uuids::uuid& _uuid, inIter _dest)
+		{
+			std::copy(_uuid.begin(), _uuid.end(), _dest);
+		}
+	};
+
+public:
+
+template<typename T, typename inIter>
+	static void pack(const T& _msg, inIter _dest)
+	{
+		return implPack<T, inIter>::_pack(_msg, _dest);
 	}
 
-template<>
-	static void pack<std::string>(const std::string& _str, std::back_insert_iterator<std::vector<char>> _dest)
-	{
-		std::uint16_t strLen = _str.length();
-
-		std::copy((char*) &strLen, (char*) &strLen + sizeof(strLen), _dest);
-		std::copy(_str.begin(), _str.end(), _dest);
-	}
-
-template<>
-	static void pack<boost::uuids::uuid>(const boost::uuids::uuid& _uuid, std::back_insert_iterator<std::vector<char>> _dest)
-	{
-		std::copy(_uuid.begin(), _uuid.end(), _dest);
-	}
 #pragma endregion pack
 
 #pragma region unpack
 
-template<class T>
-	static std::vector<char>::const_iterator unpack(T& _msg, std::vector<char>::const_iterator _source)
+private:
+template<typename T, typename outIter>
+	class implUnpack
 	{
-		std::copy(_source, _source + sizeof(T), (char*)&_msg);
-		return _source + sizeof(T);
-	}
+	public:
+		static outIter _unpack(T& _msg, outIter _source)
+		{
+			std::copy(_source, _source + sizeof(T), (char*)&_msg);
+			return _source + sizeof(T);
+		}
+	};
 
-template<>
-	static std::vector<char>::const_iterator unpack<std::string>(std::string& _msg, std::vector<char>::const_iterator _source)
+template<typename outIter>
+	class implUnpack<std::string, outIter>
 	{
-		std::uint16_t len;
-		_source = unpack(len, _source);
-		_msg = std::string(_source, _source + len);
-		return _source + len;
-	}
+	public:
+		static outIter _unpack(std::string& _msg, outIter _source)
+		{
+			std::uint16_t len;
+			_source = unpack(len, _source);
+			_msg = std::string(_source, _source + len);
+			return _source + len;
+		}
+	};
 
-template<>
-	static std::vector<char>::const_iterator unpack<boost::uuids::uuid>(boost::uuids::uuid& _uuid, std::vector<char>::const_iterator _source)
+template<typename outIter>
+	class implUnpack<boost::uuids::uuid, outIter>
 	{
-		std::copy(_source, _source + boost::uuids::uuid::static_size(), _uuid.begin());
-		return _source + boost::uuids::uuid::static_size();
+	public:
+		static outIter _unpack(boost::uuids::uuid& _uuid, outIter _source)
+		{
+			std::copy(_source, _source + boost::uuids::uuid::static_size(), _uuid.begin());
+			return _source + boost::uuids::uuid::static_size();
+		}
+	};
+
+public:
+template<typename T, typename outIter>
+	static outIter unpack(T& _msg, outIter _source)
+	{
+		return implUnpack<T, outIter>::_unpack(_msg, _source);
 	}
 
 #pragma endregion unpack

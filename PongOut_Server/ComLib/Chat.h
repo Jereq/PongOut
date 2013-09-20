@@ -12,7 +12,7 @@ public:
 	void setMsg(std::string _msg, boost::uuids::uuid& _uuid);
 
 	virtual std::vector<char> getData() override;
-	virtual msgBase::ptr createPacket(const std::vector<char>& _buffer) override;
+	virtual msgBase::ptr interpretPacket(const std::deque<char>& _buffer) override;
 	std::string getMsg();
 	boost::uuids::uuid getUUID();
 

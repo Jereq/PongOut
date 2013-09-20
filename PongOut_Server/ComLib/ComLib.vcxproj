@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Chat.h" />
+    <ClInclude Include="GetFriends.h" />
     <ClInclude Include="msgBase.h" />
     <ClInclude Include="PacketHandler.h" />
     <ClInclude Include="stdafx.h" />
@@ -86,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Chat.cpp" />
+    <ClCompile Include="GetFriends.cpp" />
     <ClCompile Include="msgBase.cpp" />
     <ClCompile Include="PacketHandler.cpp" />
     <ClCompile Include="stdafx.cpp">
