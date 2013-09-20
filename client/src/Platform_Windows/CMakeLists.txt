@@ -2,7 +2,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/module/"
 
 find_package(Directx11 REQUIRED)
 
-add_library(Graphics GraphicsWindows.cpp D3D.cpp)
 
 
 set(PLATFORM_SOURCE_FILES
@@ -11,5 +10,8 @@ set(PLATFORM_SOURCE_FILES
 )
 
 include_directories(
-	${DXSDK_DIR}
+	${DirectX_D3D11_INCLUDE_DIR}
+	${DirectX_D3DX11_INCLUDE_DIR}
 )
+
+add_library(Graphics GraphicsWindows.cpp D3D.cpp ${DirectX_D3DX11_LIBRARY} ${DirectX_D3D11_LIBRARY} TestShader.cpp)

@@ -4,11 +4,14 @@
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d11.lib")
 
-#include <ostream>
-#include <iostream>
-#include <ios>
 
-D3D::D3D()	: swapChain(0), device(0), deviceContext(0), renderTargetView(0), rasterState(0), backBuffer(0)
+#include <d3d11.h>
+#include <D3DX11.h>
+
+
+D3D::D3D()	:	swapChain(0), device(0), deviceContext(0), 
+				renderTargetView(0), rasterState(0), backBuffer(0), 
+				noDepthStencilState(0)
 {
 	fullScreen = false;
 }
@@ -24,7 +27,7 @@ bool setDXGI(unsigned int& _gpuMemory, char* _gpuDescription, int& _numerator, i
 	IDXGIFactory*	factory;
 	IDXGIAdapter*	adapter;
 	IDXGIOutput*	adapterOutput;
-
+	
 	DXGI_MODE_DESC*		displayModeList;
 	DXGI_ADAPTER_DESC	adapterDesc;
 	unsigned int		numModes, stringLength;
@@ -216,6 +219,34 @@ bool D3D::setViewPort(unsigned int _screenWidth, unsigned int _screenHeight)
 	return true;
 }
 
+bool D3D::setDepthStencil()
+{
+	HRESULT result;
+	D3D11_DEPTH_STENCIL_DESC noDepthDesc;
+	ZeroMemory(&noDepthDesc, sizeof(noDepthDesc));
+
+	noDepthDesc.DepthEnable						= false;
+	noDepthDesc.DepthWriteMask					= D3D11_DEPTH_WRITE_MASK_ALL;
+	noDepthDesc.DepthFunc						= D3D11_COMPARISON_LESS;
+	noDepthDesc.StencilEnable					= true;
+	noDepthDesc.StencilReadMask					= 0xFF;
+	noDepthDesc.StencilWriteMask				= 0xFF;
+	noDepthDesc.FrontFace.StencilFailOp			= D3D11_STENCIL_OP_KEEP;
+	noDepthDesc.FrontFace.StencilDepthFailOp	= D3D11_STENCIL_OP_INCR;
+	noDepthDesc.FrontFace.StencilPassOp			= D3D11_STENCIL_OP_KEEP;
+	noDepthDesc.FrontFace.StencilFunc			= D3D11_COMPARISON_ALWAYS;
+	noDepthDesc.BackFace.StencilFailOp			= D3D11_STENCIL_OP_KEEP;
+	noDepthDesc.BackFace.StencilDepthFailOp		= D3D11_STENCIL_OP_DECR;
+	noDepthDesc.BackFace.StencilPassOp			= D3D11_STENCIL_OP_KEEP;
+	noDepthDesc.BackFace.StencilFunc			= D3D11_COMPARISON_ALWAYS;
+
+	result = device->CreateDepthStencilState(&noDepthDesc, &noDepthStencilState);
+	if( FAILED(result) )
+		return false;
+
+	return true;
+}
+
 bool D3D::initialize(HWND _hWnd)
 {
 	bool result;
@@ -225,7 +256,7 @@ bool D3D::initialize(HWND _hWnd)
 
 	// query DXGI for hardware setup information
 	result = setDXGI(gpuMemory, gpuDescription, numerator, denominator, screenWidth, screenHeight);
-	if(result == false)
+	if(!result)
 		return false;
 
 	// 
@@ -235,10 +266,16 @@ bool D3D::initialize(HWND _hWnd)
 
 	// set new raster state
 	result = setRasterState(D3D11_CULL_MODE::D3D11_CULL_NONE, D3D11_FILL_MODE::D3D11_FILL_SOLID);
-	if( FAILED(result) )
+	if(!result)
 		return false;
 
+	// set viewport by screensize
 	setViewPort(screenWidth, screenHeight);
+
+	// set depth stencil
+	result = setDepthStencil();
+	if(!result)
+		return false;
 
 	return true;
 }

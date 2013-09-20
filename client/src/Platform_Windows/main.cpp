@@ -11,6 +11,7 @@ namespace fs = boost::filesystem;
 
 #include "PongOutConfig.h"
 #include "GraphicsWindows.h"
+
 HWND        hwnd;
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 

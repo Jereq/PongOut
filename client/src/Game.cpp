@@ -2,10 +2,10 @@
 
 #include "PongOutConfig.h"
 
-#include <chrono>
+//#include <chrono>
 #include <iostream>
 #include <stdio.h>
-#include <thread>
+//#include <thread>
 
 Game::Game(ICoreSystem* _system)
 	: system(_system)
@@ -44,8 +44,8 @@ void Game::run()
 
 		if (deltaTime < FRAME_TIME)
 		{
-			std::chrono::milliseconds dura((unsigned int)((FRAME_TIME - deltaTime) * 1000.f));
-			std::this_thread::sleep_for(dura);
+			//std::chrono::milliseconds dura((unsigned int)((FRAME_TIME - deltaTime) * 1000.f));
+			//std::this_thread::sleep_for(dura);
 		}
 
 		graphics->drawFrame();
