@@ -1,15 +1,10 @@
 #include "TestShader.h"
 
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "dxgi.lib")
-//#pragma comment(
-#include <d3d11.h>
+#include <D3DX10.h>
 #include <D3DX11.h>
 #include <D3DX11async.h>
-#include <D3DX10math.h>
-
-
-
+#pragma(lib, "D3DX11.lib")
+ 
 TestShader::TestShader() :	vertexShader(0), pixelShader(0), layout(0),
 							samplerState(0)
 {
