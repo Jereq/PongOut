@@ -1,10 +1,6 @@
 #include "D3D.h"
 
 #include <dxgi.h>
-#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "d3d11.lib")
-
-
 #include <d3d11.h>
 #include <D3DX11.h>
 

@@ -15,4 +15,12 @@ include_directories(
 	${DirectX_D3DX10_INCLUDE_DIR}
 )
 
-add_library(Graphics GraphicsWindows.cpp D3D.cpp ${DirectX_D3DX11_LIBRARY} ${DirectX_D3D11_LIBRARY} ${DirectX_D3DX10_LIBRARY} ${DirectX_D3D11_LIBRARY} TestShader.cpp)
+add_library(Graphics GraphicsWindows.cpp D3D.cpp TestShader.cpp)
+
+target_link_libraries(Graphics
+	${DirectX_D3DX11_LIBRARY}
+	${DirectX_D3D11_LIBRARY}
+	${DirectX_D3DX10_LIBRARY}
+	${DirectX_D3D11_LIBRARY}
+	${DirectX_DXGI_LIBRARY}
+)

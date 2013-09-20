@@ -27,10 +27,12 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 		DOC "DirectX SDK root directory")
 
 	if(DirectX_ROOT_DIR)
-		message("DirectX directory found")
+		message("${DirectX_ROOT_DIR}/Include")
+		message("${DirectX_ROOT_DIR}/Lib/${DirectX_ARCHITECTURE}")
+		message("${DirectX_ROOT_DIR}/Utilities/bin/${DirectX_ARCHITECTURE}")
 		set(DirectX_INC_SEARCH_PATH "${DirectX_ROOT_DIR}/Include")
 		set(DirectX_LIB_SEARCH_PATH "${DirectX_ROOT_DIR}/Lib/${DirectX_ARCHITECTURE}")
-		set(DirectX_BIN_SEARCH_PATH "${DirectX_ROOT_DIR}/Utilities/bin/x86")
+		set(DirectX_BIN_SEARCH_PATH "${DirectX_ROOT_DIR}/Utilities/bin/${DirectX_ARCHITECTURE}")
 	else()
 		message("DirectX SDK (June 2010) directory was not found!")
 	endif()
@@ -77,7 +79,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 		set (DirectX_D3D10_FOUND 1)
 		if (DirectX_D3DX10_INCLUDE_DIR AND DirectX_D3DX10_LIBRARY)
 			set (DirectX_D3DX10_FOUND 1)
-		message("d3dx10 set")
+		message("dir: ${DirectX_D3DX10_INCLUDE_DIR}")
+		message("lib: ${DirectX_D3DX10_LIBRARY}")
 		endif()
 	endif ()
 
@@ -103,10 +106,26 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 		set (DirectX_D3D11_FOUND 1)
 		if (DirectX_D3DX11_INCLUDE_DIR AND DirectX_D3DX11_LIBRARY)
 			set (DirectX_D3DX11_FOUND 1)
-		message("d3dx11 set")
+		message("dir: ${DirectX_D3DX11_INCLUDE_DIR}")
+		message("lib: ${DirectX_D3DX11_LIBRARY}")
 		endif()
 	endif()
-
+	
+	#--- DXGI --->
+	#DXGI - DIR
+	find_path (DirectX_DXGI_INCLUDE_DIR DXGI.h
+		PATHS ${DirectX_INC_SEARCH_PATH}
+		DOC "DXGI.h dir")
+	#DXGI - LIB
+	find_library (DirectX_DXGI_LIBRARY DXGI
+		PATHS ${DirectX_LIB_SEARCH_PATH}
+		DOC "DXGI lib")
+	#SET BOTH AS FOUND
+	if (DirectX_DXGI_INCLUDE_DIR  AND DirectX_DXGI_LIBRARY)
+		set (DirectX_DXGI_FOUND 1)
+		message("dir: ${DirectX_DXGI_INCLUDE_DIR}")
+		message("lib: ${DirectX_DXGI_LIBRARY}")
+	endif()
 	#MARK
 	mark_as_advanced (
 		DirectX_D3DX10_INCLUDE_DIR
@@ -123,6 +142,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 	)
 	
 	if(DirectX_D3DX10_FOUND AND DirectX_D3DX11_FOUND)
-		message("x-libs included")
+		message("All is good")
+
 	endif()
 endif()

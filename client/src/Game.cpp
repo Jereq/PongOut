@@ -10,8 +10,8 @@
 Game::Game(ICoreSystem* _system)
 	: system(_system)
 {
+	
 }
-
 void Game::run()
 {
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;

@@ -30,7 +30,7 @@ bool GraphicsWindows::initialize()
 
 
 	testShader = new TestShader();
-
+	result = testShader->initialize(d3d->device, hWnd);
 
 	return result;
 }
