@@ -1,5 +1,6 @@
 #pragma once
 #include "msgbase.h"
+
 class GetFriends : public msgBase
 {
 public:

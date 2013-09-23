@@ -5,7 +5,7 @@
 
 Server::Server(const std::string _ipAdress, std::uint16_t _port) : addr(_ipAdress), port(_port), soc(io)
 {
-	handler.initRegister();
+	 PacketHandler::getInstance().initRegister();
 }
 
 
@@ -19,18 +19,48 @@ void Server::connect()
 	std::stringstream ss;
 	ss << port;
 	tcp::resolver::query q(addr, ss.str());
-	resIt = res.resolve(q);
-	boost::asio::connect(soc, resIt);
-	startListen();
+	tcp::resolver::iterator resIt = res.resolve(q);
+	try
+	{
+		boost::asio::connect(soc, resIt);
+	}
+	catch (boost::system::system_error& e)
+	{
+		std::cout << "Failed to connect to server." << std::endl;
+		std::cout << e.what() << std::endl;
+		return;
+	}
+	
+	std::string userName, password;
+	std::cout << "Provide username: ";
+	std::cin >> userName;
+	std::cout << std::endl << "Provide password: ";
+	std::cin >> password;
+
+	Login::ptr lp = Login::ptr(new Login());
+	lp->setLogin(userName, password);
+	write(lp);
+	listen();
 	ioThread = std::thread(boost::bind(&Server::startIO, shared_from_this()));
 }
 
-void Server::startListen()
+void Server::write( msgBase::ptr _msg )
 {
-	soc.async_read_some(boost::asio::buffer(msgBuffer), boost::bind(&Server::handleMessage, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+	msgWriteBufffer = _msg->getData();
+	boost::asio::async_write(soc, boost::asio::buffer(msgWriteBufffer), boost::bind(&Server::handleWrite, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 }
 
-void Server::handleMessage(const boost::system::error_code& _error, size_t _bytesTransferred)
+void Server::handleWrite( const boost::system::error_code& _err, size_t _byte )
+{
+	std::cerr << _err.message() << std::endl;
+}
+
+void Server::listen()
+{
+	soc.async_read_some(boost::asio::buffer(msgListenBuffer), boost::bind(&Server::handleIncomingMessage, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+}
+
+void Server::handleIncomingMessage(const boost::system::error_code& _error, size_t _bytesTransferred)
 {
 	if (_error == boost::asio::error::eof)
 	{
@@ -53,18 +83,18 @@ void Server::handleMessage(const boost::system::error_code& _error, size_t _byte
 			{
 				for (unsigned int i = 0; i < missingChars; i++)
 				{
-					fullMsgBuffer.push_back(msgBuffer[readChars + i]);
+					fullMsgBuffer.push_back(msgListenBuffer[readChars + i]);
 				}
 				readChars += missingChars;
-				head = handler.getMeassageHeader(fullMsgBuffer);			
+				head = PacketHandler::getInstance().getMeassageHeader(fullMsgBuffer);			
 			}
 			else
 			{
 				for (unsigned int i = 0; i < (_bytesTransferred - readChars); i++)
 				{
-					fullMsgBuffer.push_back(msgBuffer[readChars + i]);
+					fullMsgBuffer.push_back(msgListenBuffer[readChars + i]);
 				}
-				startListen();
+				listen();
 				return;
 			}
 		}
@@ -73,9 +103,9 @@ void Server::handleMessage(const boost::system::error_code& _error, size_t _byte
 
 		if ((_bytesTransferred - readChars) >= missingChars)
 		{
-			for (int i = 0; i < missingChars; i++)
+			for (unsigned int i = 0; i < missingChars; i++)
 			{
-				fullMsgBuffer.push_back(msgBuffer[readChars + i]);
+				fullMsgBuffer.push_back(msgListenBuffer[readChars + i]);
 			}
 			readChars += missingChars;
 			messageActionSwitch(head, fullMsgBuffer);
@@ -85,9 +115,9 @@ void Server::handleMessage(const boost::system::error_code& _error, size_t _byte
 		{
 			for (unsigned int i = 0; i < (_bytesTransferred - readChars); i++)
 			{
-				fullMsgBuffer.push_back(msgBuffer[readChars + i]);
+				fullMsgBuffer.push_back(msgListenBuffer[readChars + i]);
 			}
-			startListen();
+			listen();
 			return;
 		}
 	}
@@ -95,7 +125,7 @@ void Server::handleMessage(const boost::system::error_code& _error, size_t _byte
 
 void Server::messageActionSwitch( const msgBase::header& _header, const std::deque<char>& _meassage )
 {
-	msgBase::ptr p = handler.interpretMessage(_header.type, _meassage);
+	msgBase::ptr p = PacketHandler::getInstance().interpretMessage(_header.type, _meassage);
 
 	switch (_header.type)
 	{
@@ -110,11 +140,6 @@ void Server::messageActionSwitch( const msgBase::header& _header, const std::deq
 		std::cerr << "Received unknown packet: " << (int)p->getHeader().type << std::endl;
 		break;
 	}
-}
-
-void Server::sendMessage( std::string _msg )
-{
-
 }
 
 void Server::startIO()

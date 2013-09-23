@@ -6,7 +6,7 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	Server::ptr s(new Server("127.0.0.1", 65000));
+	Server::ptr s(new Server("127.0.0.1", 6500));
 	s->connect();
 
 	for (ever)

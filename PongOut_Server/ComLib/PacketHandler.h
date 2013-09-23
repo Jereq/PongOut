@@ -9,8 +9,9 @@
 class PacketHandler
 {
 public:
-	PacketHandler(void);
-	~PacketHandler(void);
+
+	static PacketHandler& getInstance();
+
 	void initRegister();
 	msgBase::ptr interpretMessage(msgBase::MsgType _type, const std::deque<char>& _buff);
 	msgBase::header getMeassageHeader(const std::vector<char>& _buff);
@@ -18,7 +19,10 @@ public:
 	msgBase::header getMeassageHeader(const std::deque<char>& _buff);
 
 private:
+
+	PacketHandler(void);
+	~PacketHandler(void);
+
 	std::map<msgBase::MsgType, msgBase::ptr> msgMap;
 	void registerPacket(msgBase::ptr _ptr);	
 };
-

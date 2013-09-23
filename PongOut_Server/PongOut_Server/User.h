@@ -8,8 +8,12 @@
 #include <boost/bind.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <queue>
+#include <boost/array.hpp>
 
+#include "PacketHandler.h"
 #include "msgbase.h"
+
+class UserManager;
 
 using boost::asio::ip::tcp;
 
@@ -19,20 +23,25 @@ public:
 
 	typedef boost::shared_ptr<User> ptr;
 
-	User(tcp::socket* _socket, msgBase::userData _userData);
+	User(boost::shared_ptr<tcp::socket> _socket, boost::uuids::uuid _uuid);
 	~User(void);
 
-	tcp::socket* getSocket();
+	boost::shared_ptr<tcp::socket> getSocket();
 	void addMsgToMsgQueue(msgBase::ptr _msgPtr);
-	
+	void listen();
 
 private:
-	tcp::socket* socket;
+	boost::shared_ptr<tcp::socket> socket;
 	void handleWrite(const boost::system::error_code& _err, size_t _byte);
-	std::vector<char> buffer;
+	void handleIncomingMeassage(const boost::system::error_code& _error, size_t _bytesTransferred);
+	
 	void sendMsg();
-	std::queue<msgBase::ptr> msgBuffer;
+
+	std::queue<msgBase::ptr> msgWriteBuffer;
+	boost::array<char, 256> msgListenBuffer;
+	std::deque<char> fullMsgBuffer;
 	std::mutex msgBufferLock;
 	msgBase::userData userData;
+	msgBase::header head;
 };
 

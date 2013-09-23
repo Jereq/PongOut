@@ -29,13 +29,14 @@ public:
 
 	struct userData
 	{
-		std::string userName;
+		std::string userName, password;
 		boost::uuids::uuid uuid;
 
 		userData() {}
-		userData(std::string _userName, boost::uuids::uuid _uuid)
+		userData(std::string _userName, std::string _password, boost::uuids::uuid _uuid)
 		{
 			userName = _userName;
+			password = _password;
 			uuid = _uuid;
 		}
 	};	

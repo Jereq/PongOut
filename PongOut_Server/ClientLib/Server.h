@@ -10,6 +10,7 @@
 #include <thread>
 
 #include "Chat.h"
+#include "Login.h"
 
 using boost::asio::ip::tcp;
 
@@ -22,25 +23,24 @@ public:
 	~Server(void);
 
 	void connect();
-	void sendMessage(std::string _msg);
 
 private:
 
-	void handleMessage(const boost::system::error_code& _error, size_t _bytesTransferred);
+	void handleIncomingMessage(const boost::system::error_code& _error, size_t _bytesTransferred);
 	void messageActionSwitch(const msgBase::header& _header, const std::deque<char>& _meassage);
 	void startIO();
-	void startListen();
+	void listen();
+	void write(msgBase::ptr _msg);
+	void handleWrite(const boost::system::error_code& _err, size_t _byte);
 
 	std::thread ioThread;
 	const std::string addr;
 	std::uint16_t port;
 	boost::asio::io_service io;
 	tcp::socket soc;
-	tcp::resolver::iterator resIt;
-	PacketHandler handler;
-	boost::array<char, 256> msgBuffer;
+	boost::array<char, 256> msgListenBuffer;
+	std::vector<char> msgWriteBufffer;
 	std::deque<char> fullMsgBuffer;
 	msgBase::header head;
-
 };
 

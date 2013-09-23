@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "Chat.h"
 
-#include <iterator>
-
 Chat::Chat(void) : msgBase(msgBase::MsgType::CHAT)
 {
 }

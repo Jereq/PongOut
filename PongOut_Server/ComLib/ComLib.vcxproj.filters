@@ -42,6 +42,9 @@
     <ClInclude Include="GetFriends.h">
       <Filter>Header Files\Msg sub clases</Filter>
     </ClInclude>
+    <ClInclude Include="Login.h">
+      <Filter>Header Files\Msg sub clases</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -57,6 +60,9 @@
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
     <ClCompile Include="GetFriends.cpp">
+      <Filter>Source Files\Msg sub clases</Filter>
+    </ClCompile>
+    <ClCompile Include="Login.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
   </ItemGroup>

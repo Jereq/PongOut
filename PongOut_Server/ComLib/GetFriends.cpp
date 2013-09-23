@@ -13,7 +13,8 @@ GetFriends::~GetFriends(void)
 
 void GetFriends::addToFriendList( std::string _userName, boost::uuids::uuid _uuid )
 {
-	friends.push_back(msgBase::userData(_userName, _uuid));
+	//TODO: fix addToFriendList function
+	//friends.push_back(msgBase::userData(_userName, _uuid, ));
 }
 
 std::vector<char> GetFriends::getData()

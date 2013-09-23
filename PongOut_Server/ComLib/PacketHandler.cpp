@@ -1,6 +1,14 @@
 #include "stdafx.h"
 #include "PacketHandler.h"
 #include "Chat.h"
+#include "Login.h"
+#include "GetFriends.h"
+
+PacketHandler& PacketHandler::getInstance()
+{
+	static PacketHandler instance;
+	return instance;
+}
 
 PacketHandler::PacketHandler(void)
 {
@@ -23,6 +31,8 @@ msgBase::ptr PacketHandler::interpretMessage( msgBase::MsgType _type, const std:
 void PacketHandler::initRegister()
 {
 	registerPacket(msgBase::ptr(new Chat()));
+	registerPacket(msgBase::ptr(new GetFriends()));
+	registerPacket(msgBase::ptr(new Login()));
 }
 
 msgBase::header PacketHandler::getMeassageHeader( const std::vector<char>& _buff )

@@ -9,16 +9,17 @@
 using namespace std;
 
 int _tmain(int argc, _TCHAR* argv[])
-{
-	boost::asio::io_service* io = new boost::asio::io_service();
-	UserManager man(io);
-	
+{	
 	cout << "PongOut server started!" << endl;
 
-	man.listen();
-	io->run();
+	UserManager::getInstance()->listenForNewClientConnections();
+	UserManager::getInstance()->startIO();
 
-	system("pause");
+	for (ever)
+	{
+	}
+
+	//system("pause");
 	return 0;
 }
 
