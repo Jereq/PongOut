@@ -10,21 +10,23 @@
 namespace fs = boost::filesystem;
 
 #include "PongOutConfig.h"
-#include "GraphicsWindows.h"
+#include "Game.h"
+#include "CoreSystemWindows.h"
 
-HWND        hwnd;
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+Game* game;
+HWND  hwnd;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
 	static char szAppName[] = "PongOut";
 
-	MSG         msg;
+	CoreSystemWindows* iCore = new CoreSystemWindows();
+	
 	WNDCLASSEX  wndClass;
 
 	wndClass.cbSize			= sizeof(wndClass);
 	wndClass.style			= CS_HREDRAW | CS_VREDRAW;
-	wndClass.lpfnWndProc	= WndProc;
+	wndClass.lpfnWndProc	= iCore->WndProc;
 	wndClass.cbClsExtra		= 0;
 	wndClass.cbWndExtra		= 0;
 	wndClass.hInstance		= hInstance;
@@ -38,26 +40,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	RegisterClassEx(&wndClass);
 
 	hwnd = CreateWindow(szAppName, "PongOut",
-						WS_OVERLAPPEDWINDOW,
-						CW_USEDEFAULT, CW_USEDEFAULT,
-						CW_USEDEFAULT, CW_USEDEFAULT,
-						NULL, NULL, hInstance, NULL);
-	//hwnd = CreateWindowEx(WS_EX_APPWINDOW, szAppName, szAppName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW, 400, 300, 800, 600, NULL, NULL, hInstance, NULL); 
+				WS_OVERLAPPEDWINDOW,
+				CW_USEDEFAULT, CW_USEDEFAULT,
+				CW_USEDEFAULT, CW_USEDEFAULT,
+				NULL, NULL, hInstance, NULL);
 
 	ShowWindow(hwnd, iCmdShow);
-	//SetForegroundWindow(hwnd);
-	//SetFocus(hwnd);
 	UpdateWindow(hwnd);
 
-	GraphicsWindows* gw = new GraphicsWindows(hwnd);
+	iCore->setHwnd(hwnd);
 
-	while (GetMessage(&msg, NULL, 0, 0))
-	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
+	game = new Game((ICoreSystem*)iCore);
+	game->run();
 
-	return msg.wParam;
+	delete game;
+	game = NULL;
+
+	return 0;
 }
 
 std::string getVersionString()
@@ -66,33 +65,4 @@ std::string getVersionString()
 	stream << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH;
 
 	return stream.str();
-}
-
-LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
-{
-	PAINTSTRUCT	ps;
-	HDC				hdc;
-
-	switch (iMsg)
-	{
-	case WM_PAINT:
-		{
-			std::string version = getVersionString();
-			std::string hello = "Hello World!";
-			fs::path programPath(__argv[0]);
-
-			hdc = BeginPaint(hwnd, &ps);
-			TextOut(hdc, 100, 100, version.c_str(), version.length());
-			TextOut(hdc, 100, 120, hello.c_str(), hello.length());
-			TextOut(hdc, 100, 140, programPath.string().c_str(), programPath.string().length());
-			EndPaint(hwnd, &ps);
-			return 0;
-		}
-
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		return 0;
-	}
-
-	return DefWindowProc(hwnd, iMsg, wParam, lParam);
 }

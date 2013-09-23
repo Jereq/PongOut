@@ -25,7 +25,7 @@ bool TestShader::initialize(ID3D11Device* _device, HWND _hWnd)
 	if(!result)
 		return false;
 
-	return false;
+	return true;
 }
 
 void OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, LPCSTR shaderFilename)

@@ -27,6 +27,22 @@ else()
 	add_definitions(-std=c++11)
 endif()
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/")
+
+add_definitions(-DBOOST_ALL_NO_LIB)
+
+set(Boost_USE_STATIC_LIBS		ON)
+set(Boost_USE_MULTITHREADED		ON)
+set(Boost_USE_STATIC_RUNTIME	ON)
+
+find_package(Boost 1.49 COMPONENTS filesystem system REQUIRED)
+find_package(GLM REQUIRED)
+
+include_directories(
+	${Boost_INCLUDE_DIR}
+	${GLM_INCLUDE_DIRS}
+)
+
 # Use platform dependent folder for platform dependent code.
 set(PLATFORM_PATH "Platform_${CMAKE_SYSTEM_NAME}")
 
@@ -52,21 +68,6 @@ include_directories("${PROJECT_BINARY_DIR}")
 
 include_directories("${PROJECT_SOURCE_DIR}")
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/")
-
-add_definitions(-DBOOST_ALL_NO_LIB)
-
-set(Boost_USE_STATIC_LIBS		ON)
-set(Boost_USE_MULTITHREADED		ON)
-set(Boost_USE_STATIC_RUNTIME	ON)
-
-find_package(Boost 1.49 COMPONENTS filesystem system REQUIRED)
-find_package(GLM REQUIRED)
-
-include_directories(
-	${Boost_INCLUDE_DIRS}
-	${GLM_INCLUDE_DIRS}
-)
 set(EXTRA_LIBS ${EXTRA_LIBS}
 	${Boost_LIBRARIES}
 )

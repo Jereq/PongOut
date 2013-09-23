@@ -1,27 +1,55 @@
-#ifndef __ASSET_H
-#define __ASSET_H
+#pragma once
+#include <string>
 
 template<typename T>
 class Asset
 {
+protected:
+	Asset()
+		: name("EMPTY"), refCount(0)
+	{
+	}
+	virtual ~Asset(){}
+
 public:
+	T* getData()const
+	{
+		refCount++;
+		return data;
+	};
+
+	std::string	getName()const
+	{
+		return name;
+	}
+
+	virtual bool clear() = 0;
+
+	bool initialize(T* _data, std::string _name)
+	{
+		if(m_data == NULL)
+			return false;
+
+		data = _data;
+		name = _name;
+
+		return true;
+	}
+
+	void dereference()
+	{
+		refCount--;
+	}
+
+	unsigned int getRefCount()const
+	{
+		return refCount;
+	}
 
 protected:
-	Asset(T* _data, int _id)
-		: data(_data), id(_id)
-	{}
-
-	virtual ~Asset()
-	{}
-
-	virtual void clean() = 0;	//if special cleanup operationens are needed for data - define in derived class
-
-	int	getId()const
-	{ return id; }
+	T*			data;
+	std::string	name;
 
 private:
-	T*	data;
-	int id;
+	unsigned int refCount;
 };
-
-#endif

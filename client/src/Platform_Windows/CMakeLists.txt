@@ -15,7 +15,7 @@ include_directories(
 	${DirectX_D3DX10_INCLUDE_DIR}
 )
 
-add_library(Graphics GraphicsWindows.cpp D3D.cpp TestShader.cpp)
+add_library(Graphics GraphicsWindows.cpp D3D.cpp TestShader.cpp CoreSystemWindows.cpp Asset.h AssetContainer.h DXAssets.h)
 
 target_link_libraries(Graphics
 	${DirectX_D3DX11_LIBRARY}

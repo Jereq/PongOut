@@ -41,6 +41,9 @@ public:
 	bool			setViewPort(unsigned int _screenWidth, unsigned int _screenHeight);
 	bool			setDepthBuffer();
 	bool			setDepthStencil();
+
+	void beginScene(float _r, float _g, float _b, float _a);
+	void endScene();
 };
 
 #endif

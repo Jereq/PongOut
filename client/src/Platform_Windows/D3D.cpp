@@ -265,6 +265,21 @@ bool D3D::setDepthStencil()
 	if( FAILED(result) )
 		return false;
 
+	deviceContext->OMSetDepthStencilState(noDepthStencilState, 1);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+	ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
+
+	depthStencilViewDesc.Format				= DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilViewDesc.ViewDimension		= D3D11_DSV_DIMENSION_TEXTURE2D;
+	depthStencilViewDesc.Texture2D.MipSlice	= 0;
+
+	result = device->CreateDepthStencilView(depthStencilBuffer, &depthStencilViewDesc, &depthStencilView);
+	if( FAILED(result) )
+		return false;
+
+	deviceContext->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+
 	return true;
 }
 
@@ -309,4 +324,19 @@ bool D3D::initialize(HWND _hWnd)
 void D3D::shutDown()
 {
 
+}
+
+void D3D::beginScene(float _r, float _g, float _b, float _a)
+{
+	float color[4] = {_r, _g, _b, _a };
+	deviceContext->ClearRenderTargetView(renderTargetView, color);
+	deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+}
+
+void D3D::endScene()
+{
+	if(vsyncEnabled)
+		swapChain->Present(1,0);
+	else
+		swapChain->Present(0,0);
 }

@@ -2,10 +2,10 @@
 
 
 GraphicsWindows::GraphicsWindows(HWND _hWnd)
-	: d3d(0), hWnd(_hWnd)
+	: d3d(0), hWnd(_hWnd), IGraphics()
 {
 	// this should be called outside this class
-	initialize();
+	//init();
 }
 
 GraphicsWindows::~GraphicsWindows()
@@ -13,7 +13,24 @@ GraphicsWindows::~GraphicsWindows()
 
 }
 
-bool GraphicsWindows::initialize()
+void GraphicsWindows::destroy()
+{
+
+}
+
+bool GraphicsWindows::loadImage(const boost::filesystem::path& _imagePath)
+{
+
+	return true;
+}
+
+bool GraphicsWindows::loadResources(const boost::filesystem::path& _resourceDir)
+{
+
+	return true;
+}
+
+bool GraphicsWindows::init()
 {
 	bool result = false;
 	
@@ -41,7 +58,14 @@ struct P
 	float dim[2];
 };
 
-void GraphicsWindows::drawFrame()
+void GraphicsWindows::addRectangle(glm::vec2 _center, glm::vec2 _size, float _rotation, std::string id)
 {
 
+}
+
+void GraphicsWindows::drawFrame()
+{
+	d3d->beginScene(0.f, 0.f, 0.f, 1.f);
+
+	d3d->endScene();
 }
