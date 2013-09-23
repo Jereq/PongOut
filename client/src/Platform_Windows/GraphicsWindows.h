@@ -4,6 +4,7 @@
 #include "../IGraphics.h"
 #include "D3D.h"
 #include "TestShader.h"
+#include "DXAssets.h"
 
 class GraphicsWindows : public IGraphics
 {

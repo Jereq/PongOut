@@ -45,9 +45,9 @@ public:
 
 protected:
 	std::string	m_name;
-	Asset*	vBuffer;
-	Asset*	iBuffer;
-	Asset*	texture;
+	VB*		vBuffer;
+	IB*		iBuffer;
+	TEX*	texture;
 };
 
 #endif

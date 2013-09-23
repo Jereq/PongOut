@@ -21,7 +21,7 @@ bool TestShader::initialize(ID3D11Device* _device, HWND _hWnd)
 {
 	bool result;
 	
-	result = initializeShader(_device, _hWnd, "../shaders/test.vs", "../shaders/test.ps");
+	result = initializeShader(_device, _hWnd, "../src/Platform_Windows/shaders/test.vs", "../src/Platform_Windows/shaders/test.ps");
 	if(!result)
 		return false;
 
@@ -75,7 +75,7 @@ bool TestShader::initializeShader(ID3D11Device* _device, HWND _hWnd, LPCSTR _vsF
 	unsigned int numElements;
 
 	
-	result = D3DX11CompileFromFile("../build3/shaders/test.vs", NULL, NULL, "VShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &vertexShaderBuffer, &errorMessage, NULL);
+	result = D3DX11CompileFromFile(_vsFile, NULL, NULL, "VShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &vertexShaderBuffer, &errorMessage, NULL);
 	if( FAILED(result) )
 	{
 		if(errorMessage)
@@ -86,7 +86,7 @@ bool TestShader::initializeShader(ID3D11Device* _device, HWND _hWnd, LPCSTR _vsF
 	if( FAILED(result) )
 		return false;
 
-	result = D3DX11CompileFromFile("../build3/shaders/test.ps", NULL, NULL, "PShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pixelShaderBuffer, &errorMessage, NULL);
+	result = D3DX11CompileFromFile(_psFile, NULL, NULL, "PShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pixelShaderBuffer, &errorMessage, NULL);
 	if( FAILED(result) )
 	{
 		if(errorMessage)
@@ -97,7 +97,7 @@ bool TestShader::initializeShader(ID3D11Device* _device, HWND _hWnd, LPCSTR _vsF
 	if( FAILED(result) )
 		return false;
 
-	result = D3DX11CompileFromFile("../build3/shaders/spriteGS.gs", NULL, NULL, "GS", "gs_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &geometryShaderBuffer, &errorMessage, NULL);
+	result = D3DX11CompileFromFile("../src/Platform_Windows/shaders/spriteGS.gs", NULL, NULL, "GS", "gs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &geometryShaderBuffer, &errorMessage, NULL);
 	if( FAILED(result) )
 	{
 		if(errorMessage)

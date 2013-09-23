@@ -1,0 +1,13 @@
+//DESCS
+struct PSIN
+{
+	float4 position	: SV_POSITION;
+};
+
+//SHADER
+float4 PShader(PSIN input) : SV_TARGET
+{
+	float4 color = float4(1,0,0,1);
+
+	return color;
+}
