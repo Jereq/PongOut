@@ -12,7 +12,7 @@ protected:
 	virtual ~Asset(){}
 
 public:
-	T* getData()const
+	T* getData()
 	{
 		refCount++;
 		return data;
@@ -27,7 +27,7 @@ public:
 
 	bool initialize(T* _data, std::string _name)
 	{
-		if(m_data == NULL)
+		if(data == NULL)
 			return false;
 
 		data = _data;

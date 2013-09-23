@@ -17,28 +17,28 @@ void GS( point VSIN sprite[1], inout TriangleStream<PSIN> triStream )
     //--------------------------------------------
  
     //bottom left
-    v.p = float4(sprite[0].center.x - sprite[0].dimensions.x,
-		 sprite[0].center.y - sprite[0].dimensions.y,
-		 0,1);
+    v.p = float4(sprite[0].center.x - sprite[0].dimensions.x * 0.5f,
+		 sprite[0].center.y - sprite[0].dimensions.y * 0.5f,
+		 1,1);
 
     triStream.Append(v);
  
     //top left
-    v.p = float4(sprite[0].center.x - sprite[0].dimensions.x,
-		 sprite[0].center.y + sprite[0].dimensions.y,
-		 0,1);
+    v.p = float4(sprite[0].center.x - sprite[0].dimensions.x * 0.5f,
+		 sprite[0].center.y + sprite[0].dimensions.y * 0.5f,
+		 1,1);
 
     triStream.Append(v);
  
     //bottom right
-    v.p = float4(sprite[0].center.x + sprite[0].dimensions.x,
-		 sprite[0].center.y - sprite[0].dimensions.y,
-		 0,1);
+    v.p = float4(sprite[0].center.x + sprite[0].dimensions.x * 0.5f,
+		 sprite[0].center.y - sprite[0].dimensions.y * 0.5f,
+		 1,1);
     triStream.Append(v);
  
     //top right
-    v.p = float4(sprite[0].center.x + sprite[0].dimensions.x,
-		 sprite[0].center.y + sprite[0].dimensions.y,
-		 0,1);
+    v.p = float4(sprite[0].center.x + sprite[0].dimensions.x * 0.5f,
+		 sprite[0].center.y + sprite[0].dimensions.y * 0.5f,
+		 1,1);
     triStream.Append(v);
 }

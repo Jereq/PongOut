@@ -29,6 +29,12 @@ private:
 	virtual void addRectangle(glm::vec2 _center, glm::vec2 _size, float _rotation, std::string id);
 
 	virtual void drawFrame();
+
+	VertexBuffer*	vBufferAsset;
+	IndexBuffer*	iBufferAsset;
+	DXSprite*		sprite;
+	unsigned int	vertexCount;
+	unsigned int	indexCount;
 };
 
 #endif

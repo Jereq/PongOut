@@ -4,7 +4,7 @@
 
 struct VSIN
 {
-	float2 topLeft		: ANCHOR;
+	float2 center		: ANCHOR;
 	float2 dimensions	: DIMENSIONS;
 };
 
@@ -14,12 +14,19 @@ struct PSIN
 };
 
 //SHADER
-PSIN VShader(VSIN input)
+/*PSIN VShader(VSIN input)
 {
 	PSIN output;
-	float movX = -0.5;
-	float movY = 0.5;
-	output.p = float4(input.topLeft.x + movX, input.topLeft.y + movY, 1, 1);
+	output.p = float4(input.center.x, input.center.y, input.dimensions.x, input.dimensions.y);
+
+	return output;
+}*/
+
+VSIN VShader(VSIN input)
+{
+	VSIN output;
+	output.center = input.center;// = float4(input.center.x, input.center.y, 1,1);
+	output.dimensions = input.dimensions;
 
 	return output;
 }

@@ -5,6 +5,7 @@
 #include <D3DX11async.h>
 #include <D3D11.h>
 #include <fstream>
+#include "DXAssetInstancing.h"
 
 TestShader::TestShader() :	vertexShader(0), pixelShader(0), layout(0),
 							samplerState(0)
@@ -42,7 +43,7 @@ void OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, LPCSTR shader
 	bufferSize = errorMessage->GetBufferSize();
 
 	// Open a file to write the error message to.
-	fout.open("../build3/shaders/shader-error.txt");
+	fout.open("../src/Platform_Windows/shaders/shader-error.txt");
 
 	// Write out the error message.
 	for(i=0; i<bufferSize; i++)
@@ -107,7 +108,10 @@ bool TestShader::initializeShader(ID3D11Device* _device, HWND _hWnd, LPCSTR _vsF
 
 		return false;
 	}
-	
+	result = _device->CreateGeometryShader(geometryShaderBuffer->GetBufferPointer(), geometryShaderBuffer->GetBufferSize(), NULL, &geometryShader);
+	if( FAILED(result) )
+		return false;
+
 	layoutDesc[0].SemanticName			= "ANCHOR";
 	layoutDesc[0].SemanticIndex			= 0;
 	layoutDesc[0].Format				= DXGI_FORMAT_R32G32_FLOAT;
@@ -148,7 +152,47 @@ void TestShader::shutDown()
 
 }
 
-//bool TestShader::initializeShader(ID3D11Device* _device, HWND _hWnd, LPCSTR _vsFile,  WCHAR* _psFile)
-//{
-//
-//}
+bool TestShader::draw(ID3D11DeviceContext* _deviceContext, DXSprite* _sprite)
+{
+
+	setShaderParamaters(_deviceContext, _sprite);
+	drawShader(_deviceContext, 1);
+
+	return true;
+}
+
+bool TestShader::setShaderParamaters(ID3D11DeviceContext* _deviceContext, DXSprite* _sprite)
+{
+	unsigned int stride;
+	unsigned int offset;
+
+	// Set vertex buffer stride and offset.
+	stride = sizeof(SpriteVertex); 
+	offset = 0;
+
+	ID3D11Buffer* vbuf = _sprite->getVBuffer();
+	// Set the vertex buffer to active in the input assembler so it can be rendered.
+	_deviceContext->IASetVertexBuffers(0, 1, &vbuf, &stride, &offset);
+
+	ID3D11Buffer* ibuf = _sprite->getIBuffer();
+	// Set the index buffer to active in the input assembler so it can be rendered.
+	_deviceContext->IASetIndexBuffer(ibuf, DXGI_FORMAT_R32_UINT, 0);
+	
+	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
+	_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+	// Set the vertex input layout.
+	_deviceContext->IASetInputLayout(layout);
+
+	// Set the vertex and pixel shaders that will be used to render this triangle.
+	_deviceContext->VSSetShader(vertexShader,	NULL, 0);
+	_deviceContext->GSSetShader(geometryShader,	NULL, 0);
+	_deviceContext->PSSetShader(pixelShader,	NULL, 0);
+
+	return true;
+}
+
+void TestShader::drawShader(ID3D11DeviceContext* _deviceContext, int indexCount)
+{
+	_deviceContext->Draw(indexCount,0);
+}

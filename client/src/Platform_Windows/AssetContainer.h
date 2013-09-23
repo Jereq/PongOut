@@ -8,7 +8,7 @@ class Sprite
 {
 public:
 	Sprite(std::string _name = "EMPTY")
-		: m_name(_name)
+		: name(_name)
 	{}
 
 	virtual ~Sprite()
@@ -16,13 +16,13 @@ public:
 
 	bool initialize(std::string _name, Asset<VB>* _vBuffer, Asset<IB>* _iBuffer, Asset<TEX>* _texture)
 	{
-		if( m_name != "EMPTY")
+		if( name != "EMPTY")
 			return false;
 
-		m_name		= _name;
-		m_vBuffer	= _vBuffer->getData();
-		m_iBuffer	= _iBuffer->getData();
-		m_texture	= _texture->getData();
+		name		= _name;
+		vBuffer	= _vBuffer->getData();
+		iBuffer	= _iBuffer->getData();
+		//texture	= _texture->getData();
 
 		return true;
 	}
@@ -44,7 +44,7 @@ public:
 	virtual void clear() = 0;
 
 protected:
-	std::string	m_name;
+	std::string	name;
 	VB*		vBuffer;
 	IB*		iBuffer;
 	TEX*	texture;
