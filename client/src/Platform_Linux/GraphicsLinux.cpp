@@ -1,6 +1,7 @@
 #include "GraphicsLinux.h"
 
 #include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 namespace fs = boost::filesystem;
 
 #include <GL/glew.h>
@@ -10,6 +11,7 @@ namespace fs = boost::filesystem;
 #include <IL/il.h>
 
 #include <cstdio>
+#include <sstream>
 #include <stdexcept>
 
 const int GraphicsLinux::MAJOR_GL_VERSION = 4;
@@ -97,17 +99,19 @@ void GraphicsLinux::printReport()
 bool GraphicsLinux::loadRectangleShader()
 {
 	static fs::path vertexShaderPath(rootDir / "shaders/basicRect.vert");
+	static fs::path geometryShaderPath(rootDir / "shaders/basicRect.geom");
 	static fs::path fragmentShaderPath(rootDir / "shaders/basicRect.frag");
 
-	if (!rectangleProgram.compileShaderFromFile(vertexShaderPath.string(), GLSLShaderType::VERTEX) ||
-			!rectangleProgram.compileShaderFromFile(fragmentShaderPath.string(), GLSLShaderType::FRAGMENT))
+	if (!rectangleProgram.compileShaderFromFile(vertexShaderPath.string(), GLSLShaderType::VERTEX)
+			|| !rectangleProgram.compileShaderFromFile(geometryShaderPath.string(), GLSLShaderType::GEOMETRY)
+			|| !rectangleProgram.compileShaderFromFile(fragmentShaderPath.string(), GLSLShaderType::FRAGMENT))
 	{
 		fprintf(stderr, "%s", rectangleProgram.log().c_str());
 		return false;
 	}
 
 	rectangleProgram.bindAttribLocation(0, "vertexPosition");
-	rectangleProgram.bindAttribLocation(1, "vertexTexCoord");
+	rectangleProgram.bindAttribLocation(1, "vertexSize");
 
 	if (!rectangleProgram.link())
 	{
@@ -123,54 +127,33 @@ bool GraphicsLinux::loadRectangleShader()
 	return true;
 }
 
-void GraphicsLinux::initRectMesh()
+void GraphicsLinux::initRectBuffer()
 {
-	glGenBuffers(2, rectVboHandles);
-	GLuint positionBufferHandle = rectVboHandles[0];
-	GLuint texCoordBufferHandle = rectVboHandles[1];
-
-	const static glm::vec3 positions[6] = {
-			glm::vec3(-1.f,  1.f, 0.f),
-			glm::vec3(-1.f, -1.f, 0.f),
-			glm::vec3( 1.f,  1.f, 0.f),
-
-			glm::vec3( 1.f,  1.f, 0.f),
-			glm::vec3(-1.f, -1.f, 0.f),
-			glm::vec3( 1.f, -1.f, 0.f)
-	};
-
-	const static glm::vec2 texCoords[6] = {
-			glm::vec2(0.f, 1.f),
-			glm::vec2(0.f, 0.f),
-			glm::vec2(1.f, 1.f),
-
-			glm::vec2(1.f, 1.f),
-			glm::vec2(0.f, 0.f),
-			glm::vec2(1.f, 0.f)
-	};
-
-	glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, texCoordBufferHandle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), texCoords, GL_STATIC_DRAW);
+	glGenBuffers(1, &rectVboHandle);
 
 	glGenVertexArrays(1, &rectVaoHandle);
 	glBindVertexArray(rectVaoHandle);
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 
-	glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glBindBuffer(GL_ARRAY_BUFFER, rectVboHandle);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Rectangle), (const GLvoid*) offsetof(Rectangle, position));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Rectangle), (const GLvoid*) offsetof(Rectangle, size));
+	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(Rectangle), (const GLvoid*) offsetof(Rectangle, rotation));
+}
 
-	glBindBuffer(GL_ARRAY_BUFFER, texCoordBufferHandle);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+void GraphicsLinux::bufferData(const recs_t& _rects)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, rectVboHandle);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(recs_t) * _rects.size(), _rects.data(), GL_DYNAMIC_DRAW);
 }
 
 GraphicsLinux::GraphicsLinux(const fs::path& _rootDir)
 	: window(nullptr),
 	  rectVaoHandle(0),
+	  rectVboHandle(0),
 	  rootDir(_rootDir)
 {
 }
@@ -210,6 +193,10 @@ bool GraphicsLinux::init()
 	}
 
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	initDevIL();
 
@@ -221,9 +208,9 @@ bool GraphicsLinux::init()
 		return false;
 	}
 
-	initRectMesh();
+	initRectBuffer();
 
-	projectionMatrix = glm::ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);
+	projectionMatrix = glm::ortho(-1.f, 1.f, -1.f, 1.f, 1.f, -1.f);
 
 	glClearColor(1.f, 0.f, 1.f, 1.f);
 
@@ -232,16 +219,21 @@ bool GraphicsLinux::init()
 
 void GraphicsLinux::destroy()
 {
-	if (!loadedTextureIds.empty())
+	if (!loadedTextures.empty())
 	{
-		glDeleteTextures(loadedTextureIds.size(), loadedTextureIds.data());
-		loadedTextureIds.clear();
+		for (auto& image : loadedTextures)
+		{
+			glDeleteTextures(1, &image.second.textureID);
+			ilDeleteImage(image.second.id);
+
+		}
+		loadedTextures.clear();
 	}
 
 	rectangleProgram.free();
 
 	glDeleteVertexArrays(1, &rectVaoHandle);
-	glDeleteBuffers(2, rectVboHandles);
+	glDeleteBuffers(1, &rectVboHandle);
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
@@ -249,51 +241,117 @@ void GraphicsLinux::destroy()
 
 bool GraphicsLinux::loadResources(const boost::filesystem::path& _resourceDir)
 {
-	printf("Pretending to load resources...\n");
-	return fs::exists(_resourceDir) && fs::is_directory(_resourceDir);
-}
-
-bool GraphicsLinux::loadImage(const fs::path& _imagePath)
-{
-	ILuint image = ilGenImage();
-	ilBindImage(image);
-
-	if (!ilLoad(IL_PNG, _imagePath.string().c_str()))
+	if (!fs::exists(_resourceDir) || !fs::is_directory(_resourceDir))
 	{
-		fprintf(stderr, "Failed to load \"%s\"\n", _imagePath.string().c_str());
+		return false;
 	}
 
-	GLenum textureUnit = GL_TEXTURE0 + loadedTextureIds.size();
+	fs::path resourceFile = _resourceDir / "resources.txt";
+	if (!fs::exists(resourceFile) || !fs::is_regular_file(resourceFile))
+	{
+		return false;
+	}
+
+	int rowNr = 0;
+	fs::fstream f(resourceFile);
+	while (!f.eof())
+	{
+		rowNr++;
+
+		std::string line;
+		std::getline(f, line);
+
+		std::istringstream ss(line);
+		std::string type;
+		std::getline(ss, type, ':');
+
+		if (ss.eof() || type != "texture")
+		{
+			continue;
+		}
+
+		std::string resourceName;
+		std::string resourcePath;
+		ss >> resourceName >> resourcePath;
+
+		if (resourceName.empty() || resourcePath.empty())
+		{
+			continue;
+		}
+
+		LoadedImage image = loadImage(_resourceDir / resourcePath);
+		if (image.textureID)
+		{
+			loadedTextures.insert(std::pair<std::string, LoadedImage>(resourceName, image));
+		}
+	}
+
+	return true;
+}
+
+GraphicsLinux::LoadedImage GraphicsLinux::loadImage(const fs::path& _imagePath)
+{
+	LoadedImage res{0, _imagePath, 0};
+	res.id = ilGenImage();
+	ilBindImage(res.id);
+
+	if (!ilLoadImage(_imagePath.string().c_str()))
+	{
+		fprintf(stderr, "Failed to load \"%s\"\n", _imagePath.string().c_str());
+		return res;
+	}
 
 	GLuint tId;
 	glGenTextures(1, &tId);
-	loadedTextureIds.push_back(tId);
 
-	glActiveTexture(textureUnit);
 	glBindTexture(GL_TEXTURE_2D, tId);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_TYPE), ilGetData());
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-	ilDeleteImage(image);
+	res.textureID = tId;
+	return res;
 }
 
-void GraphicsLinux::addRectangle(glm::vec2 _center, glm::vec2 _size, float _rotation, std::string id)
+void GraphicsLinux::addRectangle(glm::vec3 _center, glm::vec2 _size, float _rotation, std::string _id)
 {
-	throw std::logic_error("Function not implemented");
+	Rectangle rect{
+		_center,
+		_size,
+		_rotation
+	};
+
+	registeredRectangles[_id].push_back(rect);
 }
 
 void GraphicsLinux::drawFrame()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	rectangleProgram.use();
-	rectangleProgram.setUniform("projectionMatrix", projectionMatrix);
-	rectangleProgram.setUniform("tex", 0);
+	if (!registeredRectangles.empty())
+	{
+		rectangleProgram.use();
+		rectangleProgram.setUniform("projectionMatrix", projectionMatrix);
+		rectangleProgram.setUniform("tex", 0);
+		glActiveTexture(GL_TEXTURE0);
 
-	glBindVertexArray(rectVaoHandle);
+		glBindVertexArray(rectVaoHandle);
 
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+		for (auto& recList : registeredRectangles)
+		{
+			if (recList.second.empty())
+			{
+				continue;
+			}
+
+			bufferData(recList.second);
+
+			glBindTexture(GL_TEXTURE_2D, loadedTextures.at(recList.first).textureID);
+			glDrawArrays(GL_POINTS, 0, recList.second.size());
+
+			recList.second.clear();
+		}
+	}
 
 	glfwSwapBuffers(window);
 }

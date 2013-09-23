@@ -5,9 +5,13 @@
 #include "GraphicsLinux.h"
 #include "../IGraphics.h"
 
+#include <boost/filesystem.hpp>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <boost/filesystem.hpp>
+#include <IL/il.h>
+
+#include <map>
 
 class GraphicsLinux : public IGraphics
 {
@@ -18,13 +22,28 @@ private:
 	GLFWwindow* window;
 	GLSLProgram rectangleProgram;
 	GLuint rectVaoHandle;
-	GLuint rectVboHandles[2];
-
-	std::vector<GLuint> loadedTextureIds;
+	GLuint rectVboHandle;
 
 	glm::mat4 projectionMatrix;
 
 	boost::filesystem::path rootDir;
+
+	struct LoadedImage
+	{
+		ILuint id;
+		boost::filesystem::path path;
+		GLuint textureID;
+	};
+	std::map<std::string, LoadedImage> loadedTextures;
+
+	struct Rectangle
+	{
+		glm::vec3 position;
+		glm::vec2 size;
+		float rotation;
+	};
+	typedef std::vector<Rectangle> recs_t;
+	std::map<std::string, recs_t> registeredRectangles;
 
 	static void errorCallback(int _error, const char* _description);
 
@@ -33,7 +52,11 @@ private:
 	void initDevIL();
 	void printReport();
 	bool loadRectangleShader();
-	void initRectMesh();
+	void initRectBuffer();
+
+	LoadedImage loadImage(const boost::filesystem::path& _imagePath);
+
+	void bufferData(const recs_t& _rects);
 
 public:
 	GraphicsLinux(const boost::filesystem::path& _rootDir);
@@ -42,8 +65,7 @@ public:
 	virtual void destroy() override;
 
 	virtual bool loadResources(const boost::filesystem::path& _resourceDir) override;
-	virtual bool loadImage(const boost::filesystem::path& _imagePath) override;
-	virtual void addRectangle(glm::vec2 _center, glm::vec2 _size, float _rotation, std::string id) override;
+	virtual void addRectangle(glm::vec3 _center, glm::vec2 _size, float _rotation, std::string _id) override;
 
 	virtual void drawFrame() override;
 

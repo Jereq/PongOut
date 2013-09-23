@@ -23,7 +23,7 @@ void Game::run()
 		return;
 	}
 
-	graphics->loadImage(system->getRootDir() / "resources/box_orange_01.png");
+	graphics->loadResources(system->getRootDir() / "resources");
 
 	double previousTime = system->getTime();
 	double currentTime = previousTime;
@@ -34,6 +34,10 @@ void Game::run()
 	while (!system->windowIsClosing())
 	{
 		system->pollEvents();
+
+		graphics->addRectangle(glm::vec3(0.5f, 0.5f, 0.f), glm::vec2(0.5f, 0.5f), 0.f, "blocks/pink_01");
+		graphics->addRectangle(glm::vec3(-0.5f, 0.f, 0.f), glm::vec2(1.f), 0.f, "blocks/orange_01");
+		graphics->addRectangle(glm::vec3(0.f, 0.f, -1.f), glm::vec2(0.5f), 0.f, "player/ball");
 
 		const static float FRAMES_PER_SECOND = 60.f;
 		const static float FRAME_TIME = 1.f / FRAMES_PER_SECOND;
