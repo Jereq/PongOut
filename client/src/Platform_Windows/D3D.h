@@ -26,7 +26,7 @@ public:
 	ID3D11RasterizerState*	rasterState;		//
 	D3D_FEATURE_LEVEL		featureLevel;		//
 
-	ID3D11DepthStencilState*	depthStencilBuffer;
+	ID3D11Texture2D*			depthStencilBuffer;
 	ID3D11DepthStencilView*		depthStencilView;
 	ID3D11DepthStencilState*	noDepthStencilState;
 
@@ -39,6 +39,7 @@ public:
 	bool			setSwapChain(HWND _hWnd, unsigned int _numerator, unsigned int _denominator, bool _fullScreen);
 	bool			setRasterState(D3D11_CULL_MODE _cullMode, D3D11_FILL_MODE _fillMode);
 	bool			setViewPort(unsigned int _screenWidth, unsigned int _screenHeight);
+	bool			setDepthBuffer();
 	bool			setDepthStencil();
 };
 

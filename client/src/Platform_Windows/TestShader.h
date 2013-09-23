@@ -18,10 +18,11 @@ private:
 	//bool	setShaderParamaters(ID3D11DeviceContext* _deviceContext, ID3D11ShaderResourceView* _resourceView);
 	//void	drawShader(ID3D11DeviceContext* _deviceContext, int indexCount);
 
-	ID3D11VertexShader*	vertexShader;
-	ID3D11PixelShader*	pixelShader;
-	ID3D11InputLayout*	layout;
-	ID3D11SamplerState*	samplerState;
+	ID3D11VertexShader*		vertexShader;
+	ID3D11PixelShader*		pixelShader;
+	ID3D11GeometryShader*	geometryShader;
+	ID3D11InputLayout*		layout;
+	ID3D11SamplerState*		samplerState;
 };
 
 #endif

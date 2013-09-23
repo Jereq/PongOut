@@ -215,6 +215,31 @@ bool D3D::setViewPort(unsigned int _screenWidth, unsigned int _screenHeight)
 	return true;
 }
 
+bool D3D::setDepthBuffer()
+{
+	HRESULT result;
+	D3D11_TEXTURE2D_DESC depthBufferDesc;
+
+	ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
+	depthBufferDesc.Width = screenWidth;
+	depthBufferDesc.Height = screenHeight;
+	depthBufferDesc.MipLevels = 1;
+	depthBufferDesc.ArraySize = 1;
+	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthBufferDesc.SampleDesc.Count = 1;
+	depthBufferDesc.SampleDesc.Quality = 0;
+	depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthBufferDesc.CPUAccessFlags = 0;
+	depthBufferDesc.MiscFlags = 0;
+
+	result = device->CreateTexture2D(&depthBufferDesc, NULL, &depthStencilBuffer);
+	if( FAILED(result) )
+		return false;
+
+	return true;
+}
+
 bool D3D::setDepthStencil()
 {
 	HRESULT result;
@@ -267,6 +292,11 @@ bool D3D::initialize(HWND _hWnd)
 
 	// set viewport by screensize
 	setViewPort(screenWidth, screenHeight);
+
+	// set depth buffer
+	result = setDepthBuffer();
+	if(!result)
+		return false;
 
 	// set depth stencil
 	result = setDepthStencil();

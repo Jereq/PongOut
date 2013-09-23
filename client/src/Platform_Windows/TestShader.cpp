@@ -66,40 +66,47 @@ void OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, LPCSTR shader
 bool TestShader::initializeShader(ID3D11Device* _device, HWND _hWnd, LPCSTR _vsFile, LPCSTR _psFile)
 {
 	HRESULT result;
-	ID3D10Blob* errorMessage		= 0;
-	ID3D10Blob* vertexShaderBuffer	= 0;
-	ID3D10Blob* pixelShaderBuffer	= 0;
+	ID3D10Blob* errorMessage			= 0;
+	ID3D10Blob* vertexShaderBuffer		= 0;
+	ID3D10Blob* pixelShaderBuffer		= 0;
+	ID3D10Blob*	geometryShaderBuffer	= 0;
 
 	D3D11_INPUT_ELEMENT_DESC layoutDesc[2];
 	unsigned int numElements;
 
 	
-	result = D3DX11CompileFromFile("../build3/shaders/test.vs", NULL, NULL, "TestVShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &vertexShaderBuffer, &errorMessage, NULL);
+	result = D3DX11CompileFromFile("../build3/shaders/test.vs", NULL, NULL, "VShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &vertexShaderBuffer, &errorMessage, NULL);
 	if( FAILED(result) )
 	{
 		if(errorMessage)
 			OutputShaderErrorMessage(errorMessage, _hWnd, _vsFile);
-
 		return false;
 	}
-
-	result = D3DX11CompileFromFile("../build3/shaders/test.ps", NULL, NULL, "TestPShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pixelShaderBuffer, &errorMessage, NULL);
-	if( FAILED(result) )
-	{
-		if(errorMessage)
-			OutputShaderErrorMessage(errorMessage, _hWnd, _psFile);
-
-		return false;
-	}
-
 	result = _device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &vertexShader);
 	if( FAILED(result) )
 		return false;
 
+	result = D3DX11CompileFromFile("../build3/shaders/test.ps", NULL, NULL, "PShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pixelShaderBuffer, &errorMessage, NULL);
+	if( FAILED(result) )
+	{
+		if(errorMessage)
+			OutputShaderErrorMessage(errorMessage, _hWnd, _psFile);
+		return false;
+	}
 	result = _device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &pixelShader);
 	if( FAILED(result) )
 		return false;
 
+	result = D3DX11CompileFromFile("../build3/shaders/spriteGS.gs", NULL, NULL, "GS", "gs_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &geometryShaderBuffer, &errorMessage, NULL);
+	if( FAILED(result) )
+	{
+		if(errorMessage)
+			OutputShaderErrorMessage(errorMessage, _hWnd, "Geometry Shader");
+		else
+			MessageBox(_hWnd, "Geometry Shader", "Missing Shader File", MB_OK);
+
+		return false;
+	}
 	
 	layoutDesc[0].SemanticName			= "ANCHOR";
 	layoutDesc[0].SemanticIndex			= 0;
@@ -130,6 +137,8 @@ bool TestShader::initializeShader(ID3D11Device* _device, HWND _hWnd, LPCSTR _vsF
 	pixelShaderBuffer->Release();
 	pixelShaderBuffer = 0;
 
+	geometryShaderBuffer->Release();
+	geometryShaderBuffer = 0;
 
 	return true;
 }
