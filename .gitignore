@@ -14,6 +14,14 @@
 
 *.*~
 
+# Ignorde files server
+[Dd]ebug*/
+[Rr]elease*/
+*.pch
+*.ipch
+*.sdf
+*.suo
+
 /.cproject
 /.project
 /bin/
