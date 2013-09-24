@@ -47,8 +47,9 @@ include_directories(
 set(PLATFORM_PATH "Platform_${CMAKE_SYSTEM_NAME}")
 
 add_subdirectory(${PLATFORM_PATH})
+add_subdirectory(Sound)
 
-set(EXTRA_LIBS ${EXTRA_LIBS} Graphics)
+set(EXTRA_LIBS ${EXTRA_LIBS} Graphics Sound)
 
 # Network code is easier if restricted to only Little Endian
 include(TestBigEndian)
