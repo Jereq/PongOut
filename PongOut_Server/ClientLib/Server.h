@@ -11,6 +11,8 @@
 
 #include "Chat.h"
 #include "Login.h"
+#include "ResponseFriendlist.h"
+#include "RequestFriendlist.h"
 
 using boost::asio::ip::tcp;
 
@@ -22,7 +24,8 @@ public:
 	Server(const std::string _ipAdress, std::uint16_t _port);
 	~Server(void);
 
-	void connect();
+	void connect(const std::string& _userName, const std::string& _password);
+	void requestFriends();
 
 private:
 
@@ -42,5 +45,6 @@ private:
 	std::vector<char> msgWriteBufffer;
 	std::deque<char> fullMsgBuffer;
 	msgBase::header head;
+	std::vector<std::pair<std::string, boost::uuids::uuid>> friends;
 };
 

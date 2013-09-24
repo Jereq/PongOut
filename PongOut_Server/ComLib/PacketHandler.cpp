@@ -2,7 +2,8 @@
 #include "PacketHandler.h"
 #include "Chat.h"
 #include "Login.h"
-#include "GetFriends.h"
+#include "ResponseFriendlist.h"
+#include "RequestFriendlist.h"
 
 PacketHandler& PacketHandler::getInstance()
 {
@@ -24,15 +25,16 @@ void PacketHandler::registerPacket( msgBase::ptr _ptr )
 }
 
 msgBase::ptr PacketHandler::interpretMessage( msgBase::MsgType _type, const std::deque<char>& _buff )
-{	
+{
 	return msgMap.at(_type)->interpretPacket(_buff);
 }
 
 void PacketHandler::initRegister()
 {
 	registerPacket(msgBase::ptr(new Chat()));
-	registerPacket(msgBase::ptr(new GetFriends()));
+	registerPacket(msgBase::ptr(new ResponseFriendlist()));
 	registerPacket(msgBase::ptr(new Login()));
+	registerPacket(msgBase::ptr(new RequestFriendlist()));
 }
 
 msgBase::header PacketHandler::getMeassageHeader( const std::vector<char>& _buff )

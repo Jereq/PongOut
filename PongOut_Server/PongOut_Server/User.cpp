@@ -21,9 +21,9 @@ boost::shared_ptr<tcp::socket> User::getSocket()
 void User::handleWrite( const boost::system::error_code& _err, size_t _byte )
 {
 	std::lock_guard<std::mutex> lock(msgBufferLock);
-	msgWriteBuffer.pop();
+	msgWriteBufferQueue.pop();
 
-	if (!msgWriteBuffer.empty())
+	if (!msgWriteBufferQueue.empty())
 	{
 		sendMsg();
 	}
@@ -33,14 +33,15 @@ void User::handleWrite( const boost::system::error_code& _err, size_t _byte )
 
 void User::sendMsg()
 {
-	boost::asio::async_write(*socket, boost::asio::buffer(msgWriteBuffer.front()->getData()), boost::bind(&User::handleWrite, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+	msgWriteBuffer = msgWriteBufferQueue.front()->getData();
+	boost::asio::async_write(*socket, boost::asio::buffer(msgWriteBuffer), boost::bind(&User::handleWrite, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 }
 
-void User::addMsgToMsgQueue( msgBase::ptr _msgPtr )
+void User::addMsgToMsgQueue(const msgBase::ptr& _msgPtr )
 {
 	std::lock_guard<std::mutex> lock(msgBufferLock);
-	msgWriteBuffer.push(_msgPtr);
-	if (msgWriteBuffer.size() == 1)
+	msgWriteBufferQueue.push(_msgPtr);
+	if (msgWriteBufferQueue.size() == 1)
 	{
 		sendMsg();
 	}
@@ -99,7 +100,7 @@ void User::handleIncomingMeassage( const boost::system::error_code& _error, size
 				fullMsgBuffer.push_back(msgListenBuffer[readChars + i]);
 			}
 			readChars += missingChars;
-			UserManager::getInstance()->messageActionSwitch(head, fullMsgBuffer);
+			UserManager::getInstance()->messageActionSwitch(head, fullMsgBuffer, shared_from_this());
 			fullMsgBuffer.clear();
 		} 
 		else
@@ -112,4 +113,15 @@ void User::handleIncomingMeassage( const boost::system::error_code& _error, size
 			return;
 		}
 	}
+}
+
+msgBase::userData User::getUserData()
+{
+	return userData;
+}
+
+void User::setUserNamePass(const std::string& _name, const std::string& _pass)
+{
+	userData.userName = _name;
+	userData.password = _pass;
 }

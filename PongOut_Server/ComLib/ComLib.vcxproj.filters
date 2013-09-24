@@ -39,10 +39,13 @@
     <ClInclude Include="Chat.h">
       <Filter>Header Files\Msg sub clases</Filter>
     </ClInclude>
-    <ClInclude Include="GetFriends.h">
+    <ClInclude Include="Login.h">
       <Filter>Header Files\Msg sub clases</Filter>
     </ClInclude>
-    <ClInclude Include="Login.h">
+    <ClInclude Include="ResponseFriendlist.h">
+      <Filter>Header Files\Msg sub clases</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestFriendlist.h">
       <Filter>Header Files\Msg sub clases</Filter>
     </ClInclude>
   </ItemGroup>
@@ -59,10 +62,13 @@
     <ClCompile Include="Chat.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
-    <ClCompile Include="GetFriends.cpp">
+    <ClCompile Include="Login.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
-    <ClCompile Include="Login.cpp">
+    <ClCompile Include="ResponseFriendlist.cpp">
+      <Filter>Source Files\Msg sub clases</Filter>
+    </ClCompile>
+    <ClCompile Include="RequestFriendlist.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
   </ItemGroup>

@@ -13,7 +13,7 @@ Server::~Server(void)
 {
 }
 
-void Server::connect()
+void Server::connect(const std::string& _userName, const std::string& _password)
 {
 	tcp::resolver res(io);
 	std::stringstream ss;
@@ -30,15 +30,9 @@ void Server::connect()
 		std::cout << e.what() << std::endl;
 		return;
 	}
-	
-	std::string userName, password;
-	std::cout << "Provide username: ";
-	std::cin >> userName;
-	std::cout << std::endl << "Provide password: ";
-	std::cin >> password;
 
 	Login::ptr lp = Login::ptr(new Login());
-	lp->setLogin(userName, password);
+	lp->setLogin(_userName, _password);
 	write(lp);
 	listen();
 	ioThread = std::thread(boost::bind(&Server::startIO, shared_from_this()));
@@ -52,7 +46,10 @@ void Server::write( msgBase::ptr _msg )
 
 void Server::handleWrite( const boost::system::error_code& _err, size_t _byte )
 {
-	std::cerr << _err.message() << std::endl;
+	if (_err)
+	{
+		std::cerr << _err.message() << std::endl;
+	}	
 }
 
 void Server::listen()
@@ -136,10 +133,31 @@ void Server::messageActionSwitch( const msgBase::header& _header, const std::deq
 			break;
 			//TODO: Call ClientEventLib chat event here when done!!
 		}
+
+	case msgBase::MsgType::RESPONSEFRIENDLIST:
+		{
+			ResponseFriendlist::ptr rfl = boost::static_pointer_cast<ResponseFriendlist>(p);
+			friends = rfl->getAllFriends();
+			std::cout << "Friends list received:" << std::endl;
+
+			for (auto a : friends)
+			{
+				std::cout << a.first << "  :  " << a.second << std::endl;
+			}
+
+			break;
+		}
+
 	default:
 		std::cerr << "Received unknown packet: " << (int)p->getHeader().type << std::endl;
 		break;
 	}
+}
+
+void Server::requestFriends()
+{
+	RequestFriendlist::ptr rf = RequestFriendlist::ptr(new RequestFriendlist());
+	write(rf);
 }
 
 void Server::startIO()

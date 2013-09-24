@@ -1,9 +1,14 @@
 #include "stdafx.h"
-#include "UserManager.h"
-#include <Chat.h>
-#include <Login.h>
+
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <Chat.h>
+#include <Login.h>
+#include <ResponseFriendlist.h>
+#include <RequestFriendlist.h>
+#include <stdexcept>
+
+#include "UserManager.h"
 
 boost::shared_ptr<UserManager> UserManager::ptr;
 
@@ -45,24 +50,66 @@ void UserManager::handleIncomingClient( boost::shared_ptr<tcp::socket> _soc, con
 	listenForNewClientConnections();
 }
 
-void UserManager::messageActionSwitch( const msgBase::header& _header, const std::deque<char>& _meassage )
+void UserManager::messageActionSwitch( const msgBase::header& _header, const std::deque<char>& _meassage, boost::shared_ptr<User> _user )
 {
-	msgBase::ptr p = PacketHandler::getInstance().interpretMessage(_header.type, _meassage);
+	msgBase::ptr p;
+
+	try
+	{
+		p = PacketHandler::getInstance().interpretMessage(_header.type, _meassage);
+	}
+	catch(const std::out_of_range& _e)
+	{
+		std::cerr << "Received unregistered packet: " << (int)_header.type << std::endl;
+		return;
+	}
 
 	switch (_header.type)
 	{
+
 	case msgBase::MsgType::CHAT:
 		{
 			Chat::ptr cp = boost::static_pointer_cast<Chat>(p);
+
+			//std::unique_lock<std::mutex> lock(users.getLock());
+			//User::ptr tmpUser;
+			//for (User::ptr user : users.baseSet)
+			//{
+			//	if (user->getUserData().uuid == _user->getUserData().uuid)
+			//	{
+			//		tmpUser = user;
+			//		break;
+			//	}
+			//}
+
 			break;
 			//TODO: Call ClientEventLib chat event here when done!!
 		}
+
 	case msgBase::MsgType::LOGIN:
 		{
 			Login::ptr lp = boost::static_pointer_cast<Login>(p);
-			std::cout << "Username: " << lp->getUsername() << "\tPassword: " << lp->getPassword() << std::endl;
+			_user->setUserNamePass(lp->getUsername(), lp->getPassword());
+
+			std::cout << "Username: " << lp->getUsername() << " Logged in" << std::endl;
 			break;
 		}
+
+	case msgBase::MsgType::REQUESTFRIENDLIST:
+		{
+			ResponseFriendlist::ptr rfl = ResponseFriendlist::ptr(new ResponseFriendlist());
+
+			for (User::ptr user : users.baseSet)
+			{
+				std::pair<std::string, boost::uuids::uuid> tmpPair(user->getUserData().userName, user->getUserData().uuid);
+				rfl->addToFriendList(tmpPair);
+			}
+
+			_user->addMsgToMsgQueue(rfl);
+
+			break;
+		}
+
 	default:
 		std::cerr << "Received unknown packet: " << (int)p->getHeader().type << std::endl;
 		break;

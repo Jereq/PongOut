@@ -9,6 +9,7 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <queue>
 #include <boost/array.hpp>
+#include <boost/uuid/uuid.hpp>
 
 #include "PacketHandler.h"
 #include "msgbase.h"
@@ -27,8 +28,10 @@ public:
 	~User(void);
 
 	boost::shared_ptr<tcp::socket> getSocket();
-	void addMsgToMsgQueue(msgBase::ptr _msgPtr);
+	void addMsgToMsgQueue(const msgBase::ptr& _msgPtr);
 	void listen();
+	msgBase::userData getUserData();
+	void setUserNamePass(const std::string& _name, const std::string& _pass);
 
 private:
 	boost::shared_ptr<tcp::socket> socket;
@@ -37,8 +40,9 @@ private:
 	
 	void sendMsg();
 
-	std::queue<msgBase::ptr> msgWriteBuffer;
+	std::queue<msgBase::ptr> msgWriteBufferQueue;
 	boost::array<char, 256> msgListenBuffer;
+	std::vector<char> msgWriteBuffer;
 	std::deque<char> fullMsgBuffer;
 	std::mutex msgBufferLock;
 	msgBase::userData userData;

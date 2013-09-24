@@ -18,7 +18,8 @@ public:
 		LOGOUT,
 		CREATEUSER,
 		REMINDUSER,
-		GETFRIENDS,
+		REQUESTFRIENDLIST,
+		RESPONSEFRIENDLIST,
 	};
 
 	struct header
@@ -54,7 +55,6 @@ protected:
 #pragma region pack
 
 private:
-
 template<typename T, typename inIter>
 	class implPack
 	{
@@ -89,6 +89,32 @@ template<typename inIter>
 		}
 	};
 
+template<typename inIter, typename fm, typename sm>
+	class implPack<std::pair<fm, sm>, inIter>
+	{
+	public:
+		static void _pack(const std::pair<fm, sm>& _pair, inIter _dest)
+		{
+			pack(_pair.first, _dest);
+			pack(_pair.second, _dest);
+		}
+	};
+
+template<typename inIter, typename vecType>
+	class implPack<std::vector<vecType>, inIter>
+	{
+	public:
+		static void _pack(const std::vector<vecType>& _vector, inIter _dest)
+		{
+			pack(static_cast<std::uint16_t>(_vector.size()), _dest);
+
+			for (auto a : _vector)
+			{
+				pack(a, _dest);
+			}
+		}
+	};
+
 public:
 
 template<typename T, typename inIter>
@@ -96,6 +122,8 @@ template<typename T, typename inIter>
 	{
 		return implPack<T, inIter>::_pack(_msg, _dest);
 	}
+
+
 
 #pragma endregion pack
 
@@ -134,6 +162,37 @@ template<typename outIter>
 		{
 			std::copy(_source, _source + boost::uuids::uuid::static_size(), _uuid.begin());
 			return _source + boost::uuids::uuid::static_size();
+		}
+	};
+
+template<typename outIter, typename fm, typename sm>
+	class implUnpack<std::pair<fm, sm>, outIter>
+	{
+	public:
+		static outIter _unpack(std::pair<fm, sm>& _pair, outIter _source)
+		{
+			_source = unpack(_pair.first, _source);
+			_source = unpack(_pair.second, _source);
+			return _source;
+		}
+	};
+
+template<typename outIter, typename vecType>
+	class implUnpack<std::vector<vecType>, outIter>
+	{
+	public:
+		static outIter _unpack(std::vector<vecType>& _vector, outIter _source)
+		{
+			std::uint16_t len;
+			_source = unpack(len, _source);
+			_vector.resize(len);
+
+			for (int i = 0; i < len; i++)
+			{
+				_source = unpack(_vector[i], _source);
+			}
+			
+			return _source;
 		}
 	};
 
