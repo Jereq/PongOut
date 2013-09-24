@@ -9,11 +9,10 @@
 
 Map::Map()
 {
-	frameThickness 			= NULL;
-	playAreaWidth 			= NULL;
-	playAreaHeight 			= NULL;
-	blockList 				= NULL;
-	bgTexturePath 			= NULL;
+	frameThickness 			= 0.f;
+	//blockList 				= NULL;
+
+	bgTextureName 			= "NAFINKHERELOLOLOLOL";
 }
 
 Map::~Map()
@@ -21,45 +20,55 @@ Map::~Map()
 	remBlockArray();
 }
 
-void Map::initialize(	Size _playAreaSize, float _frameThickness,
-						string _bgTexturePath, string _frameTexturePath							)
+void Map::initialize(	glm::vec2 _playAreaSize, float _frameThickness,
+						string _bgTextureName, string _frameTextureName							)
 {
 	frameThickness 			= _frameThickness;
-	bgTexturePath 			= _bgTexturePath;
-	frameTexturePath		= _frameTexturePath;
+	bgTextureName 			= _bgTextureName;
+	frameTextureName		= _frameTextureName;
 
 	setPlayAreaBounds(_playAreaSize);
 	initBlockArray(24); //Hardcoded for demo ONLY!!
 	tempSetBlockPos();
 }
 
-void Map::setPlayAreaBounds(Size _size)
+void Map::setPlayAreaBounds(glm::vec2 _size)
 {
-	playAreaSize.width 		= _size.width + frameThickness;
-	playAreaSize.height		= _size.height + frameThickness;
+	playAreaSize.x 		= _size.x + frameThickness;
+	playAreaSize.y		= _size.y + frameThickness;
 }
 
 void Map::initBlockArray(int _size)
 {
-	blockList 				= (Block*)malloc(sizeof(Block) * _size);
-	for(int i = 0; i < _size; i++)
-	{
-		blockList[i] = new Block();
-	}
+	blockList.resize(_size);
+	blockList[0].initialize(glm::vec2(1,1), glm::vec2(8,4), "blocks/orange_01", 1);
+
+
 }
 void Map::remBlockArray()
 {
-	delete [] blockList;
+	//delete [] blockList;
 }
 void Map::tempSetBlockPos()
 {
 	//Temporary setPos for the blocks, for demo ONLY!
 	for(int i = 0; i < 24; i++)
 	{
-		blockList[i].setPos(Position(i, i));
+		//blockList[i].setPos(glm::vec2(i, i));
 	}
 }
-
+std::string Map::getTextureName()
+{
+	return bgTextureName;
+}
+std::string Map::getFrameTextureName()
+{
+	return frameTextureName;
+}
+glm::vec2 Map::getSize()
+{
+	return playAreaSize;
+}
 void Map::update()
 {
 	//Update things here, fo' s'ho.

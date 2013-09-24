@@ -12,6 +12,7 @@
 #include <string>
 
 #include "MapResources.h"
+#include "ICoreSystem.h"
 
 using namespace std;
 
@@ -21,12 +22,12 @@ public:
 	Block();
 	virtual ~Block();
 
-	void initialize(Position _position, Size _size, string _texturePath, int _health);
-	void setPos(Position _position);
-	Position getPos();
+	void initialize(glm::vec2 _position, glm::vec2 _size, string _texturePath, int _health);
+	void setPos(glm::vec2 _position);
+	glm::vec2 getPos();
 private:
-	Position 			position;
-	Size				size;
+	glm::vec2 			position;
+	glm::vec2			size;
 	string 				texturePath;
 
 	int 				health;

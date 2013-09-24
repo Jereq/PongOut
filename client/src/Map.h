@@ -11,6 +11,7 @@
 #include <malloc.h>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "Block.h"
 #include "MapResources.h"
@@ -21,24 +22,25 @@ class Map {
 public:
 	Map();
 	virtual ~Map();
-	void initialize(	Size _playAreaSize, float _frameThickness,
-						string _bgTexturePath, string _frameTexturePath							);
+	void initialize(	glm::vec2 _playAreaSize, float _frameThickness,
+						string _bgTextureName, string _frameTextureName							);
 	void update();
+	string getTextureName();
+	string getFrameTextureName();
+	glm::vec2 getSize();
 
 private:
 	void initBlockArray(int _size);
 	void remBlockArray();
 	void tempSetBlockPos();
 
-	void setPlayAreaBounds(Size _size);
+	void setPlayAreaBounds(glm::vec2 _size);
 
-	Block* 			blockList;
-	string 			bgTexturePath;
-	string			frameTexturePath;
-	Size			playAreaSize;
+	vector<Block>	blockList;
+	string 			bgTextureName;
+	string			frameTextureName;
+	glm::vec2		playAreaSize;
 
-	float 			playAreaWidth;
-	float			playAreaHeight;
 	float 			frameThickness;
 
 

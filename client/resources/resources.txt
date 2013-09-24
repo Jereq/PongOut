@@ -4,4 +4,4 @@ texture:blocks/dark_magenta_02	box_dark_magenta_02.png
 texture:blocks/light_magenta_01	box_light_magenta_01.png
 texture:blocks/orange_01		box_orange_01.png
 texture:blocks/pink_01			box_pink_01.png
-
+texture:background/mainmenu_01		background_prototype.png

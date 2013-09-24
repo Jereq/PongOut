@@ -9,25 +9,22 @@
 
 Block::Block()
 {
-	position 				= NULL;
-	size 					= NULL;
-	health 					= NULL;
 }
 
 Block::~Block() {}
 
-void Block::initialize(Position _position, Size _size, string _texturePath, int _health)
+void Block::initialize(glm::vec2 _position, glm::vec2 _size, string _texturePath, int _health)
 {
 	position 				= _position;
 	size 					= _size;
 	texturePath				= _texturePath;
 	health 					= _health;
 }
-void Block::setPos(Position _position)
+void Block::setPos(glm::vec2 _position)
 {
 	position = _position;
 }
-Position Block::getPos()
+glm::vec2 Block::getPos()
 {
 	return position;
 }
