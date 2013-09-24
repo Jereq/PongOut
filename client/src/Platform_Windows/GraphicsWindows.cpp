@@ -16,11 +16,6 @@ void GraphicsWindows::destroy()
 
 }
 
-bool GraphicsWindows::loadImage(const boost::filesystem::path& _imagePath)
-{
-
-	return true;
-}
 
 bool GraphicsWindows::loadResources(const boost::filesystem::path& _resourceDir)
 {
@@ -64,7 +59,7 @@ bool GraphicsWindows::init()
 	return result;
 }
 
-void GraphicsWindows::addRectangle(glm::vec2 _center, glm::vec2 _size, float _rotation, std::string id)
+void GraphicsWindows::addRectangle(glm::vec3 _center, glm::vec2 _size, float _rotation, std::string id)
 {
 
 }

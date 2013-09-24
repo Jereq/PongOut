@@ -24,9 +24,9 @@ private:
 	virtual void destroy();
 
 	virtual bool loadResources(const boost::filesystem::path& _resourceDir);
-	virtual bool loadImage(const boost::filesystem::path& _imagePath);
 
-	virtual void addRectangle(glm::vec2 _center, glm::vec2 _size, float _rotation, std::string id);
+
+	virtual void addRectangle(glm::vec3 _center, glm::vec2 _size, float _rotation, std::string id);
 
 	virtual void drawFrame();
 
