@@ -14,9 +14,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	for (ever)
 	{
 		cout << "======== Commands list ========" << endl 
-			 << "# Connect \t : \t Provide login information and connect to server" << endl 
-			 << "# Request \t : \t Requests friends list from server" << endl 
-			 << "# Chat \t\t : \t Chat with friend [friendName] [message]" << endl;
+			 << "# Connect \t : \t Provide login information and connect to server" << endl  
+			 << "# Chat \t\t : \t Chat with friends" << endl;
 		cin >> command;
 
 		if (command == "Connect")
@@ -28,12 +27,20 @@ int _tmain(int argc, _TCHAR* argv[])
 
 			s->connect(userName, password);	
 		}
-		else if (command == "Request")
-		{
-			s->requestFriends();
-		}
 		else if (command == "Chat")
 		{
+			system("CLS");
+			s->requestFriends();
+			string toUser, msg;
+			cout << endl << "Type the name of the friend you want to chat with" << endl;
+			cin >> toUser;
+			cout << "##Chatting with: " << toUser << endl;
+
+			for (ever)
+			{
+				cin >> msg;
+				s->sendChatMsg(toUser, msg);
+			}
 		} 
 	}
 

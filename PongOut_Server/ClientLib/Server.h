@@ -26,6 +26,7 @@ public:
 
 	void connect(const std::string& _userName, const std::string& _password);
 	void requestFriends();
+	void sendChatMsg(std::string _name, std::string _msg);
 
 private:
 
@@ -38,6 +39,7 @@ private:
 
 	std::thread ioThread;
 	const std::string addr;
+	std::string userName;
 	std::uint16_t port;
 	boost::asio::io_service io;
 	tcp::socket soc;

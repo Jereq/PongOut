@@ -15,6 +15,7 @@ Server::~Server(void)
 
 void Server::connect(const std::string& _userName, const std::string& _password)
 {
+	userName = _userName;
 	tcp::resolver res(io);
 	std::stringstream ss;
 	ss << port;
@@ -129,7 +130,7 @@ void Server::messageActionSwitch( const msgBase::header& _header, const std::deq
 	case msgBase::MsgType::CHAT:
 		{
 			Chat::ptr cp = boost::static_pointer_cast<Chat>(p);
-			std::cout << cp->getMsg() << std::endl;
+			std::cout << cp->getUserName() << ": " << cp->getMsg() << std::endl;
 			break;
 			//TODO: Call ClientEventLib chat event here when done!!
 		}
@@ -163,4 +164,23 @@ void Server::requestFriends()
 void Server::startIO()
 {
 	io.run();
+}
+
+void Server::sendChatMsg( std::string _name, std::string _msg )
+{
+	Chat::ptr cp = Chat::ptr(new Chat());
+
+	boost::uuids::uuid toUUID; 
+
+	for (auto a : friends)
+	{
+		if (a.first == _name)
+		{
+			toUUID = a.second;
+			break;
+		}
+	}
+
+	cp->setMsg(_msg, toUUID, userName);
+	write(cp);
 }

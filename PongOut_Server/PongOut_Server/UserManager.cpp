@@ -61,6 +61,7 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 	catch(const std::out_of_range& _e)
 	{
 		std::cerr << "Received unregistered packet: " << (int)_header.type << std::endl;
+		std::cerr << _e.what() << std::endl;
 		return;
 	}
 
@@ -71,16 +72,19 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 		{
 			Chat::ptr cp = boost::static_pointer_cast<Chat>(p);
 
-			//std::unique_lock<std::mutex> lock(users.getLock());
-			//User::ptr tmpUser;
-			//for (User::ptr user : users.baseSet)
-			//{
-			//	if (user->getUserData().uuid == _user->getUserData().uuid)
-			//	{
-			//		tmpUser = user;
-			//		break;
-			//	}
-			//}
+			std::unique_lock<std::mutex> lock(users.getLock());
+			User::ptr toUser;
+			for (User::ptr user : users.baseSet)
+			{
+				if (user->getUserData().uuid == cp->getUUID())
+				{
+					toUser = user;
+					break;
+				}
+			}
+			cp->setUUID(_user->getUserData().uuid);
+			cp->setUserName(_user->getUserData().userName);
+			toUser->addMsgToMsgQueue(cp);
 
 			break;
 			//TODO: Call ClientEventLib chat event here when done!!
