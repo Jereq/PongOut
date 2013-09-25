@@ -1,6 +1,16 @@
 #ifndef __DXASSETINSTANCING_H
 #define __DXASSETINSTANCING_H
 
+#include "D3DX11.h"
+#include "D3DX10.h"
+
+
+struct SpriteVertex
+{
+	float center[3];
+	float dimensions[2];
+};
+
 inline float convertPixelsToClipSpace( const int pixelDimension, const int pixels )
 {
 	float ret = (float)pixels/pixelDimension*2 -1;
@@ -13,119 +23,69 @@ inline float convertPixelsToClipSpaceDistance( const int pixelDimension, const i
     return ret;
 }
 
-struct SpriteVertex
+struct PositionBufferType
 {
-	float center[2];
-	float dimensions[2];
+	D3DXVECTOR2 position;
 };
+
+
 
 namespace DXCREATE
 {
-	static bool createBuffers(ID3D11Buffer*& _vBuffer, ID3D11Buffer*& _iBuffer, unsigned int& _vertexCount, unsigned int& _indexCount, ID3D11Device* _device)
+	static HRESULT createSampleState(ID3D11SamplerState*& _sampleState, ID3D11Device* _device)
 	{
-		SpriteVertex* vertices;
-		unsigned long* indices;
-		D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
-		D3D11_SUBRESOURCE_DATA vertexData, indexData;
 		HRESULT result;
-		unsigned int i;
+		D3D11_SAMPLER_DESC samplerDesc;
 
+		samplerDesc.Filter			= D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		samplerDesc.AddressU		= D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressV		= D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressW		= D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.MipLODBias		= 0.0f;
+		samplerDesc.MaxAnisotropy	= 1;
+		samplerDesc.ComparisonFunc	= D3D11_COMPARISON_ALWAYS;
+		samplerDesc.BorderColor[0]	= 0;
+		samplerDesc.BorderColor[1]	= 0;
+		samplerDesc.BorderColor[2]	= 0;
+		samplerDesc.BorderColor[3]	= 0;
+		samplerDesc.MinLOD			= 0;
+		samplerDesc.MaxLOD			= D3D11_FLOAT32_MAX;
 
-		// Set the number of vertices in the vertex array.
-		_vertexCount = 1;
+		result = _device->CreateSamplerState(&samplerDesc, &_sampleState);
 
-		// Set the number of indices in the index array.
-		_indexCount = _vertexCount;
+		return result;
+	}
 
-		// Create the vertex array.
-		vertices = new SpriteVertex[_vertexCount];
-		if(!vertices)
-		{
+	static bool createTexture(std::string _file, ID3D11ShaderResourceView*& _srView, ID3D11Device* _device)
+	{
+		HRESULT result;
+		result = D3DX11CreateShaderResourceViewFromFile(_device, _file.c_str(), 0, 0, &_srView, 0);
+		if( FAILED(result) )
 			return false;
-		}
-
-		// Create the index array.
-		indices = new unsigned long[_indexCount];
-		if(!indices)
-		{
-			return false;
-		}
-
-		// Initialize vertex array to zeros at first.
-		memset(vertices, 0, (sizeof(SpriteVertex) * _vertexCount));
-
-		vertices[0].center[0] = 0.5f;//convertPixelsToClipSpace(1280,0);
-		vertices[0].center[1] = 0.5f;//-convertPixelsToClipSpace(1024,0);
-		vertices[0].dimensions[0] = 0.2f;//convertPixelsToClipSpaceDistance(1280,500);
-		vertices[0].dimensions[1] = 0.2f;//convertPixelsToClipSpaceDistance(1024,402);
-
-		//vertices[1].center[0] = convertPixelsToClipSpace(1280,0);
-		//vertices[1].center[1] = -convertPixelsToClipSpace(1024,0);
-		//vertices[1].dimensions[0] = convertPixelsToClipSpaceDistance(1280,10);
-		//vertices[1].dimensions[1] = convertPixelsToClipSpaceDistance(1024,10);
-
-	 //
-		//vertices[2].center[0] = convertPixelsToClipSpace(1280,10);
-		//vertices[2].center[1] = -convertPixelsToClipSpace(1024,10);
-		//vertices[2].dimensions[0] = convertPixelsToClipSpaceDistance(1280,10);
-		//vertices[2].dimensions[1] = convertPixelsToClipSpaceDistance(1024,10);
-
-		// Load the index array with data.
-		for(i=0; i<_indexCount; i++)
-		{
-			indices[i] = i;
-		}
-
-
-		// Set up the description of the static vertex buffer.
-		vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-		vertexBufferDesc.ByteWidth = sizeof(SpriteVertex) * _vertexCount;
-		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		vertexBufferDesc.MiscFlags = 0;
-		vertexBufferDesc.StructureByteStride = 0;
-
-		// Give the subresource structure a pointer to the vertex data.
-		vertexData.pSysMem = vertices;
-		vertexData.SysMemPitch = 0;
-		vertexData.SysMemSlicePitch = 0;
-
-		// Now create the vertex buffer.
-		result = _device->CreateBuffer(&vertexBufferDesc, &vertexData, &_vBuffer);
-		if(FAILED(result))
-		{
-			return false;
-		}
-
-		// Set up the description of the static index buffer.
-		indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		indexBufferDesc.ByteWidth = sizeof(unsigned long) * _indexCount;
-		indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		indexBufferDesc.CPUAccessFlags = 0;
-		indexBufferDesc.MiscFlags = 0;
-		indexBufferDesc.StructureByteStride = 0;
-
-		// Give the subresource structure a pointer to the index data.
-		indexData.pSysMem = indices;
-		indexData.SysMemPitch = 0;
-		indexData.SysMemSlicePitch = 0;
-
-		// Create the index buffer.
-		result = _device->CreateBuffer(&indexBufferDesc, &indexData, &_iBuffer);
-		if(FAILED(result))
-		{
-			return false;
-		}
-
-		// Release the arrays now that the vertex and index buffers have been created and loaded.
-		delete [] vertices;
-		vertices = 0;
-
-		delete [] indices;
-		indices = 0;
 
 		return true;
 	}
+
+	static bool createConstantBuffer(ID3D11Buffer*& _cBuffer, ID3D11Device* _device)
+	{
+		HRESULT result;
+		ID3D10Blob* errorMessage;
+		D3D11_BUFFER_DESC cBufferDesc;
+
+		cBufferDesc.Usage				= D3D11_USAGE_DYNAMIC;
+		cBufferDesc.ByteWidth			= sizeof(PositionBufferType) * 8;
+		cBufferDesc.BindFlags			= D3D11_BIND_CONSTANT_BUFFER;
+		cBufferDesc.CPUAccessFlags		= D3D11_CPU_ACCESS_WRITE;
+		cBufferDesc.MiscFlags			= 0;
+		cBufferDesc.StructureByteStride	= 0;
+
+		result = _device->CreateBuffer(&cBufferDesc, NULL, &_cBuffer);
+		if( FAILED(result) )
+			return false;
+
+		return true;
+	}
+
 };
 
 #endif

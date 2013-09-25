@@ -15,4 +15,7 @@ public:
 	virtual void pollEvents() =0;
 
 	virtual IGraphics* getGraphics() =0;
+
+	virtual bool	isKeyPress(unsigned short _key)=0;
+	virtual bool	isNewKeyPress(unsigned short _key)=0;
 };

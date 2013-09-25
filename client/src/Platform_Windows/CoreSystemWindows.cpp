@@ -1,10 +1,22 @@
 #include "CoreSystemWindows.h"
 static bool	shutDown = false;
 
+RAWINPUT* rawInput;
+unsigned short	key, oldKey;
+
 CoreSystemWindows::CoreSystemWindows()
 	: ICoreSystem(), graphics(NULL)
 {
+	registerRAW();
 
+	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
+	if(frequency == 0)
+	{
+		bool notgood = true;
+	}
+	ticksPerMs = (float)(frequency / 1000);
+
+	QueryPerformanceCounter((LARGE_INTEGER*)&startTime);
 }
 
 CoreSystemWindows::~CoreSystemWindows()
@@ -17,6 +29,16 @@ void CoreSystemWindows::setHwnd(HWND _hWnd)
 	hWnd = _hWnd;
 }
 
+bool CoreSystemWindows::isKeyPress(unsigned short _key)
+{
+	return (key == _key);
+}
+
+bool CoreSystemWindows::isNewKeyPress(unsigned short _key)
+{
+	return ((key == _key) && (key != oldKey));
+}
+
 boost::filesystem::path CoreSystemWindows::getRootDir()const
 {
 	boost::filesystem::path p = "test";
@@ -25,7 +47,26 @@ boost::filesystem::path CoreSystemWindows::getRootDir()const
 
 double CoreSystemWindows::getTime()const
 {
-	return 42.0;
+	return frameTime;
+}
+
+void CoreSystemWindows::registerRAW()
+{
+	RAWINPUTDEVICE rid[2];
+
+	rid[0].usUsagePage	= 0x01;
+	rid[0].usUsage		= 0x02;
+	rid[0].dwFlags		= 0;
+	rid[0].hwndTarget	= 0;
+
+	rid[1].usUsagePage	= 0x01;
+	rid[1].usUsage		= 0x06;
+	rid[1].dwFlags		= 0;
+	rid[1].hwndTarget	= 0;
+	
+	DWORD error;
+	if(RegisterRawInputDevices(rid, 2, sizeof(rid[0])) == FALSE )
+		error = GetLastError();
 }
 
 bool CoreSystemWindows::windowIsClosing()const
@@ -35,14 +76,21 @@ bool CoreSystemWindows::windowIsClosing()const
 
 void CoreSystemWindows::pollEvents()
 {
-	MSG msg;
+	INT64 currentTime;
+	float timeDifference;
+	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
+	timeDifference = (float)(currentTime - startTime);
+	frameTime = timeDifference / ticksPerMs;
+	startTime = currentTime;
 
-	if(GetMessage(&msg, NULL, 0, 0))
+	MSG msg;
+	oldKey = key;
+
+	while(PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE) > 0)
 	{
 		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		DispatchMessage(&msg);	
 	}
-	//WndProc(hWnd, NULL, NULL, NULL);
 }
 
 IGraphics* CoreSystemWindows::getGraphics()
@@ -55,32 +103,38 @@ IGraphics* CoreSystemWindows::getGraphics()
 
 LRESULT CALLBACK CoreSystemWindows::WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
-	PAINTSTRUCT	ps;
-	HDC				hdc;
-
+	
 	switch (iMsg)
 	{
-	//case WM_PAINT:
-	//	{
-	//		std::string version = getVersionString();
-	//		std::string hello = "Hello World!";
-	//		fs::path programPath(__argv[0]);
-
-	//		hdc = BeginPaint(hwnd, &ps);
-	//		TextOut(hdc, 100, 100, version.c_str(), version.length());
-	//		TextOut(hdc, 100, 120, hello.c_str(), hello.length());
-	//		TextOut(hdc, 100, 140, programPath.string().c_str(), programPath.string().length());
-	//		EndPaint(hwnd, &ps);
-	//		return 0;
-	//	}
-
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		shutDown = true;
 		return 0;
 
-		
-	}
+	case WM_INPUT:
+			UINT dwSize;
+			GetRawInputData((HRAWINPUT)lParam, RID_INPUT, NULL, &dwSize, sizeof(RAWINPUTHEADER));
+			
+			LPBYTE lpb = new BYTE[dwSize];
+			if(lpb == NULL)
+				return 0;
 
+			if(GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb, &dwSize, sizeof(RAWINPUTHEADER)) != dwSize)
+				return 0;
+
+			rawInput = (RAWINPUT*)lpb;
+
+			if(rawInput->header.dwType == RIM_TYPEKEYBOARD)
+			{		
+				key = rawInput->data.keyboard.VKey;
+			}
+			else if(rawInput->header.dwType == RIM_TYPEMOUSE)
+			{
+
+			}
+		break;
+
+	}
+	//return CallWindowProc(WndProc, hwnd, iMsg, wParam, lParam);
 	return DefWindowProc(hwnd, iMsg, wParam, lParam);
 }

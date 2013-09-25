@@ -1,32 +1,25 @@
 //GLOBALS
 
+
 //DESCS
 
 struct VSIN
 {
-	float2 center		: ANCHOR;
+	float3 center		: ANCHOR;
 	float2 dimensions	: DIMENSIONS;
 };
 
 struct PSIN
 {
 	float4 p		: SV_POSITION;
+	float2 t		: TEXCOORD0;
 };
-
-//SHADER
-/*PSIN VShader(VSIN input)
-{
-	PSIN output;
-	output.p = float4(input.center.x, input.center.y, input.dimensions.x, input.dimensions.y);
-
-	return output;
-}*/
 
 VSIN VShader(VSIN input)
 {
 	VSIN output;
-	output.center = input.center;// = float4(input.center.x, input.center.y, 1,1);
-	output.dimensions = input.dimensions;
+	output.center 		= input.center;
+	output.dimensions 	= input.dimensions;
 
 	return output;
 }

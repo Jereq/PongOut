@@ -13,7 +13,8 @@ public:
 	static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 	void setHwnd(HWND _hWnd);
 protected:
-
+	virtual bool	isNewKeyPress(unsigned short _key);
+	virtual bool	isKeyPress(unsigned short _key);
 
 private:
 	virtual boost::filesystem::path getRootDir() const;
@@ -25,9 +26,14 @@ private:
 
 	GraphicsWindows*	graphics;
 	HWND				hWnd;
-	
 
-	
+	void registerRAW();
+
+	//timer
+	INT64	frequency;	
+	float	ticksPerMs;
+	INT64	startTime;
+	float	frameTime;	
 };
 
 #endif
