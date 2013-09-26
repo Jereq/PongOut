@@ -14,6 +14,8 @@
 class IGraphics
 {
 public:
+	typedef std::shared_ptr<IGraphics> ptr;
+
 	/**
 	 *  destructor.
 	 */

@@ -73,7 +73,8 @@ set(EXTRA_LIBS ${EXTRA_LIBS}
 )
 
 set(SOURCE_FILES
-	${PLATFORM_SOURCE_FILES}
+	main.cpp
+	ICoreSystem.cpp ICoreSystem.h
 	Game.cpp Game.h
 	Map.cpp Map.h
 	Block.cpp Block.h

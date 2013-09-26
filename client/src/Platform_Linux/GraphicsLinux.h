@@ -45,8 +45,6 @@ private:
 	typedef std::vector<Rectangle> recs_t;
 	std::map<std::string, recs_t> registeredRectangles;
 
-	static void errorCallback(int _error, const char* _description);
-
 	bool openWindow();
 	bool checkGLVersion(int _majorRequiredVersion, int _minorRequiredVersion);
 	void initDevIL();
@@ -59,6 +57,8 @@ private:
 	void bufferData(const recs_t& _rects);
 
 public:
+	typedef std::shared_ptr<GraphicsLinux> ptr;
+
 	GraphicsLinux(const boost::filesystem::path& _rootDir);
 
 	virtual bool init() override;

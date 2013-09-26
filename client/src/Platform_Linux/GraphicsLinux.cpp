@@ -17,11 +17,6 @@ namespace fs = boost::filesystem;
 const int GraphicsLinux::MAJOR_GL_VERSION = 4;
 const int GraphicsLinux::MINOR_GL_VERSION = 0;
 
-void GraphicsLinux::errorCallback(int _error, const char* _description)
-{
-	fprintf(stderr, "GLFW error %d: %s\n", _error, _description);
-}
-
 bool GraphicsLinux::openWindow()
 {
 	glfwDefaultWindowHints();
@@ -160,13 +155,6 @@ GraphicsLinux::GraphicsLinux(const fs::path& _rootDir)
 
 bool GraphicsLinux::init()
 {
-	glfwSetErrorCallback(errorCallback);
-	if (!glfwInit())
-	{
-		fprintf(stderr, "Error initializing GLFW.\n");
-		return false;
-	}
-
 	if (!openWindow())
 	{
 		fprintf(stderr, "Error creating window.\n");

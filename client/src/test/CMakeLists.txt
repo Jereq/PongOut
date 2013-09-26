@@ -4,8 +4,12 @@ include_directories(
 	${Boost_INCLUDE_DIRS}
 )
 
-add_executable(PongOut-test mainTest.cpp)
+add_executable(PongOut-test
+	mainTest.cpp
+	../ICoreSystem.cpp
+)
 
 target_link_libraries(PongOut-test
 	${Boost_LIBRARIES}
+	${EXTRA_LIBS}
 )

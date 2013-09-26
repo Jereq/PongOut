@@ -19,7 +19,7 @@ void Game::run()
 {
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 
-	IGraphics* graphics = system->getGraphics();
+	IGraphics::ptr graphics = system->getGraphics();
 	if (!graphics->init())
 	{
 		printf("Failed to initialize renderer\n");

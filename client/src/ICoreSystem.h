@@ -13,7 +13,34 @@
  */
 class ICoreSystem
 {
+private:
+	boost::filesystem::path rootDir;
+
+protected:
+	/**
+	 *  constructor.
+	 *
+	 *  @param _rootDir the path to the directory where the game is located
+	 */
+	ICoreSystem(const boost::filesystem::path& _rootDir);
+
 public:
+	/**
+	 *  Create an instance of the platforms implementation.
+	 *
+	 *  @param _argc the the number of command line arguments passed to the main function
+	 *  @param _argv the command line arguments passed to the main function
+	 *  @return an instance that does the required platform initialization.
+	 */
+	static ICoreSystem* createInstance(int _argc, char** _argv);
+
+	/**
+	 *  Free the target instance correctly.
+	 *
+	 *  @param _inst a pointer to the instance to free. May be null.
+	 */
+	static void freeInstance(ICoreSystem*& _inst);
+
 	/**
 	 *  destructor.
 	 */
@@ -22,7 +49,7 @@ public:
 	/**
 	 *  Get the root directory of the game. This should be the root location of game assets.
 	 */
-	virtual boost::filesystem::path getRootDir() const =0;
+	virtual boost::filesystem::path getRootDir() const;
 	/**
 	 *  Get the time since the game launched, in seconds.
 	 *
@@ -51,5 +78,5 @@ public:
 	 *
 	 *  @return a pointer to a graphics object. Will not return nullptr.
 	 */
-	virtual IGraphics* getGraphics() =0;
+	virtual IGraphics::ptr getGraphics() =0;
 };

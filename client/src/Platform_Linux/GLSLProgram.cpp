@@ -26,7 +26,7 @@ bool GLSLProgram::compileShaderFromFile(const std::string& fileName, GLSLShaderT
 	if (f == nullptr)
 	{
 		logString = "Error opening shader file: ";
-		logString.append(strerror(errno)).append("\n");
+		logString.append(strerror(errno)).append("\n").append(fileName).append("\n");
 		return false;
 	}
 
@@ -208,7 +208,7 @@ bool GLSLProgram::isInUse()
 
 void GLSLProgram::free()
 {
-	if (glIsProgram(handle))
+	if (glIsProgram && glIsProgram(handle))
 	{
 		glDeleteProgram(handle);
 	}

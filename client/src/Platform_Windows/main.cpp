@@ -13,7 +13,6 @@ namespace fs = boost::filesystem;
 #include "Game.h"
 #include "CoreSystemWindows.h"
 
-Game* game;
 HWND  hwnd;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
@@ -50,11 +49,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	iCore->setHwnd(hwnd);
 
-	game = new Game((ICoreSystem*)iCore);
-	game->run();
-
-	delete game;
-	game = NULL;
+	Game game(iCore);
+	game.run();
 
 	return 0;
 }

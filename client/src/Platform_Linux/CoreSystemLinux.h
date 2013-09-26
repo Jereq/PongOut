@@ -6,17 +6,18 @@
 class CoreSystemLinux : public ICoreSystem
 {
 private:
-	boost::filesystem::path rootDir;
+	GraphicsLinux::ptr graphics;
 
-	GraphicsLinux graphics;
+	static void errorCallback(int _error, const char* _description);
 
 public:
-	CoreSystemLinux(const boost::filesystem::path& _rootDir);
 
-	virtual boost::filesystem::path getRootDir() const override;
+	CoreSystemLinux(const boost::filesystem::path& _rootDir);
+	~CoreSystemLinux();
+
 	virtual double getTime() const override;
 	virtual bool windowIsClosing() const override;
 	virtual void pollEvents() override;
 
-	virtual GraphicsLinux* getGraphics() override;
+	virtual IGraphics::ptr getGraphics() override;
 };

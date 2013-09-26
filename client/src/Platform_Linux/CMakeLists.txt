@@ -34,9 +34,3 @@ target_link_libraries(Graphics
 	${GRAPHICS_LIBS}
 )
 
-
-set(PLATFORM_SOURCE_FILES
-	${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/CoreSystemLinux.cpp
-	PARENT_SCOPE
-)
