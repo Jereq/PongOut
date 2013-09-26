@@ -5,20 +5,52 @@
 #include "stdafx.h"
 #include "UserManager.h"
 #include <boost/asio.hpp>
+#include <condition_variable>
 
 using namespace std;
+bool quit = false;
+std::mutex closeMutex;
+std::condition_variable close;
+
+BOOL WINAPI ConsoleHandler(DWORD CEvent)
+{
+	switch (CEvent)
+	{
+	case CTRL_C_EVENT:
+	case CTRL_BREAK_EVENT:
+			quit = true;
+		break;
+
+	case CTRL_CLOSE_EVENT:
+	case CTRL_LOGOFF_EVENT:
+	case CTRL_SHUTDOWN_EVENT:
+		quit = true;
+
+		std::unique_lock<std::mutex> closeLock(closeMutex);
+		close.wait(closeLock);
+		break;
+	}
+
+	return TRUE;
+}
 
 int _tmain(int argc, _TCHAR* argv[])
-{	
-	cout << "PongOut server started!" << endl;
+{
+	SetConsoleCtrlHandler((PHANDLER_ROUTINE)ConsoleHandler,TRUE);
+
+	Log::addLog(Log::LogType::INFO, "PongOut server started!");
 
 	UserManager::getInstance()->listenForNewClientConnections();
 	UserManager::getInstance()->startIO();
 
-	for (ever)
+	while (!quit)
 	{
 	}
 
+	UserManager::getInstance()->destroy();
+	Log::destroy();
+
+	close.notify_all();
 	//system("pause");
 	return 0;
 }

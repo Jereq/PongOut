@@ -11,7 +11,9 @@ User::User(boost::shared_ptr<tcp::socket> _socket, boost::uuids::uuid _uuid)
 
 
 User::~User(void)
-{}
+{
+	int dummy = 42;
+}
 
 boost::shared_ptr<tcp::socket> User::getSocket()
 {
@@ -124,4 +126,10 @@ void User::setUserNamePass(const std::string& _name, const std::string& _pass)
 {
 	userData.userName = _name;
 	userData.password = _pass;
+}
+
+void User::disconnect()
+{
+	socket->shutdown(boost::asio::socket_base::shutdown_both);
+	socket->close();
 }

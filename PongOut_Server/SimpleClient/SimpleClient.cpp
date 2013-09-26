@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include <Server.h>
+
 using namespace std;
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -38,7 +39,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 			for (ever)
 			{
-				cin >> msg;
+				getline(cin, msg);
 				s->sendChatMsg(toUser, msg);
 			}
 		} 

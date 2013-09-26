@@ -25,6 +25,7 @@ public:
 	void handleIncomingClient(boost::shared_ptr<tcp::socket> _soc, const boost::system::error_code& _errorCode );
 	void handleIncomingMeassage(const boost::system::error_code& _error, size_t _bytesTransferred);
 	void messageActionSwitch(const msgBase::header& _header, const std::deque<char>& _meassage, boost::shared_ptr<User> _user);
+	void destroy();
 
 private:
 	

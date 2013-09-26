@@ -66,7 +66,8 @@ void Server::handleIncomingMessage(const boost::system::error_code& _error, size
 	} 
 	else if (_error)
 	{
-		throw boost::system::error_code(_error);
+		std::cout << _error.message() << std::endl;
+		return;
 	}
 
 	int readChars = 0;

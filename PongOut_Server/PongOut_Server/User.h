@@ -32,6 +32,7 @@ public:
 	void listen();
 	msgBase::userData getUserData();
 	void setUserNamePass(const std::string& _name, const std::string& _pass);
+	void disconnect();
 
 private:
 	boost::shared_ptr<tcp::socket> socket;

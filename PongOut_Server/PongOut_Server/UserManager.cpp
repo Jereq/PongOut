@@ -46,7 +46,7 @@ void UserManager::handleIncomingClient( boost::shared_ptr<tcp::socket> _soc, con
 	User::ptr u = User::ptr(new User(_soc, uid));
 	users.insert(u);
 	u->listen();
-	std::cout << "New user connected" << std::endl;
+	Log::addLog(Log::LogType::INFO, "New user connected");
 	listenForNewClientConnections();
 }
 
@@ -82,8 +82,8 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 					break;
 				}
 			}
+
 			cp->setUUID(_user->getUserData().uuid);
-			cp->setUserName(_user->getUserData().userName);
 			toUser->addMsgToMsgQueue(cp);
 
 			break;
@@ -95,7 +95,8 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 			Login::ptr lp = boost::static_pointer_cast<Login>(p);
 			_user->setUserNamePass(lp->getUsername(), lp->getPassword());
 
-			std::cout << "Username: " << lp->getUsername() << " Logged in" << std::endl;
+			Log::addLog(Log::LogType::INFO, "Username: " + lp->getUsername() + " Logged in");
+
 			break;
 		}
 
@@ -128,5 +129,19 @@ void UserManager::startIO()
 void UserManager::startIOPrivate()
 {
 	ioService->run();
-	std::cout << "IO services stopped" << std::endl;
+	Log::addLog(Log::LogType::INFO, "IO services stopped");
+}
+
+void UserManager::destroy()
+{
+	ioService->stop();
+
+	//std::unique_lock<std::mutex> lock(users.getLock());
+	//for (auto u : users.baseSet)
+	//{
+	//	u->disconnect();
+	//}
+	//	
+	//users.baseSet.clear();
+	ioThread.join();
 }
