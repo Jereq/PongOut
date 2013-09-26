@@ -4,11 +4,13 @@
 #include <fmod.hpp>
 #include "SoundSettings.h"
 #include "Sound.h"
+#include <fstream>
 
 #define MAX_CHANNELS 32
 
 using std::vector;
 using std::string;
+using std::ofstream;
 
 class SoundManager
 {

@@ -17,6 +17,6 @@ public:
 	Sound(string _filename = "undefined", string _type = "undefined", float _volume = 1.0f);
 	~Sound(void);
 	
-	float getVolumevoid(void) const;
+	float getVolume(void) const;
 	void setVolume(float _volume);
 };
