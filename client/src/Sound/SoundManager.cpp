@@ -45,5 +45,11 @@ bool SoundManager::initialize(void)
 
 void SoundManager::errorReport(string filename, string errorMessage)
 {
+	ofstream errorFile;
 
+	errorFile.open(filename);
+	errorFile << errorMessage;
+	errorFile.close();
+
+	//TODO: Maybe add a messagebox as well?
 }
