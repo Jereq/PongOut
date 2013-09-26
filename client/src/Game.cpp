@@ -1,7 +1,6 @@
 #include "Game.h"
 
 #include "PongOutConfig.h"
-
 //#include <chrono>
 #include <iostream>
 #include <stdio.h>
@@ -79,6 +78,7 @@ void Game::run()
 {
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 
+	
 	IGraphics* graphics = system->getGraphics();
 	if (!graphics->init())
 	{
@@ -92,6 +92,8 @@ void Game::run()
 	double currentTime = previousTime;
 	double deltaTime = 0.f;
 
+	system->getSounds()->load("Bubble3");
+
 	std::cout << "Starting to run" << std::endl;
 
 	glm::vec3 testVector = glm::vec3(0,-1 + 0.06125,0);
@@ -99,7 +101,7 @@ void Game::run()
 
 	glm::vec3 bVector = glm::vec3(0.0,-0.75,0);
 	glm::vec3 b2Vector = glm::vec3(0.0,0.75,0);
-	glm::vec2 bDim = glm::vec2(0.06125,0.06125);
+	glm::vec2 bDim = glm::vec2(0.06125 * 0.6,0.06125);
 	glm::vec3 bVelocity = glm::vec3(0.0125, 0.0125, 0);
 	glm::vec3 rVector = glm::vec3(-1.0,0,0);
 	glm::vec2 rDim = glm::vec2(0.125, 0.125);
@@ -122,6 +124,7 @@ void Game::run()
 		float dt = system->getTime();
 		float bspeed = 0.075f;
 		float pspeed = 0.001f;
+		system->getSounds()->play("Bubble3");
 
 		if( system->isKeyPress('D') )
 			testVector = testVector + glm::vec3(1,0,0) * pspeed * dt;

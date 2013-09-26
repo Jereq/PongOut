@@ -75,6 +75,7 @@ set(EXTRA_LIBS ${EXTRA_LIBS}
 
 set(SOURCE_FILES
 	${PLATFORM_SOURCE_FILES}
+	ICoreSystem.cpp
 	Game.cpp
 )
 
@@ -88,4 +89,5 @@ add_custom_target(CopyResources ALL
 	${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_CURRENT_SOURCE_DIR}/../resources ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/resources
 )
+
 

@@ -7,6 +7,8 @@ unsigned short	key, oldKey;
 CoreSystemWindows::CoreSystemWindows()
 	: ICoreSystem(), graphics(NULL)
 {
+	bool result;
+
 	registerRAW();
 
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
@@ -17,11 +19,23 @@ CoreSystemWindows::CoreSystemWindows()
 	ticksPerMs = (float)(frequency / 1000);
 
 	QueryPerformanceCounter((LARGE_INTEGER*)&startTime);
+
+	soundManager = new SoundManager();
+	result = soundManager->initialize();
+	if(!result)
+	{
+		int i = 42;
+	}
 }
 
 CoreSystemWindows::~CoreSystemWindows()
 {
 
+}
+
+SoundManager* CoreSystemWindows::getSounds()
+{
+	return soundManager;
 }
 
 void CoreSystemWindows::setHwnd(HWND _hWnd)

@@ -50,12 +50,14 @@ bool GraphicsWindows::init()
 	result = testShader->initialize(d3d->device, hWnd);
 
 	SRV tex = NULL;
-	result = DXCREATE::createTexture("../resources/box_dark_magenta_01.png", tex, d3d->device);
+	result = DXCREATE::createTexture("../resources/textures/box_dark_magenta_01.png", tex, d3d->device);
 	textures.insert( std::pair<std::string, SRV>("blocks/dark_magenta_01", tex));
-	result = DXCREATE::createTexture("../resources/box_pink_01.png", tex, d3d->device);
+	result = DXCREATE::createTexture("../resources/textures/box_pink_01.png", tex, d3d->device);
 	textures.insert( std::pair<std::string, SRV>("blocks/pink_01", tex));
-	result = DXCREATE::createTexture("../resources/box_orange_01.png", tex, d3d->device);
+	result = DXCREATE::createTexture("../resources/textures/box_orange_01.png", tex, d3d->device);
 	textures.insert( std::pair<std::string, SRV>("blocks/orange_01", tex));
+	result = DXCREATE::createTexture("../resources/textures/ball_prototype.png", tex, d3d->device);
+	textures.insert( std::pair<std::string, SRV>("player/ball_prototype", tex));
 	return result;
 }
 
@@ -70,7 +72,7 @@ void GraphicsWindows::addRectangle(glm::vec3 _center, glm::vec2 _size, float _ro
 		std::string path;
 		clean = id.find_last_of('/');
 		std::string cleanId = id.substr(clean+1, id.size());
-		path = "../resources/" + cleanId + ".png";
+		path = "../resources/textures/" + cleanId + ".png";
 		SRV tex = NULL;
 		bool result;
 		result = DXCREATE::createTexture(path, tex, d3d->device);
@@ -178,7 +180,7 @@ void GraphicsWindows::drawFrame()
 
 	
 	int index = 0;
-	for each(sprite s in frameSprites)
+	for (sprite s : frameSprites)
 	{
 		indexCount = s.vertices.size();
 		SRV tex = s.bufferTexture;
@@ -190,7 +192,7 @@ void GraphicsWindows::drawFrame()
 		index++;
 	}
 
-	for each(sprite s in frameSprites)
+	for (sprite s : frameSprites)
 		s.vertices.clear();
 
 	frameSprites.clear();

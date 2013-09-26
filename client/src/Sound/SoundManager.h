@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include <string>
-#include <fmod.hpp>
 #include "SoundSettings.h"
 #include "Sound.h"
 #include <fstream>
@@ -11,6 +10,11 @@
 using std::vector;
 using std::string;
 using std::ofstream;
+
+namespace FMOD 
+{
+	class System;
+}
 
 class SoundManager
 {
@@ -24,6 +28,11 @@ public:
 
 	bool initialize(void);
 	void shutdown(void);
+
+	bool initializeSound(Sound* _sound);
+	bool load(string _filename);
+	void play(string _filename);
+
 
 	void errorReport(string filename, string errorMessage);
 

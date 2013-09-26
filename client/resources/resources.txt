@@ -1,7 +1,7 @@
-texture:player/ball				ball_prototype.png
-texture:blocks/dark_magenta_01	box_dark_magenta_01.png
-texture:blocks/dark_magenta_02	box_dark_magenta_02.png
-texture:blocks/light_magenta_01	box_light_magenta_01.png
-texture:blocks/orange_01		box_orange_01.png
-texture:blocks/pink_01			box_pink_01.png
+texture:player/ball		textures/ball_prototype.png
+texture:blocks/dark_magenta_01	textures/box_dark_magenta_01.png
+texture:blocks/dark_magenta_02	textures/box_dark_magenta_02.png
+texture:blocks/light_magenta_01	textures/box_light_magenta_01.png
+texture:blocks/orange_01	textures/box_orange_01.png
+texture:blocks/pink_01		textures/box_pink_01.png
 
