@@ -9,7 +9,7 @@
 
 //#include <thread>
 
-Game::Game(ICoreSystem* _system)
+Game::Game(ICoreSystem::ptr _system)
 	: system(_system)
 {
 	map = new Map();
@@ -19,16 +19,18 @@ void Game::run()
 {
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 
-	IGraphics::ptr graphics = system->getGraphics();
+	std::shared_ptr<ICoreSystem> systemPtr(system);
+
+	IGraphics::ptr graphics = systemPtr->getGraphics();
 	if (!graphics->init())
 	{
 		printf("Failed to initialize renderer\n");
 		return;
 	}
 
-	graphics->loadResources(system->getRootDir() / "resources");
+	graphics->loadResources(systemPtr->getRootDir() / "resources");
 
-	double previousTime = system->getTime();
+	double previousTime = systemPtr->getTime();
 	double currentTime = previousTime;
 	double deltaTime = 0.f;
 
@@ -36,9 +38,9 @@ void Game::run()
 	std::cout << "Texture name: \n" << map->getTextureName() << std::endl;
 
 
-	while (!system->windowIsClosing())
+	while (!systemPtr->windowIsClosing())
 	{
-		system->pollEvents();
+		systemPtr->pollEvents();
 
 		graphics->addRectangle(glm::vec3(0.f, 0.f, 0.f), glm::vec2(2.f), 0.f, map->getTextureName());
 
@@ -56,7 +58,7 @@ void Game::run()
 		const static float FRAME_TIME = 1.f / FRAMES_PER_SECOND;
 
 		previousTime = currentTime;
-		currentTime = system->getTime();
+		currentTime = systemPtr->getTime();
 		deltaTime = currentTime - previousTime;
 
 		if (deltaTime < FRAME_TIME)

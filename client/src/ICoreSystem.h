@@ -17,6 +17,8 @@ private:
 	boost::filesystem::path rootDir;
 
 protected:
+	static std::shared_ptr<ICoreSystem> instance;
+
 	/**
 	 *  constructor.
 	 *
@@ -25,21 +27,29 @@ protected:
 	ICoreSystem(const boost::filesystem::path& _rootDir);
 
 public:
+	typedef std::weak_ptr<ICoreSystem>  ptr;
+
 	/**
-	 *  Create an instance of the platforms implementation.
+	 *  Initialize an instance of the platforms implementation.
 	 *
 	 *  @param _argc the the number of command line arguments passed to the main function
 	 *  @param _argv the command line arguments passed to the main function
-	 *  @return an instance that does the required platform initialization.
+	 *  @return true on success, otherwise false
 	 */
-	static ICoreSystem* createInstance(int _argc, char** _argv);
+	static bool init(int _argc, char** _argv);
 
 	/**
-	 *  Free the target instance correctly.
+	 *  Get an instance of the platforms implementation. The system must be
+	 *  initialized manually before a valid instance can be returned.
 	 *
-	 *  @param _inst a pointer to the instance to free. May be null.
+	 *  @return a pointer to the instance, empty pointer if not initialized
 	 */
-	static void freeInstance(ICoreSystem*& _inst);
+	static ptr getInstance();
+
+	/**
+	 *  Free the instance correctly.
+	 */
+	static void destroy();
 
 	/**
 	 *  destructor.

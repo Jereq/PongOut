@@ -3,11 +3,12 @@
 
 int main(int argc, char* argv[])
 {
-	ICoreSystem* system = ICoreSystem::createInstance(argc, argv);
-	Game game(system);
+	ICoreSystem::init(argc, argv);
+
+	Game game(ICoreSystem::getInstance());
 	game.run();
 
-	delete system;
+	ICoreSystem::destroy();
 
 	return 0;
 }

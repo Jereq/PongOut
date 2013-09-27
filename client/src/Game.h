@@ -10,7 +10,7 @@
 class Game
 {
 private:
-	ICoreSystem* system;
+	ICoreSystem::ptr system;
 	Map* map;
 
 public:
@@ -18,7 +18,7 @@ public:
 	 *
 	 *  @param _system the platform dependent core system to be used by the game
 	 */
-	Game(ICoreSystem* _system);
+	Game(ICoreSystem::ptr _system);
 
 	/** Start the game.
 	 *
