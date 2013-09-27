@@ -14,23 +14,46 @@ Game::Game(ICoreSystem* _system)
 	
 }
 
-bool cbIntersect(glm::vec3 _bp, float _br, glm::vec3 _rp, glm::vec2 _rb)
+bool cbIntersect(glm::vec3 _bp, float _br, glm::vec3 _rp, glm::vec2 _rb, glm::vec3& _bv)
 {
+	bool xinv = false;
+	bool yinv = false;
 	float tx = _bp.x;
 	float ty = _bp.y;
 	float ox = _rp.x - _rb.x / 2.0;
 	float oy = _rp.y - _rb.y / 2.0;
 
 	if(tx < ox)
+	{
 		tx = ox;
+		xinv = true;
+	}
 	if(tx > ox + _rb.x)
+	{
 		tx = ox + _rb.x;
+		xinv = true;
+	}
 	if(ty < oy)
+	{
 		ty = oy;
+		yinv = true;
+	}
 	if(ty > oy + _rb.y)
+	{
 		ty = oy + _rb.y;
+		yinv = true;
+	}
 
 	bool result = ((_bp.x - tx) * (_bp.x - tx) + (_bp.y - ty) * (_bp.y - ty )) < _br * _br;
+
+	if(result)
+	{
+		if(xinv)
+			_bv.x *= -1;
+		if(yinv)
+			_bv.y *= -1;
+	}
+
 	return result;
 
 }
@@ -63,9 +86,9 @@ void rbIntersect(glm::vec3& _bp, glm::vec2 _bd, glm::vec3& _bv, std::vector<glm:
 {
 		for(int i = 0; i < _r.size(); i++)
 		{
-			if(cbIntersect(_bp + _bv, _bd.x, _r[i], _rd))
+			if(cbIntersect(_bp + _bv, _bd.x, _r[i], _rd, _bv))
 			{
-				_bv.y *= -1;
+				//_bv.y *= -1;
 
 				std::vector<glm::vec3>::iterator it = _r.begin() + i;
 				_r.erase(it, it+1);
@@ -144,21 +167,21 @@ void Game::run()
 		else if(fakeVector.x > bVector.x)
 			fakeVector -= glm::vec3(1,0,0) * pspeed * dt;
 
-		if( cbIntersect(bVector + bVelocity, bDim.x, testVector, testDim) )
+		if( cbIntersect(bVector + bVelocity, bDim.x, testVector, testDim, bVelocity) )
 		{
-			bVelocity.y *= -1;
+			//bVelocity.y *= -1;
 		}
-		else if(cbIntersect(bVector + bVelocity, bDim.x, fakeVector, testDim) )
+		else if(cbIntersect(bVector + bVelocity, bDim.x, fakeVector, testDim, bVelocity) )
 		{
-			bVelocity.y *= -1;
+			//bVelocity.y *= -1;
 		}
-		if( cbIntersect(b2Vector + b2Velocity, bDim.x, testVector, testDim) )
+		if( cbIntersect(b2Vector + b2Velocity, bDim.x, testVector, testDim, b2Velocity) )
 		{
-			b2Velocity.y *= -1;
+			//b2Velocity.y *= -1;
 		}
-		else if(cbIntersect(b2Vector + b2Velocity, bDim.x, fakeVector, testDim) )
+		else if(cbIntersect(b2Vector + b2Velocity, bDim.x, fakeVector, testDim, b2Velocity) )
 		{
-			b2Velocity.y *= -1;
+			//b2Velocity.y *= -1;
 		}
 
 		rbIntersect(bVector, bDim, bVelocity, blocks, rDim);
