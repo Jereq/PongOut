@@ -26,4 +26,5 @@ public:
 	string resourceName;
 	float getVolume(void) const;
 	void setVolume(float _volume);
+	//FMOD::Channel* getChannel();
 };
