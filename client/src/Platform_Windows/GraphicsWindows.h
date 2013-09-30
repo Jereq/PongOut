@@ -9,14 +9,15 @@
 class GraphicsWindows : public IGraphics
 {
 public:
-	GraphicsWindows(HWND _hWnd);
+	GraphicsWindows(WNDPROC _wndProc);
 	~GraphicsWindows();
 	
 protected:
 
 private:
+	WNDPROC wndProc;
+
 	D3D*	d3d;
-	HWND	hWnd;
 
 	TestShader*	testShader;
 

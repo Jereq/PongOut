@@ -81,7 +81,7 @@ set(SOURCE_FILES
 )
 
 # Add the executable
-add_executable(PongOut WIN32 ${SOURCE_FILES})
+add_executable(PongOut ${SOURCE_FILES})
 
 target_link_libraries(PongOut ${EXTRA_LIBS})
 

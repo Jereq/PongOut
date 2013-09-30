@@ -301,7 +301,7 @@ bool D3D::initialize(HWND _hWnd)
 		return false;
 
 	// set new raster state
-	result = setRasterState(D3D11_CULL_MODE::D3D11_CULL_NONE, D3D11_FILL_MODE::D3D11_FILL_SOLID);
+	result = setRasterState(D3D11_CULL_NONE, D3D11_FILL_SOLID);
 	if(!result)
 		return false;
 

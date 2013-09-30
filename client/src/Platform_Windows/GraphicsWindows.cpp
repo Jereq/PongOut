@@ -1,8 +1,8 @@
 #include "GraphicsWindows.h"
 #include "DXAssetInstancing.h"
 
-GraphicsWindows::GraphicsWindows(HWND _hWnd)
-	: d3d(0), hWnd(_hWnd), IGraphics()
+GraphicsWindows::GraphicsWindows(WNDPROC _wndProc)
+	: d3d(0), wndProc(_wndProc)
 {
 }
 
@@ -26,6 +26,36 @@ bool GraphicsWindows::loadResources(const boost::filesystem::path& _resourceDir)
 bool GraphicsWindows::init()
 {
 	bool result = false;
+
+	HMODULE hInstance = GetModuleHandle(nullptr);
+	
+	WNDCLASSEX  wndClass;
+
+	const static char szAppName[] = "PongOut";
+
+	wndClass.cbSize			= sizeof(wndClass);
+	wndClass.style			= CS_HREDRAW | CS_VREDRAW;
+	wndClass.lpfnWndProc	= wndProc;
+	wndClass.cbClsExtra		= 0;
+	wndClass.cbWndExtra		= 0;
+	wndClass.hInstance		= hInstance;
+	wndClass.hIcon			= LoadIcon(NULL, IDI_APPLICATION);
+	wndClass.hIconSm		= LoadIcon(NULL, IDI_APPLICATION);
+	wndClass.hCursor		= LoadCursor(NULL, IDC_ARROW);
+	wndClass.hbrBackground	= (HBRUSH) GetStockObject(WHITE_BRUSH);
+	wndClass.lpszClassName	= szAppName;
+	wndClass.lpszMenuName	= NULL;
+
+	RegisterClassEx(&wndClass);
+
+	HWND hWnd = CreateWindow(szAppName, "PongOut",
+				WS_OVERLAPPEDWINDOW,
+				CW_USEDEFAULT, CW_USEDEFAULT,
+				CW_USEDEFAULT, CW_USEDEFAULT,
+				NULL, NULL, hInstance, NULL);
+
+	ShowWindow(hWnd, SW_SHOWNORMAL);
+	UpdateWindow(hWnd);
 	
 	d3d = new D3D();
 

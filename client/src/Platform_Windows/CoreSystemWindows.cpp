@@ -1,8 +1,28 @@
 #include "CoreSystemWindows.h"
+
+namespace fs = boost::filesystem;
+
 static bool	shutDown = false;
 
-CoreSystemWindows::CoreSystemWindows()
-	: ICoreSystem(), graphics(NULL)
+bool ICoreSystem::init(int _argc, char** _argv)
+{
+	fs::path fullPath(fs::initial_path<fs::path>());
+	fullPath = fs::system_complete(fs::path(_argv[0]));
+	
+	if (!fs::exists(fullPath))
+	{
+		std::cout << "Error: Invalid argv[0], stop hacking!" << std::endl;
+		return false;
+	}
+
+	instance.reset();
+	instance.reset(new CoreSystemWindows(fullPath.parent_path()));
+
+	return true;
+}
+
+CoreSystemWindows::CoreSystemWindows(const boost::filesystem::path& _rootDir)
+	: ICoreSystem(_rootDir), graphics(NULL)
 {
 
 }
@@ -10,11 +30,6 @@ CoreSystemWindows::CoreSystemWindows()
 CoreSystemWindows::~CoreSystemWindows()
 {
 
-}
-
-void CoreSystemWindows::setHwnd(HWND _hWnd)
-{
-	hWnd = _hWnd;
 }
 
 boost::filesystem::path CoreSystemWindows::getRootDir()const
@@ -45,19 +60,16 @@ void CoreSystemWindows::pollEvents()
 	//WndProc(hWnd, NULL, NULL, NULL);
 }
 
-IGraphics* CoreSystemWindows::getGraphics()
+IGraphics::ptr CoreSystemWindows::getGraphics()
 {
 	if( graphics == NULL )
-		graphics = new GraphicsWindows(hWnd);
+		graphics.reset(new GraphicsWindows(&WndProc));
 
 	return graphics;
 }
 
 LRESULT CALLBACK CoreSystemWindows::WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
-	PAINTSTRUCT	ps;
-	HDC				hdc;
-
 	switch (iMsg)
 	{
 	//case WM_PAINT:

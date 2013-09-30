@@ -7,11 +7,10 @@
 class CoreSystemWindows : public ICoreSystem
 {
 public:
-	CoreSystemWindows();
+	CoreSystemWindows(const boost::filesystem::path& _rootDir);
 	~CoreSystemWindows();
 
 	static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-	void setHwnd(HWND _hWnd);
 protected:
 
 
@@ -21,13 +20,9 @@ private:
 	virtual bool windowIsClosing() const;
 	virtual void pollEvents();
 
-	virtual IGraphics* getGraphics();
+	virtual IGraphics::ptr getGraphics() override;
 
-	GraphicsWindows*	graphics;
-	HWND				hWnd;
-	
-
-	
+	IGraphics::ptr	graphics;
 };
 
 #endif

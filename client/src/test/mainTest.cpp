@@ -1,24 +1,44 @@
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
+#include <boost/test/output_test_stream.hpp>
 
 #include "ICoreSystem.h"
 
+struct cout_redirect {
+    cout_redirect( std::streambuf * new_buffer ) 
+        : old( std::cout.rdbuf( new_buffer ) )
+    { }
+
+    ~cout_redirect( ) {
+        std::cout.rdbuf( old );
+    }
+
+private:
+    std::streambuf * old;
+};
+
 BOOST_AUTO_TEST_CASE(CoreSystem)
 {
+
 	int argc = 1;
 	char *argv[2];
 	char testPath[] = "Fake/test/path/to/executable";
 	argv[0] = testPath;
 
-	BOOST_CHECK(ICoreSystem::init(argc, argv) == false);				// Fake path should not work
+	boost::test_tools::output_test_stream output;
+	{
+		cout_redirect guard(output.rdbuf());
+		BOOST_CHECK(ICoreSystem::init(argc, argv) == false);			// Fake path should not work
+		BOOST_CHECK(output.is_equal("Error: Invalid argv[0], stop hacking!\n"));	// Check error message (stupid Windows)
+	}
 
 	int argc2 = boost::unit_test::framework::master_test_suite().argc;
 	char** argv2 = boost::unit_test::framework::master_test_suite().argv;
-
+	
 	BOOST_REQUIRE(ICoreSystem::init(argc2, argv2));						// Init should work with valid path
 
 	ICoreSystem::ptr coreSystem = ICoreSystem::getInstance();
-	BOOST_REQUIRE(coreSystem.lock());											// Returns an instance
+	BOOST_REQUIRE(coreSystem.lock());									// Returns an instance
 
 	boost::filesystem::path rootDir = coreSystem.lock()->getRootDir();
 	BOOST_CHECK(boost::filesystem::exists(rootDir));					// Extracted path exists
