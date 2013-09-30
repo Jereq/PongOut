@@ -7,5 +7,10 @@ ICoreSystem::ICoreSystem()
 
 SoundManager* ICoreSystem::getSounds()
 {
+	if (!soundManager)
+	{
+		soundManager = new SoundManager();
+	}
+
 	return soundManager;
 }

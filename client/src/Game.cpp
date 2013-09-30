@@ -88,11 +88,14 @@ void Game::run()
 
 	graphics->loadResources(system->getRootDir() / "resources");
 
+	SoundManager* sounds = system->getSounds();
+	sounds->initialize();
+
 	double previousTime = system->getTime();
 	double currentTime = previousTime;
 	double deltaTime = 0.f;
 
-	system->getSounds()->load("Bubble3");
+	sounds->load("Bubble3");
 
 	std::cout << "Starting to run" << std::endl;
 
@@ -121,10 +124,10 @@ void Game::run()
 	while (!system->windowIsClosing())
 	{
 		system->pollEvents();
-		float dt = system->getTime();
+		float dt = deltaTime * 1000.f;
 		float bspeed = 0.075f;
 		float pspeed = 0.001f;
-		system->getSounds()->play("Bubble3");
+		sounds->play("Bubble3");
 
 		if( system->isKeyPress('D') )
 			testVector = testVector + glm::vec3(1,0,0) * pspeed * dt;
@@ -177,9 +180,9 @@ void Game::run()
 		for(int i = 0; i < blocks.size(); i++)
 			graphics->addRectangle(blocks[i], rDim, 10.f, "blocks/orange_01");
 
-		graphics->addRectangle(glm::vec3(0, 0, 1.f), glm::vec2(2,2), 10.f, "blocks/background_prototype");
-		graphics->addRectangle(bVector, bDim, 1.0f, "player/ball_prototype");
-		graphics->addRectangle(b2Vector, bDim, 1.0f, "player/ball_prototype");
+		graphics->addRectangle(glm::vec3(0, 0, 1.f), glm::vec2(2,2), 10.f, "background");
+		graphics->addRectangle(bVector, bDim, 1.0f, "player/ball");
+		graphics->addRectangle(b2Vector, bDim, 1.0f, "player/ball");
 		const static float FRAMES_PER_SECOND = 60.f;
 		const static float FRAME_TIME = 1.f / FRAMES_PER_SECOND;
 

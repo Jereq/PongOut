@@ -26,6 +26,16 @@ void CoreSystemLinux::pollEvents()
 	glfwPollEvents();
 }
 
+bool CoreSystemLinux::isKeyPress(unsigned short _key)
+{
+	return glfwGetKey(graphics.window, _key) == GLFW_PRESS;
+}
+
+bool CoreSystemLinux::isNewKeyPress(unsigned short _key)
+{
+	return glfwGetKey(graphics.window, _key) == GLFW_PRESS;
+}
+
 GraphicsLinux* CoreSystemLinux::getGraphics()
 {
 	return &graphics;

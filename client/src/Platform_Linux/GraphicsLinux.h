@@ -19,7 +19,7 @@ private:
 	const static int MAJOR_GL_VERSION;
 	const static int MINOR_GL_VERSION;
 
-	GLFWwindow* window;
+public: GLFWwindow* window; private:
 	GLSLProgram rectangleProgram;
 	GLuint rectVaoHandle;
 	GLuint rectVboHandle;
