@@ -1,6 +1,7 @@
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 #include <boost/test/output_test_stream.hpp>
+#include <iostream>
 
 #include "ICoreSystem.h"
 
@@ -19,7 +20,6 @@ private:
 
 BOOST_AUTO_TEST_CASE(CoreSystem)
 {
-
 	int argc = 1;
 	char *argv[2];
 	char testPath[] = "Fake/test/path/to/executable";

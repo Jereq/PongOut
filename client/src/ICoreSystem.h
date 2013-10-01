@@ -4,8 +4,8 @@
  *  File description: Contains code. You have been warned.
  */
 
+#include "Sound/SoundManager.h"
 #include "IGraphics.h"
-
 #include <boost/filesystem.hpp>
 
 /**
@@ -89,4 +89,13 @@ public:
 	 *  @return a pointer to a graphics object. Will not return nullptr.
 	 */
 	virtual IGraphics::ptr getGraphics() =0;
+
+	virtual SoundManager* getSounds();
+
+	virtual bool	isKeyPress(unsigned short _key)=0;
+	virtual bool	isNewKeyPress(unsigned short _key)=0;
+
+protected:
+	SoundManager* soundManager;
+	ICoreSystem();
 };

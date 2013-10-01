@@ -19,5 +19,8 @@ public:
 	virtual bool windowIsClosing() const override;
 	virtual void pollEvents() override;
 
+	virtual bool isKeyPress(unsigned short _key) override;
+	virtual bool isNewKeyPress(unsigned short _key) override;
+
 	virtual IGraphics::ptr getGraphics() override;
 };

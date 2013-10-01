@@ -303,6 +303,11 @@ GraphicsLinux::LoadedImage GraphicsLinux::loadImage(const fs::path& _imagePath)
 
 void GraphicsLinux::addRectangle(glm::vec3 _center, glm::vec2 _size, float _rotation, std::string _id)
 {
+	if (loadedTextures.count(_id) == 0)
+	{
+		_id = "textureNotFound";
+	}
+
 	Rectangle rect{
 		_center,
 		_size,
