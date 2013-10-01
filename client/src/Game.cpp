@@ -160,12 +160,12 @@ void Game::run()
 		float pspeed = 0.001f;
 		sounds->play("Bubble3");
 
-		graphics->addRectangle(glm::vec3(0.f, 0.f, 0.f), glm::vec2(2.f), 0.f, map->getTextureName());
+		graphics->addRectangle(glm::vec3(0.f, 0.f, 1.0f), glm::vec2(2.f), 0.f, map->getTextureName());
 
-		graphics->addRectangle(glm::vec3(-1.f, 0.f, 0.f), glm::vec2(0.05, 2.f), 0.f, map->getFrameTextureName());
-		graphics->addRectangle(glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.05, 2.f), 0.f, map->getFrameTextureName());
-		graphics->addRectangle(glm::vec3(0.f, -1.f, 0.f), glm::vec2(2.f, 0.05), 0.f, map->getFrameTextureName());
-		graphics->addRectangle(glm::vec3(0.f, 1.f, 0.f), glm::vec2(2.f, 0.05), 0.f, map->getFrameTextureName());
+		graphics->addRectangle(glm::vec3(-1.f, 0.f, 0.95f), glm::vec2(0.05, 2.f), 0.f, map->getFrameTextureName());
+		graphics->addRectangle(glm::vec3(1.f, 0.f, 0.95f), glm::vec2(0.05, 2.f), 0.f, map->getFrameTextureName());
+		graphics->addRectangle(glm::vec3(0.f, -1.f, 0.95f), glm::vec2(2.f, 0.05), 0.f, map->getFrameTextureName());
+		graphics->addRectangle(glm::vec3(0.f, 1.f, 0.95f), glm::vec2(2.f, 0.05), 0.f, map->getFrameTextureName());
 
 		b2Vector = b2Vector + b2Velocity * bspeed * dt;
 
@@ -190,7 +190,7 @@ void Game::run()
 		for(size_t i = 0; i < blocks.size(); i++)
 			graphics->addRectangle(blocks[i], rDim, 10.f, "blocks/orange_01");
 
-		graphics->addRectangle(glm::vec3(0, 0, 1.f), glm::vec2(2,2), 10.f, "background");
+		//graphics->addRectangle(glm::vec3(0, 0, 1.f), glm::vec2(2,2), 10.f, "background");
 		graphics->addRectangle(bVector, bDim, 1.0f, "player/ball");
 		graphics->addRectangle(b2Vector, bDim, 1.0f, "player/ball");
 		const static float FRAMES_PER_SECOND = 60.f;

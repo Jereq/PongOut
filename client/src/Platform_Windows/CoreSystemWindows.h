@@ -16,7 +16,6 @@ protected:
 	virtual bool	isKeyPress(unsigned short _key);
 
 private:
-	virtual boost::filesystem::path getRootDir() const;
 	virtual double getTime() const;
 	virtual bool windowIsClosing() const;
 	virtual void pollEvents();

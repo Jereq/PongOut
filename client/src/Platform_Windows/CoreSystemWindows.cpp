@@ -67,12 +67,6 @@ bool CoreSystemWindows::isNewKeyPress(unsigned short _key)
 	return ((key == _key) && (key != oldKey));
 }
 
-boost::filesystem::path CoreSystemWindows::getRootDir()const
-{
-	boost::filesystem::path p = "test";
-	return p;
-}
-
 double CoreSystemWindows::getTime()const
 {
 	LARGE_INTEGER currentTime;

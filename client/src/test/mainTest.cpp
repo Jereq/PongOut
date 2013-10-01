@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(TestResourceLoader)
 	}
 	else
 	{
-		BOOST_ERROR("\"resources/textures\" does not exist.");
+		BOOST_ERROR(texturePath.string() + " does not exist.");
 	}
 
 	BOOST_CHECK_EQUAL((int)ResourceLoader::getResources(res, coreSystem.lock()->getRootDir() / "resources"), (int)ResourceLoader::ErrorCode::SUCCESS);

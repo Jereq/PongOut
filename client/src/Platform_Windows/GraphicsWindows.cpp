@@ -1,6 +1,8 @@
 #include "GraphicsWindows.h"
 #include "DXAssetInstancing.h"
 
+#include <ResourceLoader/ResourceLoader.h>
+
 struct sprite
 {
 	SRV bufferTexture;
@@ -136,7 +138,7 @@ void GraphicsWindows::addRectangle(glm::vec3 _center, glm::vec2 _size, float _ro
 	{
 		sprite s;
 		s.id = _id;
-		s.bufferTexture = textures.at(_id).second;
+		s.bufferTexture = textures.at(_id);
 		s.vertices.push_back(sv);
 		frameSprites.push_back(s);
 	
@@ -225,6 +227,17 @@ void GraphicsWindows::drawFrame()
 			testShader->draw(d3d->deviceContext, vBuf, iBuf, tex, indexCount);
 
 		index++;
+		
+		if( vBuf != NULL )
+		{
+			vBuf->Release();
+			vBuf = NULL;
+		}
+		if( iBuf != NULL )
+		{
+			iBuf->Release();
+			iBuf = NULL;
+		}
 	}
 
 	for (sprite s : frameSprites)
@@ -232,15 +245,6 @@ void GraphicsWindows::drawFrame()
 
 	frameSprites.clear();
 
-	if( vBuf != NULL )
-	{
-		vBuf->Release();
-		vBuf = NULL;
-	}
-	if( iBuf != NULL )
-	{
-		iBuf->Release();
-		iBuf = NULL;
-	}
+
 	d3d->endScene();
 }

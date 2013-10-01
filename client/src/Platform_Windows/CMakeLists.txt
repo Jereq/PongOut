@@ -32,4 +32,5 @@ target_link_libraries(Graphics
 	${DirectX_D3DX10_LIBRARY}
 	${DirectX_D3D11_LIBRARY}
 	${DirectX_DXGI_LIBRARY}
+	ResourceLoader
 )
