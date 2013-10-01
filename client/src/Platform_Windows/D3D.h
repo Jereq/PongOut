@@ -3,13 +3,14 @@
 
 #include <D3DCommon.h>
 #include <d3d11.h>
+#include "ErrorCodeList.h"
 
 class D3D
 {
 public:
 	D3D();
 	~D3D();
-	 bool initialize(HWND _hWnd);
+	 ErrorCode initialize(HWND _hWnd);
 	 void shutDown();
 
 protected:
@@ -36,11 +37,11 @@ public:
 	bool			vsyncEnabled;
 	bool			fullScreen;
 
-	bool			setSwapChain(HWND _hWnd, unsigned int _numerator, unsigned int _denominator, bool _fullScreen);
-	bool			setRasterState(D3D11_CULL_MODE _cullMode, D3D11_FILL_MODE _fillMode);
-	bool			setViewPort(unsigned int _screenWidth, unsigned int _screenHeight);
-	bool			setDepthBuffer();
-	bool			setDepthStencil();
+	ErrorCode			setSwapChain(HWND _hWnd, unsigned int _numerator, unsigned int _denominator, bool _fullScreen);
+	ErrorCode			setRasterState(D3D11_CULL_MODE _cullMode, D3D11_FILL_MODE _fillMode);
+	ErrorCode			setViewPort(unsigned int _screenWidth, unsigned int _screenHeight);
+	ErrorCode			setDepthBuffer();
+	ErrorCode			setDepthStencil();
 
 	void beginScene(float _r, float _g, float _b, float _a);
 	void endScene();

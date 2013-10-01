@@ -17,7 +17,7 @@ D3D::~D3D()
 
 }
 
-bool setDXGI(unsigned int& _gpuMemory, char* _gpuDescription, int& _numerator, int& _denominator, unsigned int _screenWidth, unsigned int _screenHeight)
+ErrorCode setDXGI(unsigned int& _gpuMemory, char* _gpuDescription, int& _numerator, int& _denominator, unsigned int _screenWidth, unsigned int _screenHeight)
 {
 	HRESULT			result;
 	IDXGIFactory*	factory;
@@ -31,32 +31,32 @@ bool setDXGI(unsigned int& _gpuMemory, char* _gpuDescription, int& _numerator, i
 	// create directx interface
 	result = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory);
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_CREATE_DXGI_FACTORY_FAIL;
 
 	// create adapter for gpu interface
 	result = factory->EnumAdapters(0, &adapter);
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_GET_ADAPTER_FAIL;
 
 	// enumerate all outputs(monitors)
 	result = adapter->EnumOutputs(0, &adapterOutput);
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_ENUMERATE_ADAPTERS_FAIL;
 	
 	// get number of modes (r8g8b8a8) supported by monitor
 	result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL);
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_CREATE_DISPLAY_MODE_LIST_FAIL;
 
 	// create list for possible display modes for monitor/gpu combination
 	displayModeList = new DXGI_MODE_DESC[numModes];
 	if(!displayModeList)
-		return false;
+		return ErrorCode::WGFX_GET_DISPLAY_MODE_DESC_FAIL;
 
 	// fill out list with display modes
 	result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList);
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_FILL_DISPLAY_MODE_LIST_FAIL;
 
 	// find matching refresh rate(numerator, denominator) for the active displaymode
 	unsigned int i;
@@ -75,13 +75,13 @@ bool setDXGI(unsigned int& _gpuMemory, char* _gpuDescription, int& _numerator, i
 	// get gpu description
 	result = adapter->GetDesc(&adapterDesc);
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_GET_GPU_DESCRIPTION_FAIL;
 
 	_gpuMemory = (unsigned int)(adapterDesc.DedicatedVideoMemory / 1024 / 1024);
 
 	error = wcstombs_s(&stringLength, _gpuDescription, 128, adapterDesc.Description, 128);
 	if(error != 0)
-		return false;
+		return ErrorCode::WGFX_GET_GPU_DESCRIPTION_FAIL;
 
 	// release DXGI
 	delete [] displayModeList;
@@ -96,10 +96,10 @@ bool setDXGI(unsigned int& _gpuMemory, char* _gpuDescription, int& _numerator, i
 	factory->Release();
 	factory = 0;
 
-	return true;
+	return ErrorCode::WGFX_SET_DXGI_OK;
 }
 
-bool D3D::setSwapChain(HWND _hWnd, unsigned int _numerator, unsigned int _denominator, bool _fullScreen)
+ErrorCode D3D::setSwapChain(HWND _hWnd, unsigned int _numerator, unsigned int _denominator, bool _fullScreen)
 {
 	DXGI_SWAP_CHAIN_DESC	swapChainDesc;
 
@@ -156,26 +156,26 @@ bool D3D::setSwapChain(HWND _hWnd, unsigned int _numerator, unsigned int _denomi
 											D3D11_SDK_VERSION, &swapChainDesc, &swapChain, &device, NULL, &deviceContext);
 
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_CREATE_SWAPCHAIN_FAIL;
 
 	// get pointer to backbuffer
 	result = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBuffer);
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_GET_SWAPCHAIN_BUFFER_FAIL;
 
 	// create rendertargetview
 	result = device->CreateRenderTargetView(backBuffer, NULL, &renderTargetView);
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_CREATE_RENDERTARGET_FAIL;
 
 	// release pointer to buffer
 	backBuffer->Release();
 	backBuffer = 0;
 	
-	return true;
+	return ErrorCode::WGFX_OK;
 }
 
-bool D3D::setRasterState(D3D11_CULL_MODE _cullMode, D3D11_FILL_MODE _fillMode)
+ErrorCode D3D::setRasterState(D3D11_CULL_MODE _cullMode, D3D11_FILL_MODE _fillMode)
 {
 	HRESULT result;
 	D3D11_RASTERIZER_DESC rasterDesc;
@@ -194,14 +194,14 @@ bool D3D::setRasterState(D3D11_CULL_MODE _cullMode, D3D11_FILL_MODE _fillMode)
 	result = device->CreateRasterizerState(&rasterDesc, &rasterState);
 
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_CREATE_RASTERIZER_FAIL;
 
 	deviceContext->RSSetState(rasterState);
 
-	return true;
+	return ErrorCode::WGFX_SET_SWAPCHAIN_OK;
 }
 
-bool D3D::setViewPort(unsigned int _screenWidth, unsigned int _screenHeight)
+ErrorCode D3D::setViewPort(unsigned int _screenWidth, unsigned int _screenHeight)
 {
 	viewPort.Width		= (float)_screenWidth;
 	viewPort.Height		= (float)_screenHeight;
@@ -212,10 +212,10 @@ bool D3D::setViewPort(unsigned int _screenWidth, unsigned int _screenHeight)
 
 	deviceContext->RSSetViewports(1, &viewPort);
 
-	return true;
+	return ErrorCode::WGFX_SETVIEWPORT_OK;
 }
 
-bool D3D::setDepthBuffer()
+ErrorCode D3D::setDepthBuffer()
 {
 	HRESULT result;
 	D3D11_TEXTURE2D_DESC depthBufferDesc;
@@ -235,12 +235,12 @@ bool D3D::setDepthBuffer()
 
 	result = device->CreateTexture2D(&depthBufferDesc, NULL, &depthStencilBuffer);
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_CREATE_DEPTHBUFFER_FAIL;
 
-	return true;
+	return ErrorCode::WGFX_SET_DEPTHBUFFER_OK;
 }
 
-bool D3D::setDepthStencil()
+ErrorCode D3D::setDepthStencil()
 {
 	HRESULT result;
 	D3D11_DEPTH_STENCIL_DESC noDepthDesc;
@@ -263,7 +263,7 @@ bool D3D::setDepthStencil()
 
 	result = device->CreateDepthStencilState(&noDepthDesc, &noDepthStencilState);
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_CREATE_DEPTHSTENCILSTATE_FAIL;
 
 	deviceContext->OMSetDepthStencilState(noDepthStencilState, 1);
 
@@ -276,49 +276,49 @@ bool D3D::setDepthStencil()
 
 	result = device->CreateDepthStencilView(depthStencilBuffer, &depthStencilViewDesc, &depthStencilView);
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_CREATE_DEPTHSTENCILVIEW_FAIL;
 
 	deviceContext->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 
-	return true;
+	return ErrorCode::WGFX_SET_DEPTHSTENCIL_OK;
 }
 
-bool D3D::initialize(HWND _hWnd)
+ErrorCode D3D::initialize(HWND _hWnd)
 {
-	bool result;
+	ErrorCode result;
 	int numerator, denominator;
 	screenWidth = 1280;
 	screenHeight = 1024;
 
 	// query DXGI for hardware setup information
-	result = setDXGI(gpuMemory, gpuDescription, numerator, denominator, screenWidth, screenHeight);
-	if(!result)
-		return false;
+	ErrorCode dxgi_result = setDXGI(gpuMemory, gpuDescription, numerator, denominator, screenWidth, screenHeight);
+	if(dxgi_result != ErrorCode::WGFX_SET_DXGI_OK)
+		return ErrorCode::WGFX_SETUP_DXGI_FAIL;
 
 	// 
 	result = setSwapChain(_hWnd, numerator, denominator, fullScreen);
-	if(result == false)
-		return false;
+	if(result != ErrorCode::WGFX_SET_SWAPCHAIN_OK)
+		return result;
 
 	// set new raster state
 	result = setRasterState(D3D11_CULL_NONE, D3D11_FILL_SOLID);
-	if(!result)
-		return false;
+	if(result != ErrorCode::WGFX_SET_SWAPCHAIN_OK)
+		return result;
 
 	// set viewport by screensize
 	setViewPort(screenWidth, screenHeight);
 
 	// set depth buffer
 	result = setDepthBuffer();
-	if(!result)
-		return false;
+	if(result != ErrorCode::WGFX_SET_DEPTHBUFFER_OK)
+		return result;
 
 	// set depth stencil
 	result = setDepthStencil();
-	if(!result)
-		return false;
+	if(result != ErrorCode::WGFX_SET_DEPTHSTENCIL_OK)
+		return result;
 
-	return true;
+	return ErrorCode::WGFX_D3D_INIT_OK;
 }
 
 void D3D::shutDown()

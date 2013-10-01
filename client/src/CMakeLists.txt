@@ -19,10 +19,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # Handle different OS
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /MT")
-	set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} /MT")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /EHsc")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd /EHsc")
+	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /MT /EHsc")
+	set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} /MT /EHsc")
 else()
 	add_definitions(-std=c++11)
 endif()
@@ -85,6 +85,11 @@ set(SOURCE_FILES
 	Game.cpp Game.h
 	Map.cpp Map.h
 	Block.cpp Block.h
+	ScreenManager.cpp ScreenManager.h
+	ScreenState.cpp ScreenState.h
+	Button.cpp Button.h
+	MenuState.cpp MenuState.h
+	GameState.cpp GameState.h
 )
 
 # Add the executable

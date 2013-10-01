@@ -19,15 +19,13 @@ TestShader::~TestShader()
 
 }
 
-bool TestShader::initialize(ID3D11Device* _device, HWND _hWnd)
+ErrorCode TestShader::initialize(ID3D11Device* _device, HWND _hWnd)
 {
-	bool result;
+	ErrorCode result;
 	
 	result = initializeShader(_device, _hWnd, "../src/Platform_Windows/shaders/test.vs", "../src/Platform_Windows/shaders/test.ps");
-	if(!result)
-		return false;
-
-	return true;
+	
+	return result;
 }
 
 void OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, LPCSTR shaderFilename)
@@ -65,7 +63,7 @@ void OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, LPCSTR shader
 	return;
 }
 
-bool TestShader::initializeShader(ID3D11Device* _device, HWND _hWnd, LPCSTR _vsFile, LPCSTR _psFile)
+ErrorCode TestShader::initializeShader(ID3D11Device* _device, HWND _hWnd, LPCSTR _vsFile, LPCSTR _psFile)
 {
 	HRESULT result;
 	ID3D10Blob* errorMessage			= 0;
@@ -82,22 +80,22 @@ bool TestShader::initializeShader(ID3D11Device* _device, HWND _hWnd, LPCSTR _vsF
 	{
 		if(errorMessage)
 			OutputShaderErrorMessage(errorMessage, _hWnd, _vsFile);
-		return false;
+		return ErrorCode::WGFX_COMPILE_VS_FAIL;
 	}
 	result = _device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &vertexShader);
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_CREATE_VS_FAIL;
 
 	result = D3DX11CompileFromFile(_psFile, NULL, NULL, "PShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pixelShaderBuffer, &errorMessage, NULL);
 	if( FAILED(result) )
 	{
 		if(errorMessage)
 			OutputShaderErrorMessage(errorMessage, _hWnd, _psFile);
-		return false;
+		return ErrorCode::WGFX_COMPILE_PS_FAIL;
 	}
 	result = _device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &pixelShader);
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_CREATE_PS_FAIL;
 
 	result = D3DX11CompileFromFile("../src/Platform_Windows/shaders/spriteGS.gs", NULL, NULL, "GS", "gs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &geometryShaderBuffer, &errorMessage, NULL);
 	if( FAILED(result) )
@@ -107,11 +105,11 @@ bool TestShader::initializeShader(ID3D11Device* _device, HWND _hWnd, LPCSTR _vsF
 		else
 			MessageBox(_hWnd, "Geometry Shader", "Missing Shader File", MB_OK);
 
-		return false;
+		return ErrorCode::WGFX_COMPILE_GS_FAIL;
 	}
 	result = _device->CreateGeometryShader(geometryShaderBuffer->GetBufferPointer(), geometryShaderBuffer->GetBufferSize(), NULL, &geometryShader);
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_CREATE_GS_FAIL;
 
 	layoutDesc[0].SemanticName			= "ANCHOR";
 	layoutDesc[0].SemanticIndex			= 0;
@@ -134,7 +132,7 @@ bool TestShader::initializeShader(ID3D11Device* _device, HWND _hWnd, LPCSTR _vsF
 	result = _device->CreateInputLayout(layoutDesc, numElements, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &layout);
 
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_CREATE_INPUT_LAYOUT_FAIL;
 
 	vertexShaderBuffer->Release();
 	vertexShaderBuffer = 0;
@@ -146,8 +144,12 @@ bool TestShader::initializeShader(ID3D11Device* _device, HWND _hWnd, LPCSTR _vsF
 	geometryShaderBuffer = 0;
 
 	result = DXCREATE::createConstantBuffer(positionBuffer, _device);
+	if( FAILED(result) )
+		return ErrorCode::WGFX_CREATE_CBUFFER_FAIL;
 
 	result = DXCREATE::createSampleState(sampleState, _device);
+	if( FAILED(result) )
+		return ErrorCode::WGFX_CREATE_SAMPLERSTATE_FAIL;
 
 	D3D11_BLEND_DESC blendStateDesc;
 	ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
@@ -163,10 +165,9 @@ bool TestShader::initializeShader(ID3D11Device* _device, HWND _hWnd, LPCSTR _vsF
 	result = _device->CreateBlendState(&blendStateDesc, &blendState);
 
 	if( FAILED(result) )
-		return false;
+		return ErrorCode::WGFX_CREATE_BLENDSTATE_FAIL;
 
-
-	return true;
+	return ErrorCode::WGFX_INITSHADER_OK;
 }
 
 void TestShader::shutDown()
@@ -174,19 +175,19 @@ void TestShader::shutDown()
 
 }
 
-bool TestShader::draw(ID3D11DeviceContext* _deviceContext, ID3D11Buffer* _vbuffer, ID3D11Buffer* _ibuffer, ID3D11ShaderResourceView* _srView, int _indexCount)
+ErrorCode TestShader::draw(ID3D11DeviceContext* _deviceContext, ID3D11Buffer* _vbuffer, ID3D11Buffer* _ibuffer, ID3D11ShaderResourceView* _srView, int _indexCount)
 {
-	bool result;
+	ErrorCode result;
 	result = setShaderParamaters(_deviceContext, _vbuffer, _ibuffer, _srView);
-	if(!result)
-		return false;
+	if(result != ErrorCode::WGFX_SET_SHADER_PARAMETERS_OK)
+		return ErrorCode::WGFX_SET_SHADER_PARAMETERS_FAIL;
 
 	drawShader(_deviceContext, _indexCount);
 
-	return true;
+	return ErrorCode::WGFX_DRAW_OK;
 }
 
-bool TestShader::setShaderParamaters(ID3D11DeviceContext* _deviceContext, ID3D11Buffer* _vbuffer, ID3D11Buffer* _ibuffer, ID3D11ShaderResourceView* _srView)
+ErrorCode TestShader::setShaderParamaters(ID3D11DeviceContext* _deviceContext, ID3D11Buffer* _vbuffer, ID3D11Buffer* _ibuffer, ID3D11ShaderResourceView* _srView)
 {
 	HRESULT result;
 	unsigned int stride;
@@ -221,7 +222,8 @@ bool TestShader::setShaderParamaters(ID3D11DeviceContext* _deviceContext, ID3D11
 	blendFactor[2] = 0.0f;
 	blendFactor[3] = 0.0f;
 	_deviceContext->OMSetBlendState(blendState, blendFactor, 0xffffffff);
-	return true;
+
+	return ErrorCode::WGFX_SET_SHADER_PARAMETERS_OK;
 }
 
 

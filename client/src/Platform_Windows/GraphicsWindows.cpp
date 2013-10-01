@@ -64,7 +64,7 @@ bool GraphicsWindows::loadResources(const boost::filesystem::path& _resourceDir)
 
 bool GraphicsWindows::init()
 {
-	bool result = false;
+	ErrorCode result;
 
 	HMODULE hInstance = GetModuleHandle(nullptr);
 	
@@ -101,7 +101,7 @@ bool GraphicsWindows::init()
 	if(d3d != NULL)
 		result = d3d->initialize(hWnd);
 
-	if(!result)
+	if(result != ErrorCode::WGFX_OK)
 	{
 		MessageBox(hWnd, "Failed to initialize Direct3D", "Error", MB_OK);
 		return false;
@@ -111,7 +111,8 @@ bool GraphicsWindows::init()
 	testShader = new TestShader();
 	result = testShader->initialize(d3d->device, hWnd);
 
-	return result;
+
+	return true;
 }
 
 
@@ -120,6 +121,8 @@ void GraphicsWindows::addRectangle(glm::vec3 _center, glm::vec2 _size, float _ro
 	if (textures.count(_id) == 0)
 	{
 		_id = "textureNotFound";
+		ErrorCode result;
+		if(result != ErrorCode::WGFX_OK)
 	}
 	
 	SpriteVertex sv = { (float)_center.x, (float)_center.y, (float)_center.z,	//center
@@ -151,7 +154,7 @@ void GraphicsWindows::addRectangle(glm::vec3 _center, glm::vec2 _size, float _ro
 	return;
 }
 
-bool GraphicsWindows::createBuffers(ID3D11Buffer*& _vBuffer, ID3D11Buffer*& _iBuffer, ID3D11Device* _device, int _index)
+ErrorCode GraphicsWindows::createBuffers(ID3D11Buffer*& _vBuffer, ID3D11Buffer*& _iBuffer, ID3D11Device* _device, int _index)
 {
 	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
@@ -185,7 +188,7 @@ bool GraphicsWindows::createBuffers(ID3D11Buffer*& _vBuffer, ID3D11Buffer*& _iBu
 	// create the vertex buffer.
 	result = _device->CreateBuffer(&vertexBufferDesc, &vertexData, &_vBuffer);
 	if(FAILED(result))
-		return false;
+		return ErrorCode::WGFX_BUFFER_INIT_FAIL;
 
 	// Set up the description of the static index buffer.
 	indexBufferDesc.Usage				= D3D11_USAGE_DEFAULT;
@@ -203,12 +206,12 @@ bool GraphicsWindows::createBuffers(ID3D11Buffer*& _vBuffer, ID3D11Buffer*& _iBu
 	// Create the index buffer.
 	result = _device->CreateBuffer(&indexBufferDesc, &indexData, &_iBuffer);
 	if(FAILED(result))
-		return false;
+		return ErrorCode::WGFX_BUFFER_INIT_FAIL;
 
 	delete [] indices;
 	indices = 0;
 
-	return true;
+	return ErrorCode::WGFX_BUFFER_INIT_OK;
 }
 
 void GraphicsWindows::drawFrame()
@@ -221,9 +224,9 @@ void GraphicsWindows::drawFrame()
 	{
 		indexCount = s.vertices.size();
 		SRV tex = s.bufferTexture;
-		bool result = createBuffers(vBuf, iBuf, d3d->device, index);
+		ErrorCode result = createBuffers(vBuf, iBuf, d3d->device, index);
 
-		if(result)
+		if(result == ErrorCode::WGFX_OK)
 			testShader->draw(d3d->deviceContext, vBuf, iBuf, tex, indexCount);
 
 		index++;

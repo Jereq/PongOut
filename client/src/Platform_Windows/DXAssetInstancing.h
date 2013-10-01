@@ -3,7 +3,7 @@
 
 #include "D3DX11.h"
 #include "D3DX10.h"
-
+#include "ErrorCodeList.h"
 
 struct SpriteVertex
 {
@@ -56,17 +56,17 @@ namespace DXCREATE
 		return result;
 	}
 
-	static bool createTexture(std::string _file, ID3D11ShaderResourceView*& _srView, ID3D11Device* _device)
+	static ErrorCode createTexture(std::string _file, ID3D11ShaderResourceView*& _srView, ID3D11Device* _device)
 	{
 		HRESULT result;
 		result = D3DX11CreateShaderResourceViewFromFile(_device, _file.c_str(), 0, 0, &_srView, 0);
 		if( FAILED(result) )
-			return false;
+			return ErrorCode::WGFX_TEXTURE_INIT_FAIL;
 
-		return true;
+		return ErrorCode::WGFX_TEXTURE_INIT_OK;
 	}
 
-	static bool createConstantBuffer(ID3D11Buffer*& _cBuffer, ID3D11Device* _device)
+	static HRESULT createConstantBuffer(ID3D11Buffer*& _cBuffer, ID3D11Device* _device)
 	{
 		HRESULT result;
 		//ID3D10Blob* errorMessage;
@@ -80,10 +80,7 @@ namespace DXCREATE
 		cBufferDesc.StructureByteStride	= 0;
 
 		result = _device->CreateBuffer(&cBufferDesc, NULL, &_cBuffer);
-		if( FAILED(result) )
-			return false;
-
-		return true;
+		return result;
 	}
 
 };

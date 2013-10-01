@@ -1,6 +1,9 @@
 #pragma once
 
 #include "ICoreSystem.h"
+#include "ScreenManager.h"
+#include "MenuState.h"
+
 #include "Map.h"
 //#include "MapResources.h"
 
@@ -10,9 +13,9 @@
 class Game
 {
 private:
-	ICoreSystem::ptr system;
-	Map* map;
-
+	ICoreSystem::ptr	system;
+	Map*				map;
+	ScreenManager		screenManager;
 public:
 	/** constructor.
 	 *

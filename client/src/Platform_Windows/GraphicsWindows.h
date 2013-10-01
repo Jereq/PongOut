@@ -4,6 +4,7 @@
 #include "../IGraphics.h"
 #include "D3D.h"
 #include "TestShader.h"
+#include "ErrorCodeList.h"
 #include <map>
 
 
@@ -53,7 +54,7 @@ private:
 	ID3D11Buffer* vBuf;
 	ID3D11Buffer* iBuf;
 
-	bool createBuffers(ID3D11Buffer*& _vBuffer, ID3D11Buffer*& _iBuffer, ID3D11Device* _device, int _index);
+	ErrorCode createBuffers(ID3D11Buffer*& _vBuffer, ID3D11Buffer*& _iBuffer, ID3D11Device* _device, int _index);
 
 };
 

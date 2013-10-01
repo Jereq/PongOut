@@ -20,10 +20,9 @@ add_library(Graphics
 	D3D.cpp 
 	TestShader.cpp 
 	CoreSystemWindows.cpp 
-	Asset.h 
-	AssetContainer.h 
-	DXAssets.h
+	ErrorCodeList.h
 	DXAssetInstancing.h
+
 )
 
 target_link_libraries(Graphics
