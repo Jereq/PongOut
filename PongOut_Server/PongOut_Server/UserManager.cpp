@@ -7,7 +7,6 @@
 #include <ResponseFriendlist.h>
 #include <RequestFriendlist.h>
 #include <stdexcept>
-
 #include "UserManager.h"
 
 boost::shared_ptr<UserManager> UserManager::ptr;
@@ -46,7 +45,7 @@ void UserManager::handleIncomingClient( boost::shared_ptr<tcp::socket> _soc, con
 	User::ptr u = User::ptr(new User(_soc, uid));
 	users.insert(u);
 	u->listen();
-	Log::addLog(Log::LogType::INFO, "New user connected");
+	Log::addLog(Log::LogType::LOG_INFO, "New user connected");
 	listenForNewClientConnections();
 }
 
@@ -58,10 +57,9 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 	{
 		p = PacketHandler::getInstance().interpretMessage(_header.type, _meassage);
 	}
-	catch(const std::out_of_range& _e)
+	catch(const std::out_of_range&)
 	{
-		std::cerr << "Received unregistered packet: " << (int)_header.type << std::endl;
-		std::cerr << _e.what() << std::endl;
+		Log::addLog(Log::LogType::LOG_ERROR, "Received unregistered packet: " + (int)_header.type);
 		return;
 	}
 
@@ -95,7 +93,7 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 			Login::ptr lp = boost::static_pointer_cast<Login>(p);
 			_user->setUserNamePass(lp->getUsername(), lp->getPassword());
 
-			Log::addLog(Log::LogType::INFO, "Username: " + lp->getUsername() + " Logged in");
+			Log::addLog(Log::LogType::LOG_INFO, "Username: " + lp->getUsername() + " Logged in");
 
 			break;
 		}
@@ -116,7 +114,7 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 		}
 
 	default:
-		std::cerr << "Received unknown packet: " << (int)p->getHeader().type << std::endl;
+		Log::addLog(Log::LogType::LOG_ERROR, "Received unknown packet: " + (int)p->getHeader().type);
 		break;
 	}
 }
@@ -129,7 +127,7 @@ void UserManager::startIO()
 void UserManager::startIOPrivate()
 {
 	ioService->run();
-	Log::addLog(Log::LogType::INFO, "IO services stopped");
+	Log::addLog(Log::LogType::LOG_INFO, "IO services stopped");
 }
 
 void UserManager::destroy()

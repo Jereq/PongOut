@@ -21,6 +21,8 @@
 *.ipch
 *.sdf
 *.suo
+[Tt]est[Rr]esults*/
+*.user
 
 /.cproject
 /.project

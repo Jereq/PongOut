@@ -9,7 +9,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ComLib", "ComLib\ComLib.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClientLib", "ClientLib\ClientLib.vcxproj", "{17D5F5CC-259D-4ECE-9702-954799896DE2}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClientEventLib", "ClientEventLib\ClientEventLib.vcxproj", "{CBCACD0A-D942-4BC3-9805-428AECA9D0D3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest1", "UnitTest1\UnitTest1.vcxproj", "{58678128-AA31-4979-A3F7-2B5AB547900C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +33,10 @@ Global
 		{17D5F5CC-259D-4ECE-9702-954799896DE2}.Debug|Win32.Build.0 = Debug|Win32
 		{17D5F5CC-259D-4ECE-9702-954799896DE2}.Release|Win32.ActiveCfg = Release|Win32
 		{17D5F5CC-259D-4ECE-9702-954799896DE2}.Release|Win32.Build.0 = Release|Win32
-		{CBCACD0A-D942-4BC3-9805-428AECA9D0D3}.Debug|Win32.ActiveCfg = Debug|Win32
-		{CBCACD0A-D942-4BC3-9805-428AECA9D0D3}.Debug|Win32.Build.0 = Debug|Win32
-		{CBCACD0A-D942-4BC3-9805-428AECA9D0D3}.Release|Win32.ActiveCfg = Release|Win32
-		{CBCACD0A-D942-4BC3-9805-428AECA9D0D3}.Release|Win32.Build.0 = Release|Win32
+		{58678128-AA31-4979-A3F7-2B5AB547900C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{58678128-AA31-4979-A3F7-2B5AB547900C}.Debug|Win32.Build.0 = Debug|Win32
+		{58678128-AA31-4979-A3F7-2B5AB547900C}.Release|Win32.ActiveCfg = Release|Win32
+		{58678128-AA31-4979-A3F7-2B5AB547900C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

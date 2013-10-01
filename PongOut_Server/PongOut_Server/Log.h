@@ -5,6 +5,7 @@
 #include <thread>
 #include <boost/enable_shared_from_this.hpp>
 #include <map>
+#include <mutex>
 
 class Log : public boost::enable_shared_from_this<Log>
 {
@@ -12,9 +13,9 @@ public:
 
 	enum class LogType : std::uint8_t
 	{
-		INFO,
-		ERROR,
-		DEBUG,
+		LOG_INFO,
+		LOG_ERROR,
+		LOG_DEBUG,
 	};
 
 	static boost::shared_ptr<Log> getInstance();

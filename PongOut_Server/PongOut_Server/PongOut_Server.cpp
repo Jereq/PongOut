@@ -12,7 +12,7 @@ bool quit = false;
 std::mutex closeMutex;
 std::condition_variable close;
 
-BOOL WINAPI ConsoleHandler(DWORD CEvent)
+BOOL WINAPI ConsoleHandler(DWORD CEvent)//BAD WINDOWS!! MISSBEHAVING WINDOWS!!
 {
 	switch (CEvent)
 	{
@@ -38,7 +38,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	SetConsoleCtrlHandler((PHANDLER_ROUTINE)ConsoleHandler,TRUE);
 
-	Log::addLog(Log::LogType::INFO, "PongOut server started!");
+	Log::addLog(Log::LogType::LOG_INFO, "PongOut server started!");
 
 	UserManager::getInstance()->listenForNewClientConnections();
 	UserManager::getInstance()->startIO();

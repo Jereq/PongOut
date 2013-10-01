@@ -20,9 +20,9 @@ boost::shared_ptr<Log> Log::getInstance()
 
 Log::Log(void)
 {
-	enumMap.insert(std::pair<LogType, std::string>(LogType::INFO, "INFO"));
-	enumMap.insert(std::pair<LogType, std::string>(LogType::ERROR, "ERROR"));
-	enumMap.insert(std::pair<LogType, std::string>(LogType::DEBUG, "DEBUG"));
+	enumMap.insert(std::pair<LogType, std::string>(LogType::LOG_INFO, "INFO"));
+	enumMap.insert(std::pair<LogType, std::string>(LogType::LOG_ERROR, "ERROR"));
+	enumMap.insert(std::pair<LogType, std::string>(LogType::LOG_DEBUG, "DEBUG"));
 }
 
 

@@ -25,12 +25,17 @@ void User::handleWrite( const boost::system::error_code& _err, size_t _byte )
 	std::lock_guard<std::mutex> lock(msgBufferLock);
 	msgWriteBufferQueue.pop();
 
+	if (!_err)
+	{
+		Log::addLog(Log::LogType::LOG_ERROR, _err.message());
+	} 
+
+	//TODO: handle whats happens case off error
+
 	if (!msgWriteBufferQueue.empty())
 	{
 		sendMsg();
 	}
-
-	std::cerr << _err.message() << std::endl;
 }
 
 void User::sendMsg()
