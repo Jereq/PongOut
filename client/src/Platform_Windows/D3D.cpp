@@ -246,7 +246,7 @@ bool D3D::setDepthStencil()
 	D3D11_DEPTH_STENCIL_DESC noDepthDesc;
 	ZeroMemory(&noDepthDesc, sizeof(noDepthDesc));
 
-	noDepthDesc.DepthEnable						= false;
+	noDepthDesc.DepthEnable						= true;
 	noDepthDesc.DepthWriteMask					= D3D11_DEPTH_WRITE_MASK_ALL;
 	noDepthDesc.DepthFunc						= D3D11_COMPARISON_LESS;
 	noDepthDesc.StencilEnable					= true;

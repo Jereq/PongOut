@@ -20,32 +20,28 @@ void GS( point VSIN sprite[1], inout TriangleStream<PSIN> triStream )
     //bottom left
     v.p = float4(sprite[0].center.x - sprite[0].dimensions.x * 0.5f,
 		 sprite[0].center.y - sprite[0].dimensions.y * 0.5f,
-		 sprite[0].center.z * 0.5f,
-		 1);
+		 0,1);
     v.t = float2(0,1);
     triStream.Append(v);
  
     //top left
     v.p = float4(sprite[0].center.x - sprite[0].dimensions.x * 0.5f,
 		 sprite[0].center.y + sprite[0].dimensions.y * 0.5f,
-		 sprite[0].center.z * 0.5f,
-		 1);
+		 1,1);
     v.t = float2(0,0);
     triStream.Append(v);
  
     //bottom right
     v.p = float4(sprite[0].center.x + sprite[0].dimensions.x * 0.5f,
 		 sprite[0].center.y - sprite[0].dimensions.y * 0.5f,
-		 sprite[0].center.z * 0.5f,
-		 1);
+		 1,1);
     v.t = float2(1,1);
     triStream.Append(v);
  
     //top right
     v.p = float4(sprite[0].center.x + sprite[0].dimensions.x * 0.5f,
 		 sprite[0].center.y + sprite[0].dimensions.y * 0.5f,
-		 sprite[0].center.z * 0.5f,
-		 1);
+		 1,1);
     v.t = float2(1,0);
     triStream.Append(v);
 }

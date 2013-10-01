@@ -1,13 +1,18 @@
+//GLOBALS
+Texture2D shaderTexture;
+SamplerState SampleType;
+
 //DESCS
 struct PSIN
 {
 	float4 p	: SV_POSITION;
+	float2 t	: TEXCOORD0;
 };
 
 //SHADER
 float4 PShader(PSIN input) : SV_TARGET
 {
-	float4 color = float4(1,0,0,1);
+	float4 color = shaderTexture.Sample(SampleType, input.t); //
 
 	return color;
 }

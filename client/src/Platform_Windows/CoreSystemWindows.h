@@ -12,7 +12,8 @@ public:
 
 	static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 protected:
-
+	virtual bool	isNewKeyPress(unsigned short _key);
+	virtual bool	isKeyPress(unsigned short _key);
 
 private:
 	virtual boost::filesystem::path getRootDir() const;
@@ -22,7 +23,14 @@ private:
 
 	virtual IGraphics::ptr getGraphics() override;
 
-	IGraphics::ptr	graphics;
+	GraphicsWindows::ptr	graphics;
+
+	void registerRAW();
+	//timer
+	INT64	frequency;	
+	float	ticksPerMs;
+	INT64	startTime;
+	float	frameTime;	
 };
 
 #endif
