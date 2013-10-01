@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "ICoreSystem.h"
+#include "ResourceLoader/ResourceLoader.h"
 
 struct cout_redirect {
     cout_redirect( std::streambuf * new_buffer ) 
@@ -18,7 +19,7 @@ private:
     std::streambuf * old;
 };
 
-BOOST_AUTO_TEST_CASE(CoreSystem)
+BOOST_AUTO_TEST_CASE(TestCoreSystem)
 {
 	int argc = 1;
 	char *argv[2];
@@ -62,3 +63,31 @@ BOOST_AUTO_TEST_CASE(CoreSystem)
 
 	ICoreSystem::destroy();
 }
+
+BOOST_AUTO_TEST_CASE(TestResourceLoader)
+{
+	int argc2 = boost::unit_test::framework::master_test_suite().argc;
+	char** argv2 = boost::unit_test::framework::master_test_suite().argv;
+
+	BOOST_REQUIRE(ICoreSystem::init(argc2, argv2));						// Init should work with valid path
+
+	ICoreSystem::ptr coreSystem = ICoreSystem::getInstance();
+	BOOST_REQUIRE(coreSystem.lock());
+
+	std::vector<ResourceLoader::Resource> res;
+
+	BOOST_CHECK_EQUAL((int)ResourceLoader::getResources(res, boost::filesystem::path()), (int)ResourceLoader::ErrorCode::DIRECTORY_NOT_FOUND);
+
+	boost::filesystem::path texturePath = coreSystem.lock()->getRootDir() / "resources" / "textures";
+	if (boost::filesystem::exists(texturePath))
+	{
+		BOOST_CHECK_EQUAL((int)ResourceLoader::getResources(res, texturePath), (int)ResourceLoader::ErrorCode::RESOURCE_FILE_NOT_FOUND);
+	}
+	else
+	{
+		BOOST_ERROR("\"resources/textures\" does not exist.");
+	}
+
+	BOOST_CHECK_EQUAL((int)ResourceLoader::getResources(res, coreSystem.lock()->getRootDir() / "resources"), (int)ResourceLoader::ErrorCode::SUCCESS);
+}
+

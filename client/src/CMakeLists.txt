@@ -43,14 +43,6 @@ include_directories(
 	${GLM_INCLUDE_DIRS}
 )
 
-# Use platform dependent folder for platform dependent code.
-set(PLATFORM_PATH "Platform_${CMAKE_SYSTEM_NAME}")
-
-add_subdirectory(${PLATFORM_PATH})
-add_subdirectory(Sound)
-
-set(EXTRA_LIBS ${EXTRA_LIBS} Graphics Sound)
-
 # Network code is easier if restricted to only Little Endian
 include(TestBigEndian)
 TEST_BIG_ENDIAN(isBigEndian)
@@ -68,6 +60,18 @@ configure_file(
 include_directories("${PROJECT_BINARY_DIR}")
 
 include_directories("${PROJECT_SOURCE_DIR}")
+
+# Use platform dependent folder for platform dependent code.
+set(PLATFORM_PATH "Platform_${CMAKE_SYSTEM_NAME}")
+
+add_subdirectory(${PLATFORM_PATH})
+add_subdirectory(Sound)
+add_subdirectory(ResourceLoader)
+
+set(EXTRA_LIBS ${EXTRA_LIBS}
+	Graphics
+	Sound
+)
 
 set(EXTRA_LIBS ${EXTRA_LIBS}
 	${Boost_LIBRARIES}

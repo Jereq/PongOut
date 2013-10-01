@@ -10,7 +10,10 @@ namespace fs = boost::filesystem;
 
 #include <IL/il.h>
 
+#include <ResourceLoader/ResourceLoader.h>
+
 #include <cstdio>
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
 
@@ -229,48 +232,24 @@ void GraphicsLinux::destroy()
 
 bool GraphicsLinux::loadResources(const boost::filesystem::path& _resourceDir)
 {
-	if (!fs::exists(_resourceDir) || !fs::is_directory(_resourceDir))
+	std::vector<ResourceLoader::Resource> textureResources;
+	ResourceLoader::ErrorCode err = ResourceLoader::getResources(textureResources, _resourceDir, "texture");
+	if (err == ResourceLoader::ErrorCode::INVALID_FORMAT)
 	{
+		std::cout << "Warning: " << _resourceDir / "resources.txt" << " contains invalid formatting." << std::endl;
+	}
+	else if (err != ResourceLoader::ErrorCode::SUCCESS)
+	{
+		std::cout << "Error: Could not load resources from" << _resourceDir << std::endl;
 		return false;
 	}
 
-	fs::path resourceFile = _resourceDir / "resources.txt";
-	if (!fs::exists(resourceFile) || !fs::is_regular_file(resourceFile))
+	for (auto tex : textureResources)
 	{
-		return false;
-	}
-
-	int rowNr = 0;
-	fs::fstream f(resourceFile);
-	while (!f.eof())
-	{
-		rowNr++;
-
-		std::string line;
-		std::getline(f, line);
-
-		std::istringstream ss(line);
-		std::string type;
-		std::getline(ss, type, ':');
-
-		if (ss.eof() || type != "texture")
-		{
-			continue;
-		}
-
-		std::string resourceName;
-		std::string resourcePath;
-		ss >> resourceName >> resourcePath;
-
-		if (resourceName.empty() || resourcePath.empty())
-		{
-			continue;
-		}
-
-		LoadedImage image = loadImage(_resourceDir / resourcePath);
+		LoadedImage image = loadImage(tex.path);
 		if (image.textureID)
 		{
-			loadedTextures.insert(std::pair<std::string, LoadedImage>(resourceName, image));
+			loadedTextures.insert(std::pair<std::string, LoadedImage>(tex.name, image));
 		}
 	}
 

@@ -31,6 +31,31 @@ void GraphicsWindows::destroy()
 
 bool GraphicsWindows::loadResources(const boost::filesystem::path& _resourceDir)
 {
+	std::vector<ResourceLoader::Resource> textureResources;
+	ResourceLoader::ErrorCode err = ResourceLoader::getResources(textureResources, _resourceDir, "texture");
+	if (err == ResourceLoader::ErrorCode::INVALID_FORMAT)
+	{
+		std::cout << "Warning: " << _resourceDir / "resources.txt" << " contains invalid formatting." << std::endl;
+	}
+	else if (err != ResourceLoader::ErrorCode::SUCCESS)
+	{
+		std::cout << "Error: Could not load resources from" << _resourceDir << std::endl;
+		return false;
+	}
+
+	for (auto texRes : textureResources)
+	{
+		SRV tex = NULL;
+		bool result;
+		result = DXCREATE::createTexture(texRes.path.string(), tex, d3d->device);
+
+		if (!result)
+		{
+			return false;
+		}
+
+		textures.insert(std::make_pair(texRes.name, tex));
+	}
 
 	return true;
 }
@@ -84,41 +109,16 @@ bool GraphicsWindows::init()
 	testShader = new TestShader();
 	result = testShader->initialize(d3d->device, hWnd);
 
-	SRV tex = NULL;
-	result = DXCREATE::createTexture("../resources/textures/box_dark_magenta_01.png", tex, d3d->device);
-	textures.insert( std::pair<std::string, SRV>("blocks/dark_magenta_01", tex));
-	result = DXCREATE::createTexture("../resources/textures/box_pink_01.png", tex, d3d->device);
-	textures.insert( std::pair<std::string, SRV>("blocks/pink_01", tex));
-	result = DXCREATE::createTexture("../resources/textures/box_orange_01.png", tex, d3d->device);
-	textures.insert( std::pair<std::string, SRV>("blocks/orange_01", tex));
-	result = DXCREATE::createTexture("../resources/textures/ball_prototype.png", tex, d3d->device);
-	textures.insert( std::pair<std::string, SRV>("player/ball_prototype", tex));
 	return result;
 }
 
 
-void GraphicsWindows::addRectangle(glm::vec3 _center, glm::vec2 _size, float _rotation, std::string id)
+void GraphicsWindows::addRectangle(glm::vec3 _center, glm::vec2 _size, float _rotation, std::string _id)
 {
-	std::map<std::string, SRV>::iterator it = textures.find(id);
-	if(it == textures.end())	// dynamic loading
+	if (textures.count(_id) == 0)
 	{
-		int clean = id.find_first_of('/');
-		std::string cleanType = id.substr(0, clean+1);
-		std::string path;
-		clean = id.find_last_of('/');
-		std::string cleanId = id.substr(clean+1, id.size());
-		path = "../resources/textures/" + cleanId + ".png";
-		SRV tex = NULL;
-		bool result;
-		result = DXCREATE::createTexture(path, tex, d3d->device);
-
-		if(!result)
-			return;
-
-		textures.insert( std::pair<std::string, SRV>(cleanType + cleanId,tex));
-		it = textures.find(id);
+		_id = "textureNotFound";
 	}
-	
 	
 	SpriteVertex sv = { (float)_center.x, (float)_center.y, (float)_center.z,	//center
 						(float)_size.x, (float)_size.y };						//dimensions
@@ -126,7 +126,7 @@ void GraphicsWindows::addRectangle(glm::vec3 _center, glm::vec2 _size, float _ro
 	int index = -1;
 	for(size_t i=0; i<frameSprites.size();i++)
 	{
-		if(id == frameSprites[i].id)
+		if(_id == frameSprites[i].id)
 		{
 			index = i;
 			break;
@@ -135,8 +135,8 @@ void GraphicsWindows::addRectangle(glm::vec3 _center, glm::vec2 _size, float _ro
 	if(index < 0)	// we need to make a new entry in framesprites
 	{
 		sprite s;
-		s.id = id;
-		s.bufferTexture = it->second;
+		s.id = _id;
+		s.bufferTexture = textures.at(_id).second;
 		s.vertices.push_back(sv);
 		frameSprites.push_back(s);
 	
