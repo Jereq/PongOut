@@ -27,7 +27,7 @@ void User::handleWrite( const boost::system::error_code& _err, size_t _byte )
 
 	if (!_err)
 	{
-		Log::addLog(Log::LogType::LOG_ERROR, _err.message());
+		Log::addLog(Log::LogType::LOG_ERROR, 4, _err.message());
 	} 
 
 	//TODO: handle whats happens case off error

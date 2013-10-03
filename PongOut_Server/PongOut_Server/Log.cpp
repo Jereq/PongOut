@@ -3,7 +3,10 @@
 
 #include <boost/bind.hpp>
 #include <chrono>
-#include <boost/date_time/posix_time/posix_time.hpp>
+
+using namespace boost::gregorian;
+using namespace boost::posix_time;
+using namespace std;
 
 boost::shared_ptr<Log> Log::ptr;
 
@@ -13,16 +16,17 @@ boost::shared_ptr<Log> Log::getInstance()
 	{
 		ptr = boost::shared_ptr<Log>(new Log());
 		ptr->runThread = true;
-		ptr->logThread = std::thread(boost::bind(&Log::printFromQueue, ptr));
+		ptr->logThread = thread(boost::bind(&Log::printFromQueue, ptr));
 	}
 	return ptr;
 }
 
 Log::Log(void)
 {
-	enumMap.insert(std::pair<LogType, std::string>(LogType::LOG_INFO, "INFO"));
-	enumMap.insert(std::pair<LogType, std::string>(LogType::LOG_ERROR, "ERROR"));
-	enumMap.insert(std::pair<LogType, std::string>(LogType::LOG_DEBUG, "DEBUG"));
+	enumMap.insert(pair<LogType, string>(LogType::LOG_INFO, "INFO"));
+	enumMap.insert(pair<LogType, string>(LogType::LOG_ERROR, "ERROR"));
+	enumMap.insert(pair<LogType, string>(LogType::LOG_DEBUG, "DEBUG"));
+	currentLogFile = boost::shared_ptr<Log::logFile>();
 }
 
 
@@ -31,11 +35,23 @@ Log::~Log(void)
 	int i = 42;
 }
 
-void Log::addLog( LogType _type, std::string _msg )
+void Log::addLog( LogType _type, int _prio, std::string _msg )
 {
 	boost::shared_ptr<Log> p = getInstance();
-	std::lock_guard<std::mutex> lock(p->queueLock);
-	p->msgQueue.push(msg(_type, _msg));
+	lock_guard<std::mutex> lock(p->queueLock);
+
+	message m;
+	m.type = _type;
+	m.prio = _prio;
+	m.msg = _msg;
+
+	p->msgQueue.push(m);
+}
+
+void Log::setPrioLevel( int _prio )
+{
+	boost::shared_ptr<Log> p = getInstance();
+	p->prio = _prio;
 }
 
 void Log::printFromQueue()
@@ -44,20 +60,59 @@ void Log::printFromQueue()
 	{
 		if (msgQueue.size() > 0)
 		{
-			boost::posix_time::ptime ct = boost::posix_time::second_clock::local_time();
+			ptime ct = second_clock::local_time();
 
 			for (unsigned int i = 0; i < msgQueue.size(); i++)
 			{
-				std::cout << ct.time_of_day() << " ## " <<  enumMap.at(msgQueue.front().first) << " : " << msgQueue.front().second << std::endl;
-				std::lock_guard<std::mutex> lock(queueLock);
+				if (prio > msgQueue.front().prio)
+				{
+					int h = (int)ct.time_of_day().hours();
+					int m = (int)ct.time_of_day().minutes();
+					int s = (int)ct.time_of_day().seconds();
+
+					string strToPrint = to_string(h) + ":" + to_string(m) + ":" + to_string(s) + " ## " +  enumMap.at(msgQueue.front().type) + " : " + msgQueue.front().msg;
+					cout << strToPrint << endl;
+					writeToLogFile(strToPrint);
+				}				
+				lock_guard<std::mutex> lock(queueLock);
 				msgQueue.pop();
 			}
 		}
 
-		std::chrono::milliseconds pause(1000);
-		std::this_thread::sleep_for(pause);
+		chrono::milliseconds pause(1000);
+		this_thread::sleep_for(pause);
 	}
-	int dummy = 42;
+}
+
+void Log::writeToLogFile( std::string _msg )
+{
+	date currDate(day_clock::local_day_ymd());
+
+	if (currentLogFile == boost::shared_ptr<Log::logFile>() || currentLogFile->dateCreated != currDate)
+	{		
+		currentLogFile = createLogFile();
+	}
+
+	_msg.append("\n");
+	const char* buffer = _msg.c_str();
+
+	currentLogFile->file = _fsopen(currentLogFile->name.c_str(), "a", _SH_DENYRW);
+	fprintf(currentLogFile->file, buffer);
+	fclose(currentLogFile->file);
+}
+
+boost::shared_ptr<Log::logFile> Log::createLogFile()
+{
+	boost::shared_ptr<Log::logFile> res = boost::shared_ptr<Log::logFile>(new Log::logFile());
+
+	date currDate(day_clock::local_day_ymd());
+	string name = to_iso_extended_string(currDate) + "_pongOutServer.log";
+
+	res->file = nullptr;
+	res->dateCreated = currDate;
+	res->name = name;
+
+	return res;
 }
 
 void Log::destroy()
@@ -66,3 +121,5 @@ void Log::destroy()
 	ptr->logThread.join();
 	ptr.reset();
 }
+
+

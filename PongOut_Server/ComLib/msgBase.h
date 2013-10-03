@@ -5,6 +5,7 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/shared_ptr.hpp>
 #include <iterator>
+#include <map>
 
 class msgBase
 {	
@@ -48,7 +49,9 @@ public:
 	header getHeader();
 	virtual ptr interpretPacket(const std::deque<char>& _buffer) = 0;
 	virtual std::vector<char> getData() = 0;
-	
+
+	std::string getType();
+
 protected:
 	header msgHeader;
 	
@@ -130,6 +133,12 @@ template<typename T, typename inIter>
 #pragma region unpack
 
 private:
+
+	std::map<MsgType, std::string> typeMap;
+
+
+
+
 template<typename T, typename outIter>
 	class implUnpack
 	{

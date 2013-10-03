@@ -45,7 +45,7 @@ void UserManager::handleIncomingClient( boost::shared_ptr<tcp::socket> _soc, con
 	User::ptr u = User::ptr(new User(_soc, uid));
 	users.insert(u);
 	u->listen();
-	Log::addLog(Log::LogType::LOG_INFO, "New user connected");
+	Log::addLog(Log::LogType::LOG_INFO, 4, "New user connected");
 	listenForNewClientConnections();
 }
 
@@ -59,7 +59,7 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 	}
 	catch(const std::out_of_range&)
 	{
-		Log::addLog(Log::LogType::LOG_ERROR, "Received unregistered packet: " + (int)_header.type);
+		Log::addLog(Log::LogType::LOG_ERROR, 0, "Received unregistered packet: " + (int)_header.type);
 		return;
 	}
 
@@ -93,7 +93,7 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 			Login::ptr lp = boost::static_pointer_cast<Login>(p);
 			_user->setUserNamePass(lp->getUsername(), lp->getPassword());
 
-			Log::addLog(Log::LogType::LOG_INFO, "Username: " + lp->getUsername() + " Logged in");
+			Log::addLog(Log::LogType::LOG_INFO, 4, "Username: " + lp->getUsername() + " Logged in");
 
 			break;
 		}
@@ -114,7 +114,7 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 		}
 
 	default:
-		Log::addLog(Log::LogType::LOG_ERROR, "Received unknown packet: " + (int)p->getHeader().type);
+		Log::addLog(Log::LogType::LOG_ERROR, 0,"Received packet that are not yet implemented: " + p->getType());
 		break;
 	}
 }
@@ -127,7 +127,7 @@ void UserManager::startIO()
 void UserManager::startIOPrivate()
 {
 	ioService->run();
-	Log::addLog(Log::LogType::LOG_INFO, "IO services stopped");
+	Log::addLog(Log::LogType::LOG_INFO, 3,"IO services stopped");
 }
 
 void UserManager::destroy()

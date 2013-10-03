@@ -38,7 +38,9 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	SetConsoleCtrlHandler((PHANDLER_ROUTINE)ConsoleHandler,TRUE);
 
-	Log::addLog(Log::LogType::LOG_INFO, "PongOut server started!");
+	Log::setPrioLevel(5); // the higher to number the more log messages are logged max = 5, min = 0;
+
+	Log::addLog(Log::LogType::LOG_INFO, 0, "PongOut server started!");//high priority log message
 
 	UserManager::getInstance()->listenForNewClientConnections();
 	UserManager::getInstance()->startIO();
