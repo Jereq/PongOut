@@ -118,6 +118,8 @@ void Game::run()
 	SoundManager* sounds = systemPtr->getSounds();
 	sounds->initialize();
 
+	IInput::ptr input = systemPtr->getInput();
+
 	double previousTime = systemPtr->getTime();
 	double currentTime = previousTime;
 	double deltaTime = 0.f;
@@ -154,6 +156,23 @@ void Game::run()
 		previousTime = currentTime;
 		currentTime = systemPtr->getTime();
 		deltaTime = currentTime - previousTime;
+
+		std::vector<IInput::Event> events = input->getEvents(true);
+		for (auto event : events)
+		{
+			switch (event.type)
+			{
+			case IInput::Event::Type::KEY:
+				std::cout << "Key event (" << (int)event.keyEvent.key << ")" << std::endl;
+				break;
+
+			case IInput::Event::Type::MOUSE_BUTTON:
+				break;
+
+			case IInput::Event::Type::MOUSE_MOVE:
+				break;
+			}
+		}
 
 		float dt = (float)(deltaTime * 1000.f);
 		float bspeed = 0.075f;

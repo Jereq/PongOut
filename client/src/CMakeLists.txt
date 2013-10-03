@@ -67,10 +67,12 @@ set(PLATFORM_PATH "Platform_${CMAKE_SYSTEM_NAME}")
 add_subdirectory(${PLATFORM_PATH})
 add_subdirectory(Sound)
 add_subdirectory(ResourceLoader)
+add_subdirectory(Input)
 
 set(EXTRA_LIBS ${EXTRA_LIBS}
 	Graphics
 	Sound
+	Input
 )
 
 set(EXTRA_LIBS ${EXTRA_LIBS}

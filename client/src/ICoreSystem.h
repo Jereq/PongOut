@@ -6,6 +6,7 @@
 
 #include "Sound/SoundManager.h"
 #include "IGraphics.h"
+#include "Input/IInput.h"
 #include <boost/filesystem.hpp>
 
 /**
@@ -27,7 +28,7 @@ protected:
 	ICoreSystem(const boost::filesystem::path& _rootDir);
 
 public:
-	typedef std::weak_ptr<ICoreSystem>  ptr;
+	typedef std::weak_ptr<ICoreSystem> ptr;
 
 	/**
 	 *  Initialize an instance of the platforms implementation.
@@ -86,9 +87,16 @@ public:
 	 *  <br>
 	 *  The interface may or may not be initialized.
 	 *
-	 *  @return a pointer to a graphics object. Will not return nullptr.
+	 *  @return a pointer to a graphics object. Will not return a null pointer.
 	 */
 	virtual IGraphics::ptr getGraphics() =0;
+
+	/**
+	 *  Get an interface that can be used to query for input.
+	 *
+	 *  @return a pointer to a input object. Will not return a null pointer.
+	 */
+	virtual IInput::ptr getInput() =0;
 
 	virtual SoundManager* getSounds();
 

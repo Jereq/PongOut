@@ -5,7 +5,6 @@ namespace fs = boost::filesystem;
 static bool	shutDown = false;
 unsigned short	key, oldKey;
 
-
 bool ICoreSystem::init(int _argc, char** _argv)
 {
 	fs::path fullPath(fs::initial_path<fs::path>());
@@ -130,6 +129,16 @@ IGraphics::ptr CoreSystemWindows::getGraphics()
 		graphics.reset(new GraphicsWindows(&WndProc));
 
 	return graphics;
+}
+
+IInput::ptr CoreSystemWindows::getInput()
+{
+	if (!input)
+	{
+		input.reset(new InputWindows());
+	}
+
+	return input;
 }
 
 LRESULT CALLBACK CoreSystemWindows::WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)

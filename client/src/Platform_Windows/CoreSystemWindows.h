@@ -1,8 +1,9 @@
 #ifndef __CORESYSTEMWINDOWS_H
 #define __CORESYSTEMWINDOWS_H
 
-#include "../icoresystem.h"
+#include "../ICoreSystem.h"
 #include "GraphicsWindows.h"
+#include "Input/InputWindows.h"
 
 class CoreSystemWindows : public ICoreSystem
 {
@@ -22,8 +23,10 @@ private:
 
 	virtual SoundManager* getSounds();
 	virtual IGraphics::ptr getGraphics() override;
+	virtual IInput::ptr getInput() override;
 
 	GraphicsWindows::ptr	graphics;
+	InputWindows::ptr		input;
 
 	void registerRAW();
 	//timer
