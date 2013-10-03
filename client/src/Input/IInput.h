@@ -38,7 +38,7 @@ public:
 		LEFT_SQUARE_BRACKET, BACK_SLASH, RIGHT_SQUARE_BRACKET, BACK_QUOTE, DEL = 0x7F,							//5
 		LEFT_SHIFT, RIGHT_SHIFT, LEFT_CTRL, RIGHT_CTRL, LEFT_ALT, RIGHT_ALT, INSERT, LEFT_SUPER, RIGHT_SUPER,	//9
 		F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,														//12
-		SYS_RQ, SCROLL_LOCK, NUM_LOCK,																			//3
+		SYS_RQ, SCROLL_LOCK, NUM_LOCK, WORLD_1, WORLD_2, MENU,													//6
 		NP_DIVIDE, NP_MULTIPLY, NP_MINUS, NP_PLUS, NP_RETURN, NP_PERIOD,										//6
 		NP0, NP1, NP2, NP3, NP4, NP5, NP6, NP7, NP8, NP9,														//10
 	};
@@ -49,15 +49,15 @@ public:
 	struct MouseMoveEvent
 	{
 		/**
-		 *  Horizontal position, left to right, in pixels,
+		 *  Horizontal position, left to right, in screen coordinates,
 		 *  starting with 0 at the left inner border of the window.
 		 */
-		int posX;
+		double posX;
 		/**
-		 *  Vertical position, top to bottom, in pixels,
+		 *  Vertical position, top to bottom, in screen coordinates,
 		 *  starting with 0 at the top inner border of the window.
 		 */
-		int posY;
+		double posY;
 	};
 
 	/**
@@ -104,6 +104,17 @@ public:
 	};
 
 	/**
+	 *  Event for when a character has been entered.
+	 */
+	struct CharEvent
+	{
+		/**
+		 *  The entered character, using UTF-32.
+		 */
+		char32_t character;
+	};
+
+	/**
 	 * General input event type.
 	 */
 	struct Event
@@ -116,6 +127,7 @@ public:
 			MOUSE_MOVE,
 			MOUSE_BUTTON,
 			KEY,
+			CHARACTER,
 		};
 
 		union
@@ -123,6 +135,7 @@ public:
 			KeyEvent keyEvent;
 			MouseMoveEvent mouseMoveEvent;
 			MouseButtonEvent mouseButtonEvent;
+			CharEvent charEvent;
 		};
 
 		/**

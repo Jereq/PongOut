@@ -7,10 +7,14 @@
 class CoreSystemLinux : public ICoreSystem
 {
 private:
+	GLFWwindow* window;
+
 	GraphicsLinux::ptr graphics;
 	InputLinux::ptr input;
 
 	static void errorCallback(int _error, const char* _description);
+
+	bool openWindow();
 
 public:
 

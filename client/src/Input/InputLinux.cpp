@@ -2,16 +2,18 @@
 
 #include <GLFW/glfw3.h>
 
-std::map<short, IInput::KeyCode> InputLinux::keyMapFromNative;
-std::map<IInput::KeyCode, short> InputLinux::keyMapToNative;
+std::map<int, IInput::KeyCode> InputLinux::keyMapFromNative;
+std::map<IInput::KeyCode, int> InputLinux::keyMapToNative;
+std::map<GLFWwindow*, std::weak_ptr<InputLinux>> InputLinux::windowMap;
+bool InputLinux::staticInitialized = initKeyMaps();
 
-void InputLinux::insertKey(short _nativeKey, IInput::KeyCode _iKey)
+void InputLinux::insertKey(int _nativeKey, IInput::KeyCode _iKey)
 {
 	keyMapFromNative[_nativeKey] = _iKey;
 	keyMapToNative[_iKey] = _nativeKey;
 }
 
-void InputLinux::initKeyMaps()
+bool InputLinux::initKeyMaps()
 {
 	insertKey(GLFW_KEY_0, IInput::KeyCode::K0);
 	insertKey(GLFW_KEY_1, IInput::KeyCode::K1);
@@ -97,6 +99,7 @@ void InputLinux::initKeyMaps()
 	insertKey(GLFW_KEY_LEFT_CONTROL, IInput::KeyCode::LEFT_CTRL);
 	insertKey(GLFW_KEY_LEFT_SHIFT, IInput::KeyCode::LEFT_SHIFT);
 	insertKey(GLFW_KEY_LEFT_SUPER, IInput::KeyCode::LEFT_SUPER);
+	insertKey(GLFW_KEY_MENU, IInput::KeyCode::MENU);
 	insertKey(GLFW_KEY_MINUS, IInput::KeyCode::DASH);
 	insertKey(GLFW_KEY_NUM_LOCK, IInput::KeyCode::NUM_LOCK);
 	insertKey(GLFW_KEY_PAGE_DOWN, IInput::KeyCode::PAGE_DOWN);
@@ -116,4 +119,119 @@ void InputLinux::initKeyMaps()
 	insertKey(GLFW_KEY_SPACE, IInput::KeyCode::SPACE);
 	insertKey(GLFW_KEY_TAB, IInput::KeyCode::TAB);
 	insertKey(GLFW_KEY_UP, IInput::KeyCode::UP_ARROW);
+	insertKey(GLFW_KEY_WORLD_1, IInput::KeyCode::WORLD_1);
+	insertKey(GLFW_KEY_WORLD_2, IInput::KeyCode::WORLD_2);
+
+	return true;
 }
+
+IInput::KeyCode InputLinux::translateKey(int _nativeKey)
+{
+	if (keyMapFromNative.count(_nativeKey) == 0)
+	{
+		return IInput::KeyCode::UNKNOWN;
+	}
+
+	return keyMapFromNative.at(_nativeKey);
+}
+
+int InputLinux::translateKey(IInput::KeyCode _iKey)
+{
+	if (keyMapToNative.count(_iKey) == 0)
+	{
+		return GLFW_KEY_UNKNOWN;
+	}
+
+	return keyMapToNative.at(_iKey);
+}
+
+InputLinux::InputLinux()
+{
+}
+
+void InputLinux::keyCallback(GLFWwindow* _window, int _key, int _scancode, int _action, int _mods)
+{
+	if (_action == GLFW_REPEAT)
+	{
+		return;
+	}
+
+	Event ev;
+	ev.type = Event::Type::KEY;
+	ev.keyEvent.key = translateKey(_key);
+	ev.keyEvent.pressed = (_action == GLFW_PRESS);
+
+	ptr input = windowMap[_window].lock();
+	if (input)
+	{
+		input->events.push_back(ev);
+	}
+}
+
+void InputLinux::mouseButtonCallback(GLFWwindow* _window, int _button, int _action, int _mods)
+{
+	MouseButtonEvent::Button button;
+	switch (_button)
+	{
+	case GLFW_MOUSE_BUTTON_LEFT:	button = MouseButtonEvent::Button::LEFT;	break;
+	case GLFW_MOUSE_BUTTON_RIGHT:	button = MouseButtonEvent::Button::RIGHT;	break;
+	case GLFW_MOUSE_BUTTON_MIDDLE:	button = MouseButtonEvent::Button::MIDDLE;	break;
+	default:						button = MouseButtonEvent::Button::UNKNOWN; break;
+	}
+
+	Event ev;
+	ev.type = Event::Type::MOUSE_BUTTON;
+	ev.mouseButtonEvent.button = button;
+	ev.mouseButtonEvent.pressed = (_action == GLFW_PRESS);
+
+	ptr input = windowMap[_window].lock();
+	if (input)
+	{
+		input->events.push_back(ev);
+	}
+}
+
+void InputLinux::mouseCursorPosCallback(GLFWwindow* _window, double _xpos, double _ypos)
+{
+	Event ev;
+	ev.type = Event::Type::MOUSE_MOVE;
+	ev.mouseMoveEvent.posX = _xpos;
+	ev.mouseMoveEvent.posY = _ypos;
+
+	ptr input = windowMap[_window].lock();
+	if (input)
+	{
+		input->events.push_back(ev);
+	}
+}
+
+void InputLinux::characterCallback(GLFWwindow* _window, unsigned int _character)
+{
+	Event ev;
+	ev.type = Event::Type::CHARACTER;
+	ev.charEvent.character = _character;
+
+	ptr input = windowMap[_window].lock();
+	if (input)
+	{
+		input->events.push_back(ev);
+	}
+}
+
+bool InputLinux::registerWindowForInput(GLFWwindow* _window)
+{
+	if (!_window)
+	{
+		return false;
+	}
+
+	windowMap[_window] = shared_from_this();
+
+	glfwSetKeyCallback(_window, &keyCallback);
+	glfwSetCursorPosCallback(_window, &mouseCursorPosCallback);
+	glfwSetMouseButtonCallback(_window, &mouseButtonCallback);
+	glfwSetCharCallback(_window, &characterCallback);
+
+	return true;
+}
+

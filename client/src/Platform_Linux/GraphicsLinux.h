@@ -16,10 +16,7 @@
 class GraphicsLinux : public IGraphics
 {
 private:
-	const static int MAJOR_GL_VERSION;
-	const static int MINOR_GL_VERSION;
-
-public: GLFWwindow* window; private:
+	GLFWwindow* window;
 	GLSLProgram rectangleProgram;
 	GLuint rectVaoHandle;
 	GLuint rectVboHandle;
@@ -45,7 +42,6 @@ public: GLFWwindow* window; private:
 	typedef std::vector<Rectangle> recs_t;
 	std::map<std::string, recs_t> registeredRectangles;
 
-	bool openWindow();
 	bool checkGLVersion(int _majorRequiredVersion, int _minorRequiredVersion);
 	void initDevIL();
 	void printReport();
@@ -59,7 +55,10 @@ public: GLFWwindow* window; private:
 public:
 	typedef std::shared_ptr<GraphicsLinux> ptr;
 
-	GraphicsLinux(const boost::filesystem::path& _rootDir);
+	const static int MAJOR_GL_VERSION;
+	const static int MINOR_GL_VERSION;
+
+	GraphicsLinux(const boost::filesystem::path& _rootDir, GLFWwindow* _window);
 
 	virtual bool init() override;
 	virtual void destroy() override;

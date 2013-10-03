@@ -11,6 +11,7 @@ namespace fs = boost::filesystem;
 #include <IL/il.h>
 
 #include <ResourceLoader/ResourceLoader.h>
+#include <Input/InputLinux.h>
 
 #include <cstdio>
 #include <iostream>
@@ -19,38 +20,6 @@ namespace fs = boost::filesystem;
 
 const int GraphicsLinux::MAJOR_GL_VERSION = 4;
 const int GraphicsLinux::MINOR_GL_VERSION = 0;
-
-bool GraphicsLinux::openWindow()
-{
-	glfwDefaultWindowHints();
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-	glfwWindowHint(GLFW_DEPTH_BITS, 32);
-	glfwWindowHint(GLFW_SAMPLES, 8);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, MAJOR_GL_VERSION);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, MINOR_GL_VERSION);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	const static size_t WIDTH = 800;
-	const static size_t HEIGHT = 480;
-
-	window = glfwCreateWindow(WIDTH, HEIGHT, "PongOut", nullptr, nullptr);
-	if (!window)
-	{
-		glfwDefaultWindowHints();
-		window = glfwCreateWindow(WIDTH, HEIGHT, "PongOut", nullptr, nullptr);
-
-		if (!window)
-		{
-			return false;
-		}
-	}
-
-	glfwMakeContextCurrent(window);
-	glfwSwapInterval(1);
-
-	return true;
-}
 
 bool GraphicsLinux::checkGLVersion(int _majorRequiredVersion, int _minorRequiredVersion)
 {
@@ -148,8 +117,8 @@ void GraphicsLinux::bufferData(const recs_t& _rects)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(recs_t) * _rects.size(), _rects.data(), GL_DYNAMIC_DRAW);
 }
 
-GraphicsLinux::GraphicsLinux(const fs::path& _rootDir)
-	: window(nullptr),
+GraphicsLinux::GraphicsLinux(const fs::path& _rootDir, GLFWwindow* _window)
+	: window(_window),
 	  rectVaoHandle(0),
 	  rectVboHandle(0),
 	  rootDir(_rootDir)
@@ -158,13 +127,6 @@ GraphicsLinux::GraphicsLinux(const fs::path& _rootDir)
 
 bool GraphicsLinux::init()
 {
-	if (!openWindow())
-	{
-		fprintf(stderr, "Error creating window.\n");
-		glfwTerminate();
-		return false;
-	}
-
 	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
 	if (GLEW_OK != err)

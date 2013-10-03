@@ -8,6 +8,38 @@ void CoreSystemLinux::errorCallback(int _error, const char* _description)
 	fprintf(stderr, "GLFW error %d: %s\n", _error, _description);
 }
 
+bool CoreSystemLinux::openWindow()
+{
+	glfwDefaultWindowHints();
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	glfwWindowHint(GLFW_DEPTH_BITS, 32);
+	glfwWindowHint(GLFW_SAMPLES, 8);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GraphicsLinux::MAJOR_GL_VERSION);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GraphicsLinux::MINOR_GL_VERSION);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	const static size_t WIDTH = 800;
+	const static size_t HEIGHT = 480;
+
+	window = glfwCreateWindow(WIDTH, HEIGHT, "PongOut", nullptr, nullptr);
+	if (!window)
+	{
+		glfwDefaultWindowHints();
+		window = glfwCreateWindow(WIDTH, HEIGHT, "PongOut", nullptr, nullptr);
+
+		if (!window)
+		{
+			return false;
+		}
+	}
+
+	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1);
+
+	return true;
+}
+
 bool ICoreSystem::init(int _argc, char** _argv)
 {
 	fs::path fullPath(fs::initial_path<fs::path>());
@@ -26,12 +58,20 @@ bool ICoreSystem::init(int _argc, char** _argv)
 }
 
 CoreSystemLinux::CoreSystemLinux(const boost::filesystem::path& _rootDir)
-	: ICoreSystem(_rootDir)
+	: ICoreSystem(_rootDir),
+	  window(nullptr)
 {
 	glfwSetErrorCallback(errorCallback);
 	if (!glfwInit())
 	{
 		fprintf(stderr, "Error initializing GLFW.\n");
+		throw std::exception();
+	}
+
+	if (!openWindow())
+	{
+		fprintf(stderr, "Error creating window.\n");
+		glfwTerminate();
 		throw std::exception();
 	}
 }
@@ -58,7 +98,7 @@ void CoreSystemLinux::pollEvents()
 
 bool CoreSystemLinux::isKeyPress(unsigned short _key)
 {
-	return glfwGetKey(graphics->window, _key) == GLFW_PRESS;
+	return glfwGetKey(window, _key) == GLFW_PRESS;
 }
 
 bool CoreSystemLinux::isNewKeyPress(unsigned short _key)
@@ -70,7 +110,7 @@ IGraphics::ptr CoreSystemLinux::getGraphics()
 {
 	if (!graphics)
 	{
-		graphics.reset(new GraphicsLinux(getRootDir()));
+		graphics.reset(new GraphicsLinux(getRootDir(), window));
 	}
 
 	return graphics;
@@ -81,6 +121,7 @@ IInput::ptr CoreSystemLinux::getInput()
 	if (!input)
 	{
 		input.reset(new InputLinux());
+		input->registerWindowForInput(window);
 	}
 
 	return input;

@@ -4,7 +4,6 @@
 //#include <chrono>
 #include <iostream>
 #include <stdio.h>
-//#include "Map.h"
 
 //#include <thread>
 #include <vector>
@@ -100,6 +99,79 @@ void rbIntersect(glm::vec3& _bp, glm::vec2 _bd, glm::vec3& _bv, std::vector<glm:
 		}
 }
 
+std::string naiveUTF32toUTF8(char32_t _character)
+{
+	char buffer[6];
+
+	if (_character <= 0x7F)
+	{
+		return std::string(1, (char)_character);
+	}
+	else if (_character <= 0x07FF)
+	{
+		buffer[1] = (_character & 0x3F) | 0x80;
+		_character >>= 6;
+		buffer[0] = _character | 0xC0;
+
+		return std::string(buffer, buffer + 2);
+	}
+	else if (_character <= 0xFFFF)
+	{
+		buffer[2] = (_character & 0x3F) | 0x80;
+		_character >>= 6;
+		buffer[1] = (_character & 0x3F) | 0x80;
+		_character >>= 6;
+		buffer[0] = _character | 0xE0;
+
+		return std::string(buffer, buffer + 3);
+	}
+	else if (_character <= 0x1FFFFF)
+	{
+		buffer[3] = (_character & 0x3F) | 0x80;
+		_character >>= 6;
+		buffer[2] = (_character & 0x3F) | 0x80;
+		_character >>= 6;
+		buffer[1] = (_character & 0x3F) | 0x80;
+		_character >>= 6;
+		buffer[0] = _character | 0xF0;
+
+		return std::string(buffer, buffer + 4);
+	}
+	else if (_character <= 0x3FFFFFF)
+	{
+		buffer[4] = (_character & 0x3F) | 0x80;
+		_character >>= 6;
+		buffer[3] = (_character & 0x3F) | 0x80;
+		_character >>= 6;
+		buffer[2] = (_character & 0x3F) | 0x80;
+		_character >>= 6;
+		buffer[1] = (_character & 0x3F) | 0x80;
+		_character >>= 6;
+		buffer[0] = _character | 0xF8;
+
+		return std::string(buffer, buffer + 5);
+	}
+	else if (_character <= 0x7FFFFFFF)
+	{
+		buffer[5] = (_character & 0x3F) | 0x80;
+		_character >>= 6;
+		buffer[4] = (_character & 0x3F) | 0x80;
+		_character >>= 6;
+		buffer[3] = (_character & 0x3F) | 0x80;
+		_character >>= 6;
+		buffer[2] = (_character & 0x3F) | 0x80;
+		_character >>= 6;
+		buffer[1] = (_character & 0x3F) | 0x80;
+		_character >>= 6;
+		buffer[0] = _character | 0xFC;
+
+		return std::string(buffer, buffer + 6);
+	}
+
+	// Invalid
+	return std::string();
+}
+
 void Game::run()
 {
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
@@ -163,13 +235,19 @@ void Game::run()
 			switch (event.type)
 			{
 			case IInput::Event::Type::KEY:
-				std::cout << "Key event (" << (int)event.keyEvent.key << ")" << std::endl;
+				std::cout << "Key event (" << (int)event.keyEvent.key << ", " << (event.keyEvent.pressed ? "PRESSED" : "RELEASED") << ")" << std::endl;
 				break;
 
 			case IInput::Event::Type::MOUSE_BUTTON:
+				std::cout << "Mouse button event (" << (int)event.mouseButtonEvent.button << ", " << (event.mouseButtonEvent.pressed ? "PRESSED" : "RELEASED") << ")" << std::endl;
 				break;
 
 			case IInput::Event::Type::MOUSE_MOVE:
+				std::cout << "Mouse move event (" << event.mouseMoveEvent.posX << ", " << event.mouseMoveEvent.posY << ")" << std::endl;
+				break;
+
+			case IInput::Event::Type::CHARACTER:
+				std::cout << "Character event (" << naiveUTF32toUTF8(event.charEvent.character) << ")" << std::endl;
 				break;
 			}
 		}
