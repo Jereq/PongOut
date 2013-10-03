@@ -2,11 +2,13 @@
 
 #include "../ICoreSystem.h"
 #include "GraphicsLinux.h"
+#include "Input/InputLinux.h"
 
 class CoreSystemLinux : public ICoreSystem
 {
 private:
 	GraphicsLinux::ptr graphics;
+	InputLinux::ptr input;
 
 	static void errorCallback(int _error, const char* _description);
 
@@ -23,4 +25,5 @@ public:
 	virtual bool isNewKeyPress(unsigned short _key) override;
 
 	virtual IGraphics::ptr getGraphics() override;
+	virtual IInput::ptr getInput() override;
 };

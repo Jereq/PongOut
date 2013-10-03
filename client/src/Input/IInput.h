@@ -33,8 +33,8 @@ public:
 		PAGE_UP, PAGE_DOWN, END, HOME, LEFT_ARROW, UP_ARROW, RIGHT_ARROW, DOWN_ARROW,							//8
 		SINGLE_QUOTE = 0x27, COMMA = 0x2C, DASH = 0x2D, PERIOD = 0x2E, SLASH = 0x2F,							//5
 		K0, K1, K2, K3, K4, K5, K6, K7, K8, K9,																	//10
-		COLON, SEMICOLON, EQUAL = 0x3D,	AT,																		//4
-		A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,							//26
+		SEMICOLON = 0x3B, EQUAL = 0x3D,																			//2
+		A = 0x41, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,					//26
 		LEFT_SQUARE_BRACKET, BACK_SLASH, RIGHT_SQUARE_BRACKET, BACK_QUOTE, DEL = 0x7F,							//5
 		LEFT_SHIFT, RIGHT_SHIFT, LEFT_CTRL, RIGHT_CTRL, LEFT_ALT, RIGHT_ALT, INSERT, LEFT_SUPER, RIGHT_SUPER,	//9
 		F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,														//12

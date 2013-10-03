@@ -75,3 +75,14 @@ IGraphics::ptr CoreSystemLinux::getGraphics()
 
 	return graphics;
 }
+
+IInput::ptr CoreSystemLinux::getInput()
+{
+	if (!input)
+	{
+		input.reset(new InputLinux());
+	}
+
+	return input;
+}
+
