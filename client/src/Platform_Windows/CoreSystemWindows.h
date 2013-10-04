@@ -13,8 +13,6 @@ public:
 
 	static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 protected:
-	virtual bool	isNewKeyPress(unsigned short _key);
-	virtual bool	isKeyPress(unsigned short _key);
 
 private:
 	virtual double getTime() const;

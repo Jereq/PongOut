@@ -18,5 +18,10 @@ private:
 	static unsigned short translateKey(IInput::KeyCode _iKey);
 
 public:
+	InputWindows();
 	typedef std::shared_ptr<InputWindows> ptr;
+	void addFrameKey(unsigned short _key, bool _isDown);
+	void addMouseKey(IInput::MouseButtonEvent::Button _key, bool _isDown);
+	void addMouseMove(int _lastX, int _lastY);
+	void addCharacter(char32_t _char);
 };

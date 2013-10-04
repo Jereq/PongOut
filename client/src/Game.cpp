@@ -235,19 +235,19 @@ void Game::run()
 			switch (event.type)
 			{
 			case IInput::Event::Type::KEY:
-				std::cout << "Key event (" << (int)event.keyEvent.key << ", " << (event.keyEvent.pressed ? "PRESSED" : "RELEASED") << ")" << std::endl;
+				//std::cout << "Key event (" << (int)event.keyEvent.key << ", " << (event.keyEvent.pressed ? "PRESSED" : "RELEASED") << ")" << std::endl;
 				break;
 
 			case IInput::Event::Type::MOUSE_BUTTON:
-				std::cout << "Mouse button event (" << (int)event.mouseButtonEvent.button << ", " << (event.mouseButtonEvent.pressed ? "PRESSED" : "RELEASED") << ")" << std::endl;
+				//std::cout << "Mouse button event (" << (int)event.mouseButtonEvent.button << ", " << (event.mouseButtonEvent.pressed ? "PRESSED" : "RELEASED") << ")" << std::endl;
 				break;
 
 			case IInput::Event::Type::MOUSE_MOVE:
-				std::cout << "Mouse move event (" << event.mouseMoveEvent.posX << ", " << event.mouseMoveEvent.posY << ")" << std::endl;
+				//std::cout << "Mouse move event (" << event.mouseMoveEvent.posX << ", " << event.mouseMoveEvent.posY << ")" << std::endl;
 				break;
 
 			case IInput::Event::Type::CHARACTER:
-				std::cout << "Character event (" << naiveUTF32toUTF8(event.charEvent.character) << ")" << std::endl;
+				//std::cout << "Character event (" << naiveUTF32toUTF8(event.charEvent.character) << ")" << std::endl;
 				break;
 			}
 		}

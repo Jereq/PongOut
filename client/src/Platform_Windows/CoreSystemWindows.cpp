@@ -1,9 +1,9 @@
 #include "CoreSystemWindows.h"
+#include <windowsx.h>
 
 namespace fs = boost::filesystem;
 
 static bool	shutDown = false;
-unsigned short	key, oldKey;
 
 bool ICoreSystem::init(int _argc, char** _argv)
 {
@@ -56,16 +56,6 @@ SoundManager* CoreSystemWindows::getSounds()
 	return soundManager;
 }
 
-bool CoreSystemWindows::isKeyPress(unsigned short _key)
-{
-	return (key == _key);
-}
-
-bool CoreSystemWindows::isNewKeyPress(unsigned short _key)
-{
-	return ((key == _key) && (key != oldKey));
-}
-
 double CoreSystemWindows::getTime()const
 {
 	LARGE_INTEGER currentTime;
@@ -107,7 +97,6 @@ void CoreSystemWindows::pollEvents()
 	startTime = currentTime;
 
 	MSG msg;
-	oldKey = key;
 
 	if (graphics)
 	{
@@ -143,6 +132,13 @@ IInput::ptr CoreSystemWindows::getInput()
 
 LRESULT CALLBACK CoreSystemWindows::WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
+	std::shared_ptr<InputWindows> input;
+	std::shared_ptr<ICoreSystem> instance(getInstance());
+	if(instance)
+	{
+		input = std::static_pointer_cast<InputWindows>(instance->getInput());
+	}
+
 	switch (iMsg)
 	{
 	case WM_DESTROY:
@@ -151,6 +147,7 @@ LRESULT CALLBACK CoreSystemWindows::WndProc(HWND hwnd, UINT iMsg, WPARAM wParam,
 		return 0;
 
 	case WM_INPUT:
+		{
 			UINT dwSize;
 			GetRawInputData((HRAWINPUT)lParam, RID_INPUT, NULL, &dwSize, sizeof(RAWINPUTHEADER));
 			
@@ -163,17 +160,78 @@ LRESULT CALLBACK CoreSystemWindows::WndProc(HWND hwnd, UINT iMsg, WPARAM wParam,
 
 			RAWINPUT* rawInput = (RAWINPUT*)lpb;
 
-			if(rawInput->header.dwType == RIM_TYPEKEYBOARD)
-			{		
-				key = rawInput->data.keyboard.VKey;
-			}
-			else if(rawInput->header.dwType == RIM_TYPEMOUSE)
+			if(input)
 			{
+				if(rawInput->header.dwType == RIM_TYPEKEYBOARD)
+				{		
+					unsigned short key = rawInput->data.keyboard.VKey;
+					bool isDown = rawInput->data.keyboard.Flags == RI_KEY_MAKE;
 
+					input->addFrameKey(key, isDown);
+				}
+				else if(rawInput->header.dwType == RIM_TYPEMOUSE)
+				{
+									unsigned short key = rawInput->data.mouse.usButtonFlags;
+					if (key & RI_MOUSE_LEFT_BUTTON_DOWN)
+					{
+						input->addMouseKey(IInput::MouseButtonEvent::Button::LEFT, true);
+					}
+						
+					if (key & RI_MOUSE_LEFT_BUTTON_UP)
+					{
+						input->addMouseKey(IInput::MouseButtonEvent::Button::LEFT, false);
+					}
+
+					if (key & RI_MOUSE_RIGHT_BUTTON_DOWN)
+					{
+						input->addMouseKey(IInput::MouseButtonEvent::Button::RIGHT, true);
+					}
+
+					if (key & RI_MOUSE_RIGHT_BUTTON_UP)
+					{
+						input->addMouseKey(IInput::MouseButtonEvent::Button::RIGHT, false);
+					}
+
+					if (key & RI_MOUSE_MIDDLE_BUTTON_DOWN)
+					{
+						input->addMouseKey(IInput::MouseButtonEvent::Button::MIDDLE, true);
+					}
+
+					if (key & RI_MOUSE_MIDDLE_BUTTON_UP)
+					{
+						input->addMouseKey(IInput::MouseButtonEvent::Button::MIDDLE, false);
+					}
+				}
+
+				return 0;
 			}
+		}
 		break;
+	case WM_MOUSEMOVE:
+		{
+			if(input)
+			{
+				int x = GET_X_LPARAM(lParam);
+				int y = GET_Y_LPARAM(lParam);
+				input->addMouseMove(x,y);
 
+				return 0;
+			}
+		}
+		break;
+	case WM_CHAR:
+		{
+			if (input)
+			{
+				char32_t character = wParam;
+				input->addCharacter(character);
+
+				return 0;
+			}
+
+		}
+		break;
 	}
-	//return CallWindowProc(WndProc, hwnd, iMsg, wParam, lParam);
-	return DefWindowProc(hwnd, iMsg, wParam, lParam);
+
+	return DefWindowProcW(hwnd, iMsg, wParam, lParam);
 }

@@ -100,9 +100,6 @@ public:
 
 	virtual SoundManager* getSounds();
 
-	virtual bool	isKeyPress(unsigned short _key)=0;
-	virtual bool	isNewKeyPress(unsigned short _key)=0;
-
 protected:
 	SoundManager* soundManager;
 	ICoreSystem();

@@ -68,9 +68,9 @@ bool GraphicsWindows::init()
 
 	HMODULE hInstance = GetModuleHandle(nullptr);
 	
-	WNDCLASSEX  wndClass;
+	WNDCLASSEXW  wndClass;
 
-	const static char szAppName[] = "PongOut";
+	LPCWSTR szAppName = L"PongOut";
 
 	wndClass.cbSize			= sizeof(wndClass);
 	wndClass.style			= CS_HREDRAW | CS_VREDRAW;
@@ -85,9 +85,9 @@ bool GraphicsWindows::init()
 	wndClass.lpszClassName	= szAppName;
 	wndClass.lpszMenuName	= NULL;
 
-	RegisterClassEx(&wndClass);
+	RegisterClassExW(&wndClass);
 
-	hWnd = CreateWindow(szAppName, "PongOut",
+	hWnd = CreateWindowExW(WS_EX_LEFT, szAppName, L"PongOut",
 				WS_OVERLAPPEDWINDOW,
 				CW_USEDEFAULT, CW_USEDEFAULT,
 				CW_USEDEFAULT, CW_USEDEFAULT,
