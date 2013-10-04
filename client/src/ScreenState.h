@@ -2,29 +2,36 @@
 #define __SCREENSTATE_H
 
 #include "IGraphics.h"
+#include "Input/IInput.h"
 #include <string>
 
 class ScreenState
 {
 public:
+	typedef std::shared_ptr<ScreenState> ptr;
+
 	ScreenState(const std::string _screenName);
 	~ScreenState();
 
-	virtual void onInput();
+	virtual void onInput(const std::vector<IInput::Event> _events);
 	virtual void update(const float _dt);
 	virtual void draw(std::shared_ptr<IGraphics> _graphics);
 	virtual bool initialize();
+	virtual bool onExit();
+	virtual bool onEntry();
 
-	const bool isActive();
-	const bool isPopup();
-	const std::string getScreenName();
+	bool isInitialized() const;
+	bool isActive() const;
+	bool isPopup() const;
+	std::string getScreenName() const;
 
 protected:
-	const std::string getBackgroundName();
+	std::string getBackgroundName() const;
+	bool		initialized;
 	bool		active;
 	bool		popup;
 
-private:
+//private:
 	std::string screenName;
 	std::string backgroundName;
 

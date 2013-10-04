@@ -10,13 +10,14 @@ Button::~Button()
 
 }
 
-bool Button::initialize(const std::string _textureName, const std::string _textName, const glm::vec2 _size, const glm::vec3 _center)
+bool Button::initialize(const std::string _textureName, const std::string _textName, 
+						const glm::vec2 _size, const glm::vec3 _center, const std::string _func)
 {
 	textureName = _textureName;
 	textName	= _textName;
 	size		= _size;
 	center		= _center;
-
+	func		= _func;
 	return true;
 }
 

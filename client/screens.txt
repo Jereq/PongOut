@@ -1,0 +1,40 @@
+screen
+	id mainmenu
+	background bbackground/mainmenu_01
+	button
+		id b1
+		texture blocks/dark_magenta_01
+		label
+		position 128/10/0
+		size 64/32
+		func goto/login
+	/button
+	button
+		id b2
+		texture blocks/orange_01
+		label 
+		position 128/160/0
+		size 64/32
+		func 
+	/button
+/screen
+screen
+	id login
+	background background/mainmenu_01
+	button
+		id b1
+		texture blocks/pink_01
+		label 
+		position 128/10/0
+		size 64/32
+		func 
+	/button
+	button
+		id b2
+		texture 
+		label 
+		position 512/10/0
+		size 64/32
+		func goto/mainmenu
+	/button
+/screen

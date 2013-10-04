@@ -1,0 +1,36 @@
+screen
+	id:mainmenu
+	button
+		id:b1
+		texture:blocks/dark_magenta_01
+		label:
+		position:128/10
+		size:64/32
+	/button
+	button
+		id:b2
+		texture:blocks/orange_01
+		label:
+		position:128/10
+		size:64/32
+	/button
+	background
+		texture:background/manmenu_01
+/screen
+screen
+	id:test2
+	button
+		id:b1
+		texture:blocks/pink_01
+		label:
+		position:128/10
+		size:64/32
+	/button
+	button
+		id:b2
+		texture:
+		label:
+		position:128/10
+		size:64/32
+	/button
+/screen

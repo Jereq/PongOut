@@ -117,8 +117,12 @@ void Game::run()
 	std::cout << "Starting to run" << std::endl;
 	std::cout << "Texture name: \n" << map->getTextureName() << std::endl;
 
-	screenManager.addScreen(new MenuState());
-	screenManager.addScreen(new MenuState());
+	if (!screenManager.openScreen("login"))
+	{
+		std::cout << "Failed to open screen" << std::endl;
+		return;
+	}
+
 	while(!systemPtr->windowIsClosing())
 	{
 		systemPtr->pollEvents();
@@ -155,16 +159,9 @@ void Game::run()
 		float pspeed = 0.001f;
 		
 		sounds->play("Bubble3");
-		
-		//graphics->addRectangle(glm::vec3(0.f, 0.f, 0.f), glm::vec2(2.f), 0.f, map->getTextureName());
 
-		//graphics->addRectangle(glm::vec3(-1.f, 0.f, 0.f), glm::vec2(0.05, 2.f), 0.f, map->getFrameTextureName());
-		//graphics->addRectangle(glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.05, 2.f), 0.f, map->getFrameTextureName());
-		//graphics->addRectangle(glm::vec3(0.f, -1.f, 0.f), glm::vec2(2.f, 0.05), 0.f, map->getFrameTextureName());
-		//graphics->addRectangle(glm::vec3(0.f, 1.f, 0.f), glm::vec2(2.f, 0.05), 0.f, map->getFrameTextureName());
-
+		screenManager.onInput(events);
 		screenManager.update(deltaTime, graphics);
-		//graphics->addRectangle(glm::vec3(0, 0, 1.f), glm::vec2(2,2), 10.f, "background");
 
 		const static float FRAMES_PER_SECOND = 60.f;
 		const static float FRAME_TIME = 1.f / FRAMES_PER_SECOND;

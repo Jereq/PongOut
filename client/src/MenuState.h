@@ -15,7 +15,7 @@ private:
 	std::vector<Button*> buttons;
 
 	virtual bool initialize();
-	virtual void onInput();
+	virtual void onInput(const std::vector<IInput::Event> _events);
 	virtual void update(const float _dt);
 	virtual void draw(std::shared_ptr<IGraphics> _graphics);
 };
