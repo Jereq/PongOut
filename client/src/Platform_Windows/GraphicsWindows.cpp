@@ -48,10 +48,10 @@ bool GraphicsWindows::loadResources(const boost::filesystem::path& _resourceDir)
 	for (auto texRes : textureResources)
 	{
 		SRV tex = NULL;
-		bool result;
+		ErrorCode result;
 		result = DXCREATE::createTexture(texRes.path.string(), tex, d3d->device);
 
-		if (!result)
+		if (result != ErrorCode::G_OK)
 		{
 			return false;
 		}
@@ -121,8 +121,9 @@ void GraphicsWindows::addRectangle(glm::vec3 _center, glm::vec2 _size, float _ro
 	if (textures.count(_id) == 0)
 	{
 		_id = "textureNotFound";
-		ErrorCode result;
-		if(result != ErrorCode::WGFX_OK)
+		//ErrorCode result;
+		//if(result != ErrorCode::WGFX_OK)
+		//	return;
 	}
 	
 	SpriteVertex sv = { (float)_center.x, (float)_center.y, (float)_center.z,	//center
