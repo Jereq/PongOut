@@ -64,7 +64,7 @@ void MenuState::draw(std::shared_ptr<IGraphics> _graphics)
 {
 	for(Button b : buttons)
 	{
-		_graphics->addRectangle(b.getCenter(), b.getSize(), 0.0, b.getTextureName());
+		b.draw(_graphics);
 	}
 
 	for(Image i : images)

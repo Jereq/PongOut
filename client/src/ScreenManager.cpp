@@ -65,7 +65,7 @@ bool readButton(Button& _button, std::istream& _is, glm::vec2 _screenSize)
 {
 	glm::vec3 buttonPosition;
 	glm::vec2 buttonSize;
-	std::string textureName, buttonId, buttonFunc;
+	std::string textureNormal, textureHovered, textName, buttonId, buttonFunc;
 
 	while(true)
 	{
@@ -134,14 +134,23 @@ bool readButton(Button& _button, std::istream& _is, glm::vec2 _screenSize)
 			buttonSize.x = screenSizeToClip(_screenSize.x, sizeVals[0]);
 			buttonSize.y = screenSizeToClip(_screenSize.y, sizeVals[1]);
 		}
-		else if(type == "texture")
+		else if(type == "textureNormal")
 		{
-			if (!textureName.empty() || val1.empty())
+			if (!textureNormal.empty() || val1.empty())
 			{
 				return false;
 			}
 
-			textureName = val1;
+			textureNormal = val1;
+		}
+		else if(type == "textureHovered")
+		{
+			if (!textureHovered.empty() || val1.empty())
+			{
+				return false;
+			}
+
+			textureHovered = val1;
 		}
 		else if(type == "func")
 		{
@@ -152,9 +161,14 @@ bool readButton(Button& _button, std::istream& _is, glm::vec2 _screenSize)
 
 			buttonFunc = val1;
 		}
-		else if(type == "label")
+		else if(type == "textName")
 		{
+			if(!textName.empty() || val1.empty())
+			{
+				return false;
+			}
 
+			textName = val1;
 		}
 		else
 		{
@@ -162,12 +176,17 @@ bool readButton(Button& _button, std::istream& _is, glm::vec2 _screenSize)
 		}
 	}
 
-	if (textureName.empty() || buttonId.empty() || buttonFunc.empty())
+	if (textureNormal.empty() || buttonId.empty() || buttonFunc.empty())
 	{
 		return false;
 	}
 
-	_button.initialize(textureName, "EMPTY", buttonSize, buttonPosition, buttonFunc);
+	if (textureHovered.empty())
+	{
+		textureHovered = textureNormal;
+	}
+
+	_button.initialize(textureNormal, textureHovered, textName, buttonSize, buttonPosition, buttonFunc);
 
 	return true;
 }

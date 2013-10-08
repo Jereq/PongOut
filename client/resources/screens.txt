@@ -16,16 +16,18 @@ screen
 	/image
 	button
 		id b1
-		texture blocks/dark_magenta_01
-		label
+		textureNormal blocks/dark_magenta_01
+		textureHovered blocks/orange_01
+		textName blocks/pink_01
 		position 640/400/0
 		size 400/200
 		func back
 	/button
 	button
 		id b2
-		texture blocks/orange_01
-		label 
+		textureNormal blocks/orange_01
+		textureHovered blocks/dark_magenta_01
+		textName blocks/pink_01
 		position 640/200/0
 		size 400/200
 		func A
@@ -37,16 +39,14 @@ screen
 	screenSize 1280/1024
 	button
 		id b1
-		texture blocks/pink_01
-		label 
+		textureNormal blocks/pink_01
 		position 64/64/0
 		size 64/64
 		func exit
 	/button
 	button
 		id b2
-		texture f
-		label 
+		textureNormal f
 		position 64/128/0
 		size 64/64
 		func goto/mainmenu

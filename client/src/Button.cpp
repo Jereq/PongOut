@@ -11,10 +11,11 @@ Button::~Button()
 
 }
 
-bool Button::initialize(const std::string _textureName, const std::string _textName, 
+bool Button::initialize(const std::string& _backgroundNormal, const std::string& _backgroundHovered, std::string& _textName, 
 						const glm::vec2 _size, const glm::vec3 _center, const std::string _func)
 {
-	textureName = _textureName;
+	backgroundNormal	= _backgroundNormal;
+	backgroundHovered	= _backgroundHovered;
 	textName	= _textName;
 	size		= _size;
 	center		= _center;
@@ -22,16 +23,6 @@ bool Button::initialize(const std::string _textureName, const std::string _textN
 	marked		= false;
 	state		= State::Normal;
 	return true;
-}
-
-const std::string Button::getTextureName()
-{
-	return textureName;
-}
-
-const std::string Button::getTextName()
-{
-	return textName;
 }
 
 const bool Button::isMarked()
@@ -117,8 +108,24 @@ void Button::onInput(IInput::Event _event)
 void Button::update(float _dt)
 {
 	//switch for interpolation later
-	if(marked)
-		size = glm::vec2(0.25,0.25);
-	else
-		size = glm::vec2(0.125,0.125);
+}
+
+void Button::draw(IGraphics::ptr _graphics)
+{
+	switch(state)
+	{
+	case State::Normal:
+	case State::Pressed:
+		_graphics->addRectangle(center, size, 0, backgroundNormal);
+		break;
+
+	case State::Hovered:
+		_graphics->addRectangle(center, size, 0, backgroundHovered);
+		break;
+	}
+
+	if(!textName.empty())
+	{
+		_graphics->addRectangle(center + glm::vec3(0,0,-0.00001), size * 0.5f, 0, textName);
+	}
 }

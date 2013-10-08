@@ -3,6 +3,7 @@
 
 #include "GUIActionHandler.h"
 #include "Input\IInput.h"
+#include "IGraphics.h"
 
 #include <string>
 #include <glm/glm.hpp>
@@ -13,14 +14,14 @@ public:
 	Button(GUIActionHandler* _actionHandler = nullptr);
 	~Button();
 
-	bool				initialize(const std::string _textureName, const std::string _textName, 
-					const glm::vec2 _size, const glm::vec3 _center, const std::string _func);
+	bool				initialize(const std::string& _backgroundNormal, const std::string& _backgroundHovered, std::string& _textName, 
+						const glm::vec2 _size, const glm::vec3 _center, const std::string _func);
 
 
 	void				onInput(IInput::Event _event);
 	virtual void		update(float _dt);
-	const std::string	getTextureName();
-	const std::string	getTextName();
+	void				draw(IGraphics::ptr _graphics);
+
 	const bool			isMarked();
 	const glm::vec2		getSize();
 	const glm::vec3		getCenter();
@@ -36,8 +37,10 @@ private:
 	};
 
 	State		state;
-	std::string textureName;
+	std::string backgroundNormal;
+	std::string backgroundHovered;
 	std::string textName;
+
 	std::string func;
 	bool		marked;
 	glm::vec2	size;
