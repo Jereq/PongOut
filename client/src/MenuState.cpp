@@ -27,6 +27,11 @@ void MenuState::addButtons(std::vector<Button> _buttons)
 	buttons.insert(buttons.end(),_buttons.begin(), _buttons.end());
 }
 
+void MenuState::addImages(std::vector<Image> _images)
+{
+	images.insert(images.end(),_images.begin(), _images.end());
+}
+
 void MenuState::onInput(const std::vector<IInput::Event> _events)
 {
 	for(IInput::Event e : _events)
@@ -34,8 +39,11 @@ void MenuState::onInput(const std::vector<IInput::Event> _events)
 		switch(e.type)
 		{
 		case IInput::Event::Type::MOUSE_MOVE:
-
-			
+		case IInput::Event::Type::MOUSE_BUTTON:
+			for(Button& b : buttons)
+			{
+				b.onInput(e);
+			}
 			break;
 		}
 	}
@@ -59,5 +67,9 @@ void MenuState::draw(std::shared_ptr<IGraphics> _graphics)
 		_graphics->addRectangle(b.getCenter(), b.getSize(), 0.0, b.getTextureName());
 	}
 
+	for(Image i : images)
+	{
+		i.draw(_graphics);
+	}
 	_graphics->addRectangle(glm::vec3(0,0,0), glm::vec2(2,2), 0, backgroundName);
 }

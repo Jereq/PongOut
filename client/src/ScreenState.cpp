@@ -1,7 +1,7 @@
 #include "ScreenState.h"
 
 ScreenState::ScreenState(const std::string _screenName)
-	: screenName(_screenName), initialized(false)
+	: screenName(_screenName), initialized(false), popup(false)
 {
 
 }

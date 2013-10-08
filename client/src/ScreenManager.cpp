@@ -15,10 +15,12 @@ inline float screenPositionToClip( const float _screenDimension, const float _sc
     return _screenPosition / _screenDimension * 2.f - 1.f;
 }
 
-ScreenManager::ScreenManager(const boost::filesystem::path& _rootDir)
+ScreenManager::ScreenManager(const boost::filesystem::path& _rootDir, FunctionHandler* _funcHandler)
+	: funcHandler(_funcHandler)
 {
 	readScreen(_rootDir / "resources" / "screens.txt");
 	//registerScreenState("login", ScreenState::ptr(new MenuState("login")));
+	
 }
 
 ScreenManager::~ScreenManager()
@@ -170,6 +172,104 @@ bool readButton(Button& _button, std::istream& _is, glm::vec2 _screenSize)
 	return true;
 }
 
+bool readImage(Image& _image, std::istream& _is, glm::vec2 _screenSize)
+{
+	std::string imageId;
+	std::string textureName;
+	glm::vec3	imagePosition;
+	glm::vec2	imageSize;
+
+	while(true)
+	{
+		std::string line;
+		if (!std::getline(_is, line))
+		{
+			return false;
+		}
+
+		if (line.empty())
+		{
+			continue;
+		}
+
+		if (line == "\t/image")
+		{
+			break;
+		}
+
+		std::istringstream ss(line);
+		char t1, t2;
+		ss.get(t1);
+		ss.get(t2);
+		if (t1 != '\t' || t2 != '\t')
+		{
+			return false;
+		}
+
+		std::string type, val1;
+		ss >> type >> val1;
+
+		if (type.empty())
+		{
+			continue;
+		}
+
+		if (type == "id")
+		{
+			if (!imageId.empty() || val1.empty())
+			{
+				return false;
+			}
+
+			imageId = val1;
+		}
+		else if(type == "position")
+		{
+			std::vector<float> posVals;
+			if (!readFloats(posVals, val1) || posVals.size() != 3)
+			{
+				return false;
+			}
+
+			imagePosition.x = screenPositionToClip(_screenSize.x, posVals[0]);
+			imagePosition.y = screenPositionToClip(_screenSize.y, posVals[1]);
+			imagePosition.z = posVals[2];
+		}
+		else if(type == "size")
+		{
+			std::vector<float> sizeVals;
+			if (!readFloats(sizeVals, val1) || sizeVals.size() != 2)
+			{
+				return false;
+			}
+
+			imageSize.x = screenSizeToClip(_screenSize.x, sizeVals[0]);
+			imageSize.y = screenSizeToClip(_screenSize.y, sizeVals[1]);
+		}
+		else if(type == "texture")
+		{
+			if (!textureName.empty() || val1.empty())
+			{
+				return false;
+			}
+
+			textureName = val1;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	if (textureName.empty() || imageId.empty())
+	{
+		return false;
+	}
+
+	_image.initialize(imageId, textureName, imagePosition, imageSize);
+
+	return true;
+}
 bool ScreenManager::readScreen(const boost::filesystem::path& _screenFile)
 {
 	boost::filesystem::fstream file(_screenFile);
@@ -195,6 +295,7 @@ bool ScreenManager::readScreen(const boost::filesystem::path& _screenFile)
 			std::string screenName;
 			std::string backgroundName;
 			std::vector<Button> buttons;
+			std::vector<Image> images;
 			glm::vec2 screenSize(800, 600);
 
 			while(true)
@@ -245,13 +346,23 @@ bool ScreenManager::readScreen(const boost::filesystem::path& _screenFile)
 				}
 				else if(type == "button")
 				{
-					Button b;
+					Button b(this);
 					if (!readButton(b, file, screenSize))
 					{
 						return false;
 					}
 					
 					buttons.push_back(b);
+				}
+				else if( type == "image")
+				{
+					Image image;
+					if(!readImage(image, file, screenSize))
+					{
+						return false;
+					}
+
+					images.push_back(image);
 				}
 				else if (type == "screenSize")
 				{
@@ -273,6 +384,7 @@ bool ScreenManager::readScreen(const boost::filesystem::path& _screenFile)
 
 			MenuState::ptr menuState(new MenuState(screenName));
 			menuState->addButtons(buttons);
+			menuState->addImages(images);
 			menuState->setBackground(backgroundName);
 			registerScreenState(screenName, menuState);		
 		}
@@ -295,7 +407,6 @@ void ScreenManager::update(float _dt, std::shared_ptr<IGraphics> _graphics)
 	int numScreens = screensToUpdate.size();
 	int i;
 	unsigned int topScreen = numScreens;
-	float dt = 42.0f;
 
 	for(i=numScreens; i>0; i--)
 	{
@@ -304,7 +415,7 @@ void ScreenManager::update(float _dt, std::shared_ptr<IGraphics> _graphics)
 		//several screens can be active at once
 		if(currentScreen->isActive())
 		{
-			currentScreen->update(dt);
+			currentScreen->update(_dt);
 		}
 	}
 
@@ -312,6 +423,11 @@ void ScreenManager::update(float _dt, std::shared_ptr<IGraphics> _graphics)
 	{
 		ScreenState::ptr currentScreen = screensToUpdate[i-1];
 		currentScreen->draw(_graphics);
+
+		if (!currentScreen->isPopup())
+		{
+			break;
+		}
 	}
 }
 
@@ -369,4 +485,27 @@ bool ScreenManager::goBack()
 	screens.back()->onEntry();
 
 	return true;
+}
+
+void ScreenManager::buttonPressed(const std::string& _func)
+{
+	if (_func.substr(0, 5) == "goto/")
+	{
+		std::string newScreen = _func.substr(5);
+		if (!openScreen(newScreen))
+		{
+			std::cout << "Failed to open screen \"" << newScreen << "\"" << std::endl;
+		}
+	}
+	else if (_func == "back")
+	{
+		goBack();
+	}
+	else
+	{
+		if (funcHandler)
+		{
+			funcHandler->onFunction(_func);
+		}
+	}
 }

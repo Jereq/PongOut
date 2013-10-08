@@ -89,6 +89,7 @@ bool CoreSystemWindows::windowIsClosing()const
 
 void CoreSystemWindows::pollEvents()
 {
+	
 	INT64 currentTime;
 	float timeDifference;
 	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
@@ -229,6 +230,17 @@ LRESULT CALLBACK CoreSystemWindows::WndProc(HWND hwnd, UINT iMsg, WPARAM wParam,
 				return 0;
 			}
 
+		}
+		break;
+
+	case WM_SIZE:
+		if(input)
+		{
+			unsigned int width = GET_X_LPARAM(lParam);
+			unsigned int height = GET_Y_LPARAM(lParam);
+
+			input->onResize(width, height);
+			return 0;
 		}
 		break;
 	}

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "FunctionHandler.h"
 #include "ICoreSystem.h"
 #include "ScreenManager.h"
 
@@ -9,12 +10,16 @@
 /**
  *  Main game class responsible for managing screens and the game loop.
  */
-class Game
+class Game : public FunctionHandler
 {
 private:
 	ICoreSystem::ptr	system;
 	Map*				map;
 	ScreenManager		screenManager;
+	bool				shouldStop;
+
+	void onFunction(const std::string& _func) override;
+
 public:
 	/** constructor.
 	 *
@@ -27,4 +32,10 @@ public:
 	 *  Start the game running. Should return once the game has exited.
 	 */
 	void run();
+
+	/** Stop the game.
+	 *
+	 *  Stops the game from running. Will not take effect until the current update is done.
+	 */
+	void stop();
 };

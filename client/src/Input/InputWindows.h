@@ -16,6 +16,7 @@ private:
 	static void initKeyMaps();
 	static IInput::KeyCode translateKey(unsigned short _nativeKey);
 	static unsigned short translateKey(IInput::KeyCode _iKey);
+	unsigned int screenWidth, screenHeight;
 
 public:
 	InputWindows();
@@ -24,4 +25,5 @@ public:
 	void addMouseKey(IInput::MouseButtonEvent::Button _key, bool _isDown);
 	void addMouseMove(int _lastX, int _lastY);
 	void addCharacter(char32_t _char);
+	void onResize(unsigned int _width, unsigned int _height);
 };

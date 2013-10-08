@@ -8,9 +8,20 @@
 //#include <thread>
 #include <vector>
 
+void Game::onFunction(const std::string& _func)
+{
+	std::cout << "Performing: " << _func << std::endl;
+
+	if (_func == "exit")
+	{
+		stop();
+	}
+}
+
 Game::Game(ICoreSystem::ptr _system)
 	: system(_system),
-	screenManager(_system.lock()->getRootDir())
+	screenManager(_system.lock()->getRootDir(), this),
+	shouldStop(false)
 {
 	map = new Map();
 	map->initialize(glm::vec2(800.0f, 600.0f), 8, "background/mainmenu_01", "blocks/orange_01");
@@ -123,8 +134,9 @@ void Game::run()
 		std::cout << "Failed to open screen" << std::endl;
 		return;
 	}
+	
 
-	while(!systemPtr->windowIsClosing())
+	while(!systemPtr->windowIsClosing() && !shouldStop)
 	{
 		systemPtr->pollEvents();
 		
@@ -180,3 +192,7 @@ void Game::run()
 	graphics->destroy();
 }
 
+void Game::stop()
+{
+	shouldStop = true;
+}

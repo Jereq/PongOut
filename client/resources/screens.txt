@@ -1,42 +1,54 @@
 screen
 	id mainmenu
-	background bbackground/mainmenu_01
+	background background/mainmenu_01
 	screenSize 1280/1024
+	image
+		id t1
+		texture blocks/pink_01
+		position 640/800/0
+		size 1200/400
+	/image
+	image
+		id t2
+		texture blocks/dark_magenta_01
+		position 640/550/0
+		size 1200/20
+	/image
 	button
 		id b1
 		texture blocks/dark_magenta_01
 		label
-		position 128/10/0
-		size 64/32
-		func goto/login
+		position 640/400/0
+		size 400/200
+		func back
 	/button
 	button
 		id b2
 		texture blocks/orange_01
 		label 
-		position 128/160/0
-		size 64/32
+		position 640/200/0
+		size 400/200
 		func A
 	/button
 /screen
 screen
 	id login
-	background background/mainmenu_01
-	screenSize 10/10
+	background player/ball
+	screenSize 1280/1024
 	button
 		id b1
 		texture blocks/pink_01
 		label 
-		position 2.5/5/0
-		size 2/1
-		func B
+		position 64/64/0
+		size 64/64
+		func exit
 	/button
 	button
 		id b2
 		texture f
 		label 
-		position 5/5/0
-		size 2/1
+		position 64/128/0
+		size 64/64
 		func goto/mainmenu
 	/button
 /screen

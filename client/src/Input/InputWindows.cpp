@@ -136,8 +136,8 @@ void InputWindows::addMouseMove(int _lastX, int _lastY)
 {
 	Event e;
 	e.type = Event::Type::MOUSE_MOVE;
-	e.mouseMoveEvent.posX = (double)_lastX;
-	e.mouseMoveEvent.posY = (double)_lastY;
+	e.mouseMoveEvent.posX = (double)_lastX / screenWidth * 2 - 1;
+	e.mouseMoveEvent.posY = -((double)_lastY / screenHeight * 2 - 1);
 	events.push_back(e);
 }
 
@@ -147,4 +147,10 @@ void InputWindows::addCharacter(char32_t _char)
 	e.type = Event::Type::CHARACTER;
 	e.charEvent.character = _char;
 	events.push_back(e);
+}
+
+void InputWindows::onResize(unsigned int _width, unsigned int _height)
+{
+	screenWidth		= _width;
+	screenHeight	= _height;
 }

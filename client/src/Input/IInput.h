@@ -49,13 +49,11 @@ public:
 	struct MouseMoveEvent
 	{
 		/**
-		 *  Horizontal position, left to right, in screen coordinates,
-		 *  starting with 0 at the left inner border of the window.
+		 *  Horizontal position, left to right, in clipspace coordinates.
 		 */
 		double posX;
 		/**
-		 *  Vertical position, top to bottom, in screen coordinates,
-		 *  starting with 0 at the top inner border of the window.
+		 *  Vertical position, top to bottom, in clipspace coordinates.
 		 */
 		double posY;
 	};

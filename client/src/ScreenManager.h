@@ -1,16 +1,18 @@
 #ifndef __SCREENMANAGER_H
 #define __SCREENMANAGER_H
 
+#include "FunctionHandler.h"
+#include "GUIActionHandler.h"
 #include "Input/IInput.h"
 #include "ScreenState.h"
 
 #include <map>
 #include <vector>
 
-class ScreenManager
+class ScreenManager : public GUIActionHandler
 {
 public:
-	ScreenManager(const boost::filesystem::path& _rootDir);
+	ScreenManager(const boost::filesystem::path& _rootDir, FunctionHandler* _funcHandler);
 	//ErrorCode
 	~ScreenManager();
 
@@ -23,10 +25,13 @@ private:
 	std::vector<ScreenState::ptr> screens;
 	std::map<std::string, ScreenState::ptr> registeredStates;
 
+	FunctionHandler* funcHandler;
+
 	bool registerScreenState(const std::string& _stateId, ScreenState::ptr _state);
 	bool goBack();
 
 	bool readScreen(const boost::filesystem::path& _screenFile);
+	void buttonPressed(const std::string& _func) override;
 };
 
 #endif
