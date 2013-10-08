@@ -151,6 +151,19 @@ InputLinux::InputLinux()
 
 void InputLinux::keyCallback(GLFWwindow* _window, int _key, int _scancode, int _action, int _mods)
 {
+	if (_key == GLFW_KEY_BACKSPACE && _action != GLFW_RELEASE)
+	{
+		Event ev;
+		ev.type = Event::Type::CHARACTER;
+		ev.charEvent.character = (char32_t)'\b';
+
+		ptr input = windowMap[_window].lock();
+		if (input)
+		{
+			input->events.push_back(ev);
+		}
+	}
+
 	if (_action == GLFW_REPEAT)
 	{
 		return;
@@ -193,10 +206,13 @@ void InputLinux::mouseButtonCallback(GLFWwindow* _window, int _button, int _acti
 
 void InputLinux::mouseCursorPosCallback(GLFWwindow* _window, double _xpos, double _ypos)
 {
+	int windowWidth, windowHeight;
+	glfwGetWindowSize(_window, &windowWidth, &windowHeight);
+
 	Event ev;
 	ev.type = Event::Type::MOUSE_MOVE;
-	ev.mouseMoveEvent.posX = _xpos;
-	ev.mouseMoveEvent.posY = _ypos;
+	ev.mouseMoveEvent.posX = _xpos / windowWidth * 2.0 - 1.0;
+	ev.mouseMoveEvent.posY = -(_ypos / windowHeight * 2.0 - 1.0);
 
 	ptr input = windowMap[_window].lock();
 	if (input)

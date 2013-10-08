@@ -3,6 +3,7 @@
 #include "MenuState.h"
 
 #include <boost/filesystem/fstream.hpp>
+#include <iostream>
 #include <sstream>
 
 inline float screenSizeToClip( const float _screenDimension, const float _screenSize )

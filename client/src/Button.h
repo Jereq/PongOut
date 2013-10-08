@@ -2,7 +2,7 @@
 #define __BUTTON_H
 
 #include "GUIActionHandler.h"
-#include "Input\IInput.h"
+#include "Input/IInput.h"
 #include "IGraphics.h"
 
 #include <string>
