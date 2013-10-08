@@ -100,5 +100,5 @@ void MenuState::draw(std::shared_ptr<IGraphics> _graphics)
 	{
 		i.draw(_graphics);
 	}
-	_graphics->addRectangle(glm::vec3(0,0,0), glm::vec2(2,2), 0, backgroundName);
+	_graphics->addRectangle(glm::vec3(0,0,0.9999), glm::vec2(2,2), 0, backgroundName);
 }
