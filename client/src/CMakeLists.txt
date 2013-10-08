@@ -93,6 +93,7 @@ set(SOURCE_FILES
 	FunctionHandler.h
 	GUIActionHandler.h
 	Image.cpp Image.h
+	InputField.cpp InputField.h
 )
 
 # Add the executable

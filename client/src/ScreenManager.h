@@ -21,6 +21,8 @@ public:
 	bool removeScreen(ScreenState* _screen);
 	bool openScreen(const std::string& _stateId);
 
+	std::string getText(const std::string& _elemId) const;
+
 private:
 	std::vector<ScreenState::ptr> screens;
 	std::map<std::string, ScreenState::ptr> registeredStates;

@@ -3,6 +3,7 @@
 
 #include "ScreenState.h"
 #include "Button.h"
+#include "InputField.h"
 #include <vector>
 #include "Image.h"
 
@@ -16,10 +17,15 @@ public:
 
 	void addButtons(std::vector<Button> _buttons);
 	void addImages(std::vector<Image> _images);
+	void addInputFields(std::vector<InputField> _inputFields);
 	void setBackground(const std::string _backgroundName);
+
+	std::string getText(const std::string& _elemId) const override;
+
 private:
 	std::vector<Button> buttons;
 	std::vector<Image> images;
+	std::vector<InputField> inputFields;
 	virtual bool initialize();
 	virtual void onInput(const std::vector<IInput::Event> _events);
 	virtual void update(const float _dt);

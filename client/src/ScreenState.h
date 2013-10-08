@@ -20,6 +20,8 @@ public:
 	virtual bool onExit();
 	virtual bool onEntry();
 
+	virtual std::string getText(const std::string& _elemId) const =0;
+
 	bool isInitialized() const;
 	bool isActive() const;
 	bool isPopup() const;

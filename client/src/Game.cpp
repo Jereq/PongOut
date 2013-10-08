@@ -16,6 +16,16 @@ void Game::onFunction(const std::string& _func)
 	{
 		stop();
 	}
+	else if (_func == "login")
+	{
+		std::string username = screenManager.getText("username");
+		std::string password = screenManager.getText("password");
+
+		if (username == "test" && password == "pass")
+		{
+			screenManager.openScreen("mainmenu");
+		}
+	}
 }
 
 Game::Game(ICoreSystem::ptr _system)
@@ -27,7 +37,7 @@ Game::Game(ICoreSystem::ptr _system)
 	map->initialize(glm::vec2(800.0f, 600.0f), 8, "background/mainmenu_01", "blocks/orange_01");
 }
 
-std::string naiveUTF32toUTF8(char32_t _character)
+static std::string naiveUTF32toUTF8(char32_t _character)
 {
 	char buffer[6];
 

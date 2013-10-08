@@ -32,6 +32,11 @@ void MenuState::addImages(std::vector<Image> _images)
 	images.insert(images.end(),_images.begin(), _images.end());
 }
 
+void MenuState::addInputFields(std::vector<InputField> _inputFields)
+{
+	inputFields.insert(inputFields.end(), _inputFields.begin(), _inputFields.end());
+}
+
 void MenuState::onInput(const std::vector<IInput::Event> _events)
 {
 	for(IInput::Event e : _events)
@@ -44,6 +49,12 @@ void MenuState::onInput(const std::vector<IInput::Event> _events)
 			{
 				b.onInput(e);
 			}
+
+		case IInput::Event::Type::CHARACTER:
+			for (InputField& i : inputFields)
+			{
+				i.onInput(e);
+			}
 			break;
 		}
 	}
@@ -52,6 +63,19 @@ void MenuState::onInput(const std::vector<IInput::Event> _events)
 void MenuState::setBackground(const std::string _backgroundName)
 {
 	backgroundName = _backgroundName;
+}
+
+std::string MenuState::getText(const std::string& _elemId) const
+{
+	for (const InputField& inF : inputFields)
+	{
+		if (inF.getId() == _elemId)
+		{
+			return inF.getText();
+		}
+	}
+
+	return "";
 }
 
 void MenuState::update(float _dt)
@@ -68,6 +92,11 @@ void MenuState::draw(std::shared_ptr<IGraphics> _graphics)
 	}
 
 	for(Image i : images)
+	{
+		i.draw(_graphics);
+	}
+
+	for(InputField i : inputFields)
 	{
 		i.draw(_graphics);
 	}

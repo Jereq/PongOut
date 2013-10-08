@@ -191,6 +191,104 @@ bool readButton(Button& _button, std::istream& _is, glm::vec2 _screenSize)
 	return true;
 }
 
+bool readInputField(InputField& _inputField, std::istream& _is, glm::vec2 _screenSize)
+{
+	std::string inputFieldId;
+	glm::vec3 inputFieldPosition;
+	glm::vec2 inputFieldSize;
+	std::string textureName;
+
+	while(true)
+	{
+		std::string line;
+		if (!std::getline(_is, line))
+		{
+			return false;
+		}
+
+		if (line.empty())
+		{
+			continue;
+		}
+
+		if (line == "\t/inputField")
+		{
+			break;
+		}
+
+		std::istringstream ss(line);
+		char t1, t2;
+		ss.get(t1);
+		ss.get(t2);
+		if (t1 != '\t' || t2 != '\t')
+		{
+			return false;
+		}
+
+		std::string type, val1;
+		ss >> type >> val1;
+
+		if (type.empty())
+		{
+			continue;
+		}
+
+		if (type == "id")
+		{
+			if (!inputFieldId.empty() || val1.empty())
+			{
+				return false;
+			}
+
+			inputFieldId = val1;
+		}
+		else if(type == "position")
+		{
+			std::vector<float> posVals;
+			if (!readFloats(posVals, val1) || posVals.size() != 3)
+			{
+				return false;
+			}
+
+			inputFieldPosition.x = screenPositionToClip(_screenSize.x, posVals[0]);
+			inputFieldPosition.y = screenPositionToClip(_screenSize.y, posVals[1]);
+			inputFieldPosition.z = posVals[2];
+		}
+		else if(type == "size")
+		{
+			std::vector<float> sizeVals;
+			if (!readFloats(sizeVals, val1) || sizeVals.size() != 2)
+			{
+				return false;
+			}
+
+			inputFieldSize.x = screenSizeToClip(_screenSize.x, sizeVals[0]);
+			inputFieldSize.y = screenSizeToClip(_screenSize.y, sizeVals[1]);
+		}
+		else if(type == "textureName")
+		{
+			if (!textureName.empty() || val1.empty())
+			{
+				return false;
+			}
+
+			textureName = val1;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	if (textureName.empty() || inputFieldId.empty())
+	{
+		return false;
+	}
+
+	_inputField.initialize(inputFieldId, textureName, inputFieldPosition, inputFieldSize);
+
+	return true;
+}
 bool readImage(Image& _image, std::istream& _is, glm::vec2 _screenSize)
 {
 	std::string imageId;
@@ -315,6 +413,7 @@ bool ScreenManager::readScreen(const boost::filesystem::path& _screenFile)
 			std::string backgroundName;
 			std::vector<Button> buttons;
 			std::vector<Image> images;
+			std::vector<InputField> inputFields;
 			glm::vec2 screenSize(800, 600);
 
 			while(true)
@@ -383,6 +482,14 @@ bool ScreenManager::readScreen(const boost::filesystem::path& _screenFile)
 
 					images.push_back(image);
 				}
+				else if(type == "inputField")
+				{
+					InputField inputField;
+					if(!readInputField(inputField, file, screenSize))
+						return false;
+
+					inputFields.push_back(inputField);
+				}
 				else if (type == "screenSize")
 				{
 					std::vector<float> sizeVals;
@@ -404,6 +511,7 @@ bool ScreenManager::readScreen(const boost::filesystem::path& _screenFile)
 			MenuState::ptr menuState(new MenuState(screenName));
 			menuState->addButtons(buttons);
 			menuState->addImages(images);
+			menuState->addInputFields(inputFields);
 			menuState->setBackground(backgroundName);
 			registerScreenState(screenName, menuState);		
 		}
@@ -490,6 +598,11 @@ bool ScreenManager::openScreen(const std::string& _stateId)
 	screens.back()->onEntry();
 
 	return true;
+}
+
+std::string ScreenManager::getText(const std::string& _elemId) const
+{
+	return screens.back()->getText(_elemId);
 }
 
 bool ScreenManager::goBack()

@@ -37,6 +37,18 @@ screen
 	id login
 	background player/ball
 	screenSize 1280/1024
+	inputField
+		id username
+		textureName A
+		position 600/300/0
+		size 400/100
+	/inputField
+	inputField
+		id password
+		textureName B
+		position 600/180/0
+		size 400/100
+	/inputField
 	button
 		id b1
 		textureNormal blocks/pink_01
@@ -49,6 +61,6 @@ screen
 		textureNormal f
 		position 64/128/0
 		size 64/64
-		func goto/mainmenu
+		func login
 	/button
 /screen
