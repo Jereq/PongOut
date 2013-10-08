@@ -1,36 +1,42 @@
 screen
-	id:mainmenu
+	id mainmenu
+	background bbackground/mainmenu_01
+	screenSize 1280/1024
 	button
-		id:b1
-		texture:blocks/dark_magenta_01
-		label:
-		position:128/10
-		size:64/32
+		id b1
+		texture blocks/dark_magenta_01
+		label
+		position 128/10/0
+		size 64/32
+		func goto/login
 	/button
 	button
-		id:b2
-		texture:blocks/orange_01
-		label:
-		position:128/10
-		size:64/32
+		id b2
+		texture blocks/orange_01
+		label 
+		position 128/160/0
+		size 64/32
+		func A
 	/button
-	background
-		texture:background/manmenu_01
 /screen
 screen
-	id:test2
+	id login
+	background background/mainmenu_01
+	screenSize 10/10
 	button
-		id:b1
-		texture:blocks/pink_01
-		label:
-		position:128/10
-		size:64/32
+		id b1
+		texture blocks/pink_01
+		label 
+		position 2.5/5/0
+		size 2/1
+		func B
 	/button
 	button
-		id:b2
-		texture:
-		label:
-		position:128/10
-		size:64/32
+		id b2
+		texture f
+		label 
+		position 5/5/0
+		size 2/1
+		func goto/mainmenu
 	/button
 /screen

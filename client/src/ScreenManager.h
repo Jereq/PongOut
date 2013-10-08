@@ -10,7 +10,7 @@
 class ScreenManager
 {
 public:
-	ScreenManager();
+	ScreenManager(const boost::filesystem::path& _rootDir);
 	//ErrorCode
 	~ScreenManager();
 
@@ -25,6 +25,8 @@ private:
 
 	bool registerScreenState(const std::string& _stateId, ScreenState::ptr _state);
 	bool goBack();
+
+	bool readScreen(const boost::filesystem::path& _screenFile);
 };
 
 #endif

@@ -9,7 +9,8 @@
 #include <vector>
 
 Game::Game(ICoreSystem::ptr _system)
-	: system(_system)
+	: system(_system),
+	screenManager(_system.lock()->getRootDir())
 {
 	map = new Map();
 	map->initialize(glm::vec2(800.0f, 600.0f), 8, "background/mainmenu_01", "blocks/orange_01");
@@ -161,7 +162,7 @@ void Game::run()
 		sounds->play("Bubble3");
 
 		screenManager.onInput(events);
-		screenManager.update(deltaTime, graphics);
+		screenManager.update((float)deltaTime, graphics);
 
 		const static float FRAMES_PER_SECOND = 60.f;
 		const static float FRAME_TIME = 1.f / FRAMES_PER_SECOND;
