@@ -6,6 +6,8 @@
 #include "ICoreSystem.h"
 #include "ResourceLoader/ResourceLoader.h"
 
+#include "soundTest.h"
+
 struct cout_redirect {
     cout_redirect( std::streambuf * new_buffer ) 
         : old( std::cout.rdbuf( new_buffer ) )

@@ -6,6 +6,8 @@ include_directories(
 
 add_executable(PongOut-test
 	mainTest.cpp
+	soundTest.h
+	soundTest.cpp
 	../ICoreSystem.cpp
 )
 

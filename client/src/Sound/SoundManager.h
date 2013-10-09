@@ -27,6 +27,7 @@ private:
 	vector<Sound> music;
 	vector<Sound> sfx;
 	SoundSettings settings;
+	bool soundsLoaded;
 public:
 	SoundManager(void);
 	~SoundManager(void);
