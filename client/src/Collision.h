@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ICoreSystem.h"
-#include "Ball.hpp"
+#include "Ball.h"
 #include <iostream>
 #include <array>
 

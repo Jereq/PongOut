@@ -1,5 +1,4 @@
 #include "PhysicsComponent.h"
-#include "Ball.h"
 
 
 bool PhysicsComponent::initialize(Map* _map)
@@ -12,7 +11,7 @@ bool PhysicsComponent::initialize(Map* _map)
 	return true;
 }
 
-void PhysicsComponent::update(Ball* _ball, double _dt)
+void PhysicsComponent::bounceOnPlayArea(GameObject* _gameObject, double _dt)
 {
 	//return glm::vec2( _screenSize.x / _screenDimension.x * 2.f, _screenSize.y / _screenDimension.y * 2.f);
 
@@ -22,24 +21,54 @@ void PhysicsComponent::update(Ball* _ball, double _dt)
 	glm::vec2 min = glm::vec2(-clipArea.x / 2,-clipArea.y / 2);
 	glm::vec2 max = glm::vec2(clipArea.x / 2,clipArea.y / 2);
 
-	if(_ball->center.x - _ball->size.x / 2 < min.x)
+	if(_gameObject->center.x - _gameObject->size.x / 2 < min.x)
 	{
-		_ball->center.x = min.x + _ball->size.x / 2.0;
-		_ball->velocity.x *= -1;
+		_gameObject->center.x = min.x + _gameObject->size.x / 2.0;
+		_gameObject->velocity.x *= -1;
 	}
-	else if (_ball->center.x + _ball->size.x / 2 > max.x)
+	else if (_gameObject->center.x + _gameObject->size.x / 2 > max.x)
 	{
-		_ball->center.x = max.x - _ball->size.x / 2.0;
-		_ball->velocity.x *= -1;
+		_gameObject->center.x = max.x - _gameObject->size.x / 2.0;
+		_gameObject->velocity.x *= -1;
 	}
-	if(_ball->center.y - _ball->size.y / 2 < min.y)
+	if(_gameObject->center.y - _gameObject->size.y / 2 < min.y)
 	{
-		_ball->center.y = min.y + _ball->size.y / 2.0;
-		_ball->velocity.y *= -1;
+		_gameObject->center.y = min.y + _gameObject->size.y / 2.0;
+		_gameObject->velocity.y *= -1;
 	}
-	else if(_ball->center.y + _ball->size.y / 2 > max.y)
+	else if(_gameObject->center.y + _gameObject->size.y / 2 > max.y)
 	{
-		_ball->center.y = max.y - _ball->size.y / 2.0;
-		_ball->velocity.y *= -1;
+		_gameObject->center.y = max.y - _gameObject->size.y / 2.0;
+		_gameObject->velocity.y *= -1;
+	}
+}
+
+void PhysicsComponent::restrictToPlayArea(GameObject* _gameObject, double _dt)
+{
+		glm::vec2 playArea = map->getSize();
+	glm::vec2 clipArea = glm::vec2( playArea.x / 1280. * 2.f, playArea.y / 1024. * 2.f);
+
+	glm::vec2 min = glm::vec2(-clipArea.x / 2,-clipArea.y / 2);
+	glm::vec2 max = glm::vec2(clipArea.x / 2,clipArea.y / 2);
+
+	if(_gameObject->center.x - _gameObject->size.x / 2 < min.x)
+	{
+		_gameObject->center.x = min.x + _gameObject->size.x / 2.0;
+
+	}
+	else if (_gameObject->center.x + _gameObject->size.x / 2 > max.x)
+	{
+		_gameObject->center.x = max.x - _gameObject->size.x / 2.0;
+
+	}
+	if(_gameObject->center.y - _gameObject->size.y / 2 < min.y)
+	{
+		_gameObject->center.y = min.y + _gameObject->size.y / 2.0;
+
+	}
+	else if(_gameObject->center.y + _gameObject->size.y / 2 > max.y)
+	{
+		_gameObject->center.y = max.y - _gameObject->size.y / 2.0;
+
 	}
 }

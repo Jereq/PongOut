@@ -30,7 +30,7 @@ private:
 
 	std::vector<GameObject::ptr> gameObjects;
 
-	IGraphics::ptr _graphics;
+	IGraphics::ptr graphics;
 	InputState	inputState;
 	Map* map;
 };

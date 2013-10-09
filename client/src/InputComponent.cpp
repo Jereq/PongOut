@@ -26,7 +26,6 @@ bool InputComponent::initialize(InputState::ptr _inputState)
 void InputComponent::update(GameObject* _gameObject, double _dt)
 {
 	std::vector<IInput::Event> events =  inputState->getEvents();
-	float acceleration =2.f;
 
 	for(IInput::Event e : events)
 	{
@@ -36,6 +35,8 @@ void InputComponent::update(GameObject* _gameObject, double _dt)
 			{
 				double x = e.mouseMoveEvent.posX;
 				double y = e.mouseMoveEvent.posY;
+
+				_gameObject->velocity = glm::vec2(x,y);
 			}
 			break;
 

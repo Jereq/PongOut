@@ -43,10 +43,10 @@ void Map::initBlockArray(int _size, GraphicsComponent::ptr _graphicsComponent)
 	//blockList.resize(_size);
 	//blockList[0].initialize(glm::vec2(1,1), glm::vec2(8,4), "blocks/orange_01", 1);
 
-	int screenWidth = 1280;
-	int screenHeight = 1024;
-	glm::vec2 size = glm::vec2(128,64);
-	glm::vec3 origo = glm::vec3(0 + size.x / 2., screenHeight/2, 0);
+	int screenWidth = playAreaSize.x;
+	int screenHeight = playAreaSize.y;
+	glm::vec2 size = glm::vec2(64,32);
+	glm::vec3 origo = glm::vec3(playAreaSize.x / 2 + size.x / 2., playAreaSize.y/2, 0);
 	
 	int columns = 10;
 	int rows = 3;
