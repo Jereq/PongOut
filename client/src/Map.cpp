@@ -41,7 +41,7 @@ void Map::setPlayAreaBounds(glm::vec2 _size)
 void Map::initBlockArray(int _size)
 {
 	blockList.resize(_size);
-	blockList[0].initialize(glm::vec2(1,1), glm::vec2(8,4), "blocks/orange_01", 1);
+	blockList[0].initialize(glm::vec3(1,1, 0), glm::vec2(8,4), "blocks/orange_01", 1);
 
 
 }

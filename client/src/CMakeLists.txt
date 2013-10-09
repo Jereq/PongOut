@@ -89,6 +89,9 @@ set(SOURCE_FILES
 	GUIActionHandler.h
 	Image.cpp Image.h
 	InputField.cpp InputField.h
+	Collision.cpp Collision.h
+	Ball.cpp Ball.hpp
+	HitBox.cpp HitBox.h
 )
 
 # Add the executable

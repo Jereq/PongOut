@@ -9,6 +9,7 @@
 #include <vector>
 
 void Game::onFunction(const std::string& _func)
+
 {
 	std::cout << "Performing: " << _func << std::endl;
 
@@ -172,7 +173,6 @@ void Game::run()
 				//std::cout << "Key event (" << (int)event.keyEvent.key << ", " << (event.keyEvent.pressed ? "PRESSED" : "RELEASED") << ")" << std::endl;
 				//sounds->playSfx("ball_vs_ball");
 				break;
-
 			case IInput::Event::Type::MOUSE_BUTTON:
 				//std::cout << "Mouse button event (" << (int)event.mouseButtonEvent.button << ", " << (event.mouseButtonEvent.pressed ? "PRESSED" : "RELEASED") << ")" << std::endl;
 				break;
@@ -211,7 +211,6 @@ void Game::run()
 	sounds->shutdown();
 	graphics->destroy();
 }
-
 void Game::stop()
 {
 	shouldStop = true;
