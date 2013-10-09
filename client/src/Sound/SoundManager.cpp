@@ -65,7 +65,7 @@ bool SoundManager::initialize(void)
 		return false;
 	}
 	
-	system->getChannel(0, &backgroundChannel);
+	system->getChannel(FMOD_CHANNEL_FREE, &backgroundChannel);
 
 	return true;
 }
@@ -143,7 +143,7 @@ void SoundManager::playSfx(const string _resourceName)
 		}
 
 		FMOD::Channel *channel;
-		res = system->playSound(FMOD_CHANNELINDEX::FMOD_CHANNEL_FREE, sfx[index].sound, true, &channel);
+		res = system->playSound(FMOD_CHANNEL_FREE, sound.sound, true, &channel);
 		if (res != FMOD_OK)
 		{
 			//TODO: Add error report.
@@ -190,7 +190,7 @@ void SoundManager::changeBackgroundMusic(const string _resourceName)
 		{
 			return;
 		}
-		res = system->playSound(FMOD_CHANNELINDEX::FMOD_CHANNEL_REUSE, music[index].sound, true, &backgroundChannel);
+		res = system->playSound(FMOD_CHANNEL_REUSE, sound.sound, true, &backgroundChannel);
 		backgroundChannel->setVolume(sound.volume * settings.getMusicVolume());
 		backgroundChannel->setPaused(false);
 	}

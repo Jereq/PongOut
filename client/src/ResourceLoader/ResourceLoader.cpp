@@ -86,7 +86,10 @@ ResourceLoader::ErrorCode ResourceLoader::getResources(std::vector<Resource>& _r
 
 	for (auto val : result)
 	{
-		_ret.push_back(val);
+		if (val.type == _type)
+		{
+			_ret.push_back(val);
+		}
 	}
 
 	return ErrorCode::SUCCESS;

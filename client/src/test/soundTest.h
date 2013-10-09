@@ -5,7 +5,7 @@
 
 BOOST_AUTO_TEST_CASE(SoundEngineTest)
 {
-	SoundManager soundM = SoundManager();
+	SoundManager soundM;
 	BOOST_REQUIRE(soundM.initialize());
 
 	//int argc = boost::unit_test::framework::master_test_suite().argc;

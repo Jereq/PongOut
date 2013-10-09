@@ -32,6 +32,9 @@ public:
 	SoundManager(void);
 	~SoundManager(void);
 
+	SoundManager(const SoundManager&) = delete;
+	SoundManager& operator=(const SoundManager&) = delete;
+
 	bool initialize(void);
 	void shutdown(void);
 
