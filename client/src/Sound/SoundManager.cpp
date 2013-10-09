@@ -32,7 +32,7 @@ bool SoundManager::initialize(void)
 	result = system->getVersion(&usedVersion);
 	if(usedVersion < FMOD_VERSION)
 	{
-		string errorMessage = "Your version of FMOD is not supported: v."+
+		string errorMessage = "Your version of FMOD is not supported: v."+ 
 			std::to_string(usedVersion) + "Please update to: " + std::to_string(FMOD_VERSION);
 		errorReport("sound_error.txt", errorMessage);
 		return false;
@@ -41,7 +41,6 @@ bool SoundManager::initialize(void)
 	result = system->setOutput(FMOD_OUTPUTTYPE_WASAPI);
 	result = system->setSpeakerMode(FMOD_SPEAKERMODE_STEREO);
 	result = system->init(MAX_CHANNELS, FMOD_INIT_NORMAL, 0);
-	
 	
 	return true;
 }
@@ -56,7 +55,6 @@ bool SoundManager::load(string _filename)
 	FMOD_RESULT res = system->createStream( path.c_str(), 0, NULL, &sounds[current]->sound );
 	sounds[current]->sound->setMode(FMOD_LOOP_NORMAL);
 
-	
 	//return res;
 	//initializeSound(sounds[current]);
 	return true;
@@ -74,7 +72,7 @@ bool SoundManager::initializeSound(Sound* _sound)
 	bool b;
 	_sound->channel->isPlaying(&b);
 	if( b == false )
-		res = system->playSound( FMOD_CHANNELINDEX::FMOD_CHANNEL_REUSE, NULL, false, &_sound->channel );
+		res = system->playSound(FMOD_CHANNELINDEX::FMOD_CHANNEL_REUSE, NULL, false, &_sound->channel);
 
 
 	//FMOD_DSP_DESCRIPTION dspdesc;
