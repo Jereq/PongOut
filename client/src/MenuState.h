@@ -19,6 +19,7 @@ public:
 	void addImages(std::vector<Image> _images);
 	void addInputFields(std::vector<InputField> _inputFields);
 	void setBackground(const std::string _backgroundName);
+	void setMusic(const std::string _music);
 
 	std::string getText(const std::string& _elemId) const override;
 
@@ -26,8 +27,10 @@ private:
 	std::vector<Button> buttons;
 	std::vector<Image> images;
 	std::vector<InputField> inputFields;
+	std::string music;
 	virtual bool initialize();
 	virtual void onInput(const std::vector<IInput::Event> _events);
+	virtual bool onEntry();
 	virtual void update(const float _dt);
 	virtual void draw(std::shared_ptr<IGraphics> _graphics);
 	

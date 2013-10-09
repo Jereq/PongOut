@@ -16,7 +16,7 @@ texture:blocks/orange_03		textures/box_orange_03.png
 texture:blocks/orange_04		textures/box_orange_04.png
 texture:blocks/orange_05		textures/box_orange_05.png
 texture:blocks/pink_01			textures/box_pink_01.png
-texture:textureNotFound		textures/textureNotFound.png
+texture:textureNotFound			textures/textureNotFound.png
 texture:background/mainmenu_01		background_prototype.png
 texture:blocks/pink_02			textures/box_pink_02.png
 texture:blocks/pink_03			textures/box_pink_03.png
@@ -61,7 +61,7 @@ texture:input/box			textures/input_box.png
 texture:input/chat			textures/input_chat.png
 texture:input/player_search		textures/input_player_search.png
 texture:output/chat_window		textures/chat_window.png
-texture:output/player_list_game_lobby	textures/player_list_game_lobby
+texture:output/player_list_game_lobby	textures/player_list_game_lobby.png
 texture:output/player_list_high_scores	textures/player_list_high_scores.png
 texture:text/5min			textures/text_5min.png
 texture:text/10min			textures/text_10min.png
@@ -103,3 +103,6 @@ texture:text/username			textures/text_username.png
 texture:text/winner			textures/text_winner.png
 texture:regulator/bar			textures/regulator_bar.png
 texture:regulator/regulator		textures/regulator_regulator.png
+music:background			sounds/Bubble3.mid
+sfx:ball_vs_ball			sounds/ball_on_ball_collision.mp3
+sfx:block_explodes			sounds/block_explodes.mp3

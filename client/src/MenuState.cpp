@@ -1,4 +1,5 @@
 #include "MenuState.h"
+#include "ICoreSystem.h"
 
 
 MenuState::MenuState(const std::string _screenName)
@@ -60,9 +61,21 @@ void MenuState::onInput(const std::vector<IInput::Event> _events)
 	}
 }
 
+bool MenuState::onEntry()
+{
+	ICoreSystem::getInstance().lock()->getSounds()->changeBackgroundMusic(music);
+
+	return true;
+}
+
 void MenuState::setBackground(const std::string _backgroundName)
 {
 	backgroundName = _backgroundName;
+}
+
+void MenuState::setMusic(const std::string _music)
+{
+	music = _music;
 }
 
 std::string MenuState::getText(const std::string& _elemId) const

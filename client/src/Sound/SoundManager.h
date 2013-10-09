@@ -4,6 +4,8 @@
 #include "SoundSettings.h"
 #include "Sound.h"
 #include <fstream>
+#include <ResourceLoader/ResourceLoader.h>
+#include <boost/filesystem/path.hpp>
 
 #define MAX_CHANNELS 32
 
@@ -14,14 +16,17 @@ using std::ofstream;
 namespace FMOD 
 {
 	class System;
+	class Channel;
 }
 
 class SoundManager
 {
 private:
 	FMOD::System *system;
-	vector<Sound*> sounds;
-	SoundSettings *settings;
+	FMOD::Channel *backgroundChannel;
+	vector<Sound> music;
+	vector<Sound> sfx;
+	SoundSettings settings;
 public:
 	SoundManager(void);
 	~SoundManager(void);
@@ -29,11 +34,11 @@ public:
 	bool initialize(void);
 	void shutdown(void);
 
-	bool initializeSound(Sound* _sound);
-	bool load(string _filename);
-	void play(string _filename);
-
-
-	void errorReport(string filename, string errorMessage);
-
+	bool loadSounds(const boost::filesystem::path &_resourceDir);
+	void playSfx(const string _resourceName);
+	void changeBackgroundMusic(const string _resourceName);
+	
+private:
+	bool load(const ResourceLoader::Resource &_soundRes);
+	void errorReport(const string filename, const string errorMessage);
 };

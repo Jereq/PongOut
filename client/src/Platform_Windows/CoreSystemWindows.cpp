@@ -25,8 +25,6 @@ bool ICoreSystem::init(int _argc, char** _argv)
 CoreSystemWindows::CoreSystemWindows(const boost::filesystem::path& _rootDir)
 	: ICoreSystem(_rootDir), graphics(NULL)
 {
-	bool result;
-
 	registerRAW();
 
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
@@ -37,23 +35,11 @@ CoreSystemWindows::CoreSystemWindows(const boost::filesystem::path& _rootDir)
 	ticksPerMs = (float)(frequency / 1000);
 	
 	QueryPerformanceCounter((LARGE_INTEGER*)&startTime);
-
-	soundManager = new SoundManager();
-	result = soundManager->initialize();
-	if(!result)
-	{
-		int i = 42;
-	}
 }
 
 CoreSystemWindows::~CoreSystemWindows()
 {
 
-}
-
-SoundManager* CoreSystemWindows::getSounds()
-{
-	return soundManager;
 }
 
 double CoreSystemWindows::getTime()const

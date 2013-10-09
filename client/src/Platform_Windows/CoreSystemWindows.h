@@ -19,7 +19,6 @@ private:
 	virtual bool windowIsClosing() const;
 	virtual void pollEvents();
 
-	virtual SoundManager* getSounds();
 	virtual IGraphics::ptr getGraphics() override;
 	virtual IInput::ptr getInput() override;
 

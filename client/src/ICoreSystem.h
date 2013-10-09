@@ -97,10 +97,11 @@ public:
 	 *  @return a pointer to a input object. Will not return a null pointer.
 	 */
 	virtual IInput::ptr getInput() =0;
-
+	//TODO document this shit
 	virtual SoundManager* getSounds();
 
 protected:
+	
 	SoundManager* soundManager;
 	ICoreSystem();
 };

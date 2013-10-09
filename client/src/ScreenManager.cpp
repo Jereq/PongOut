@@ -416,6 +416,7 @@ bool ScreenManager::readScreen(const boost::filesystem::path& _screenFile)
 			std::vector<Image> images;
 			std::vector<InputField> inputFields;
 			glm::vec2 screenSize(800, 600);
+			std::string music;
 
 			while(true)
 			{
@@ -502,6 +503,15 @@ bool ScreenManager::readScreen(const boost::filesystem::path& _screenFile)
 					screenSize.x = sizeVals[0];
 					screenSize.y = sizeVals[1];
 				}
+				else if(type == "music")
+				{
+					if (!music.empty() || val1.empty())
+					{
+						return false;
+					}
+
+					music = val1;
+				}
 			}
 
 			if (screenName.empty() || backgroundName.empty())
@@ -514,6 +524,7 @@ bool ScreenManager::readScreen(const boost::filesystem::path& _screenFile)
 			menuState->addImages(images);
 			menuState->addInputFields(inputFields);
 			menuState->setBackground(backgroundName);
+			menuState->setMusic(music);
 			registerScreenState(screenName, menuState);		
 		}
 	}

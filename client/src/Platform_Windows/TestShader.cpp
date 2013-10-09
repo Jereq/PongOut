@@ -189,7 +189,6 @@ ErrorCode TestShader::draw(ID3D11DeviceContext* _deviceContext, ID3D11Buffer* _v
 
 ErrorCode TestShader::setShaderParamaters(ID3D11DeviceContext* _deviceContext, ID3D11Buffer* _vbuffer, ID3D11Buffer* _ibuffer, ID3D11ShaderResourceView* _srView)
 {
-	HRESULT result;
 	unsigned int stride;
 	unsigned int offset;
 

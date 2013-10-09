@@ -1,25 +1,35 @@
 #include "SoundManager.h"
-
+#include <ResourceLoader/ResourceLoader.h>
 #include <fmod.hpp>
 
 SoundManager::SoundManager(void)
+	: settings(1.f, 1.f),
+	system(nullptr),
+	backgroundChannel(nullptr)
+
 {
-	system = NULL;
-	settings = NULL;
 }
 
 SoundManager::~SoundManager(void)
 {
+	if (system)
+	{
+		system->release();
+		system = nullptr;
+	}
 }
 
 bool SoundManager::initialize(void)
 {
+	if (system)
+	{
+		return false;
+	}
+
 	FMOD_RESULT result;
 	unsigned int usedVersion;
 
-	settings = new SoundSettings();
-	if(!settings)
-		return false;
+	settings = SoundSettings(1.f, 1.f);
 
 	result = FMOD::System_Create(&system);
 	if(result != FMOD_OK)
@@ -32,73 +42,66 @@ bool SoundManager::initialize(void)
 	result = system->getVersion(&usedVersion);
 	if(usedVersion < FMOD_VERSION)
 	{
+		system->release();
+		system = nullptr;
+
 		string errorMessage = "Your version of FMOD is not supported: v."+ 
 			std::to_string(usedVersion) + "Please update to: " + std::to_string(FMOD_VERSION);
 		errorReport("sound_error.txt", errorMessage);
 		return false;
 	}
 
-	result = system->setOutput(FMOD_OUTPUTTYPE_WASAPI);
 	result = system->setSpeakerMode(FMOD_SPEAKERMODE_STEREO);
 	result = system->init(MAX_CHANNELS, FMOD_INIT_NORMAL, 0);
 	
+	system->getChannel(0, &backgroundChannel);
+
 	return true;
 }
 
-bool SoundManager::load(string _filename)
+void SoundManager::shutdown(void)
 {
-	string path = "../resources/sounds/" + _filename + ".mid";
-
-	sounds.push_back( new Sound( _filename, "music", 1.0f ) );
-	int current = sounds.size() - 1;
-
-	FMOD_RESULT res = system->createStream( path.c_str(), 0, NULL, &sounds[current]->sound );
-	sounds[current]->sound->setMode(FMOD_LOOP_NORMAL);
-
-	//return res;
-	//initializeSound(sounds[current]);
-	return true;
+	if (system)
+	{
+		system->release();
+		system = nullptr;
+	}
 }
 
-bool SoundManager::initializeSound(Sound* _sound)
+bool SoundManager::loadSounds(const boost::filesystem::path &_resourceDir)
 {
-	if(_sound == NULL)
+	std::vector<ResourceLoader::Resource> soundResources;
+	ResourceLoader::ErrorCode err = ResourceLoader::getResources(soundResources, _resourceDir);
+
+	if (err != ResourceLoader::ErrorCode::SUCCESS)
+	{
+		string errorMessage = "Failed to load sound resources (" + std::to_string((int)err) + ")";
+		errorReport("sound_error.txt", errorMessage);
 		return false;
+	}
 
-	//int c = _sound->id;
-
-	FMOD_RESULT res;
-
-	bool b;
-	_sound->channel->isPlaying(&b);
-	if( b == false )
-		res = system->playSound(FMOD_CHANNELINDEX::FMOD_CHANNEL_REUSE, NULL, false, &_sound->channel);
-
-
-	//FMOD_DSP_DESCRIPTION dspdesc;
-	////FMOD::DSP*	mydsp;
-
-	//memset(&dspdesc, 0, sizeof(FMOD_DSP_DESCRIPTION));
-	//strcpy(dspdesc.name, "Music");
-	//dspdesc.channels =	0;
-	//dspdesc.read	 = DSPDefault;
-	//dspdesc.userdata = (Sound*)p_sounds[c];
-
-	//res = p_system->createDSP(&dspdesc, &p_sounds[c]->mydsp);
-	//p_sounds[c]->mydsp->setBypass(false);
-	//res = p_sounds[c]->channel->addDSP(p_sounds[c]->mydsp,0);
-
+	for (const ResourceLoader::Resource& res : soundResources)
+	{
+		if (res.type == "music")
+		{
+			load(res);
+		}
+		else if (res.type == "sfx")
+		{
+			load(res);
+		}
+	}
 
 	return true;
 }
 
-void SoundManager::play(string _filename)
+void SoundManager::playSfx(const string _resourceName)
 {
 	int index = -1;
 
-	for( int i = 0; i < sounds.size(); i++ )
+	for(unsigned int i = 0; i < sfx.size(); i++ )
 	{
-		if( sounds[i]->resourceName == _filename )
+		if(sfx[i].resourceName == _resourceName )
 		{
 			index = i;
 			break;
@@ -108,19 +111,88 @@ void SoundManager::play(string _filename)
 	FMOD_RESULT res;
 	if( index != -1 )
 	{
-		bool b;
-		sounds[index]->channel->isPlaying(&b);
-		if( b == false )
-		{	
-			res = system->playSound( FMOD_CHANNELINDEX::FMOD_CHANNEL_REUSE, sounds[index]->sound, false, &sounds[index]->channel );
-			//sounds[index]->mydsp->setBypass(false);
-			//sounds[index]->channel->addDSP(p_sounds[index]->mydsp,0);
+		Sound &sound = sfx[index];
+		if(sound.sound == nullptr)
+		{
+			return;
+		}
+
+		if(sound.type != "sfx")
+		{
+			return;
+		}
+
+		FMOD::Channel *channel;
+		res = system->playSound(FMOD_CHANNELINDEX::FMOD_CHANNEL_FREE, sfx[index].sound, true, &channel);
+		if (res != FMOD_OK)
+		{
+			//TODO: Add error report.
+		}
+		channel->setVolume(sound.volume * settings.getSfxVolume());
+		channel->setPaused(false);
+	}
+}
+
+void SoundManager::changeBackgroundMusic(const string _resourceName)
+{
+	int index = -1;
+
+	for(unsigned int i = 0; i < music.size(); i++)
+	{
+		if(music[i].resourceName == _resourceName)
+		{
+			index = i;
+			break;
 		}
 	}
 
+	FMOD_RESULT res;
+	if( index != -1 )
+	{
+		Sound &sound = music[index];
+		if(sound.sound == nullptr)
+		{
+			return;
+		}
+
+		if(sound.type != "music")
+		{
+			return;
+		}
+
+		FMOD::Sound *currentSound; 
+		res = backgroundChannel->getCurrentSound(&currentSound);
+		if(res != FMOD_OK)
+		{
+			//TODO: Add error report.
+		}
+		if(sound.sound == currentSound)
+		{
+			return;
+		}
+		res = system->playSound(FMOD_CHANNELINDEX::FMOD_CHANNEL_REUSE, music[index].sound, true, &backgroundChannel);
+		backgroundChannel->setVolume(sound.volume * settings.getMusicVolume());
+		backgroundChannel->setPaused(false);
+	}
 }
 
-void SoundManager::errorReport(string filename, string errorMessage)
+bool SoundManager::load(const ResourceLoader::Resource &_soundRes)
+{
+	if(_soundRes.type == "music")
+	{
+		music.push_back(Sound(_soundRes.name, _soundRes.type, 1.0f));
+		FMOD_RESULT res = system->createSound(_soundRes.path.string().c_str(), FMOD_LOOP_NORMAL, nullptr, &music.back().sound);
+	}
+	else if(_soundRes.type == "sfx")
+	{
+		sfx.push_back(Sound(_soundRes.name, _soundRes.type, 1.0f));
+		FMOD_RESULT res = system->createSound(_soundRes.path.string().c_str(), FMOD_DEFAULT, nullptr, &sfx.back().sound);
+	}
+
+	return true;
+}
+
+void SoundManager::errorReport(const string filename, const string errorMessage)
 {
 	ofstream errorFile;
 

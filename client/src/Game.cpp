@@ -126,7 +126,16 @@ void Game::run()
 	graphics->loadResources(systemPtr->getRootDir() / "resources");
 
 	SoundManager* sounds = systemPtr->getSounds();
-	sounds->initialize();
+	if(!sounds->initialize())
+	{
+		printf("Failed to initialize sound system\n");
+		return;
+	}
+	if(!sounds->loadSounds(systemPtr->getRootDir() / "resources"))
+	{
+		printf("Failed to load sound resources\n");
+		return;
+	}
 
 	IInput::ptr input = systemPtr->getInput();
 
@@ -134,7 +143,7 @@ void Game::run()
 	double currentTime = previousTime;
 	double deltaTime = 0.f;
 
-	sounds->load("Bubble3");
+	
 
 	std::cout << "Starting to run" << std::endl;
 	std::cout << "Texture name: \n" << map->getTextureName() << std::endl;
@@ -145,7 +154,7 @@ void Game::run()
 		return;
 	}
 	
-
+	
 	while(!systemPtr->windowIsClosing() && !shouldStop)
 	{
 		systemPtr->pollEvents();
@@ -161,6 +170,7 @@ void Game::run()
 			{
 			case IInput::Event::Type::KEY:
 				//std::cout << "Key event (" << (int)event.keyEvent.key << ", " << (event.keyEvent.pressed ? "PRESSED" : "RELEASED") << ")" << std::endl;
+				//sounds->playSfx("ball_vs_ball");
 				break;
 
 			case IInput::Event::Type::MOUSE_BUTTON:
@@ -181,7 +191,6 @@ void Game::run()
 		float bspeed = 0.075f;
 		float pspeed = 0.001f;
 		
-		sounds->play("Bubble3");
 
 		screenManager.onInput(events);
 		screenManager.update((float)deltaTime, graphics);
@@ -199,6 +208,7 @@ void Game::run()
 		
 	}
 
+	sounds->shutdown();
 	graphics->destroy();
 }
 
