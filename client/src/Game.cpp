@@ -34,8 +34,8 @@ Game::Game(ICoreSystem::ptr _system)
 	screenManager(_system.lock()->getRootDir(), this),
 	shouldStop(false)
 {
-	map = new Map();
-	map->initialize(glm::vec2(800.0f, 600.0f), 8, "background/mainmenu_01", "blocks/orange_01");
+	//map = new Map();
+	//map->initialize(glm::vec2(800.0f, 600.0f), 8, "background/mainmenu_01", "blocks/orange_01");
 }
 
 static std::string naiveUTF32toUTF8(char32_t _character)
@@ -124,6 +124,8 @@ void Game::run()
 		return;
 	}
 
+	
+
 	graphics->loadResources(systemPtr->getRootDir() / "resources");
 
 	SoundManager* sounds = systemPtr->getSounds();
@@ -147,9 +149,11 @@ void Game::run()
 	
 
 	std::cout << "Starting to run" << std::endl;
-	std::cout << "Texture name: \n" << map->getTextureName() << std::endl;
+	//std::cout << "Texture name: \n" << map->getTextureName() << std::endl;
 
-	if (!screenManager.openScreen("login"))
+	screenManager.initialize(systemPtr);
+
+	if (!screenManager.openScreen("game"))
 	{
 		std::cout << "Failed to open screen" << std::endl;
 		return;
@@ -165,27 +169,7 @@ void Game::run()
 		deltaTime = currentTime - previousTime;
 		
 		std::vector<IInput::Event> events = input->getEvents(true);
-		for (auto event : events)
-		{
-			switch (event.type)
-			{
-			case IInput::Event::Type::KEY:
-				//std::cout << "Key event (" << (int)event.keyEvent.key << ", " << (event.keyEvent.pressed ? "PRESSED" : "RELEASED") << ")" << std::endl;
 				//sounds->playSfx("ball_vs_ball");
-				break;
-			case IInput::Event::Type::MOUSE_BUTTON:
-				//std::cout << "Mouse button event (" << (int)event.mouseButtonEvent.button << ", " << (event.mouseButtonEvent.pressed ? "PRESSED" : "RELEASED") << ")" << std::endl;
-				break;
-
-			case IInput::Event::Type::MOUSE_MOVE:
-				//std::cout << "Mouse move event (" << event.mouseMoveEvent.posX << ", " << event.mouseMoveEvent.posY << ")" << std::endl;
-				break;
-
-			case IInput::Event::Type::CHARACTER:
-				//std::cout << "Character event (" << naiveUTF32toUTF8(event.charEvent.character) << ")" << std::endl;
-				break;
-			}
-		}
 
 		float dt = (float)(deltaTime * 1000.f);
 		float bspeed = 0.075f;

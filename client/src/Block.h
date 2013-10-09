@@ -1,5 +1,8 @@
 /*
  * Block.h
+ *
+ *
+ *
  */
 
 #ifndef BLOCK_H_
@@ -8,32 +11,24 @@
 #include <iostream>
 #include <string>
 
-#include "MapResources.h"
-#include <CoreSystem/ICoreSystem.h>
-#include "HitBox.h"
+#include "glm/glm.hpp"
+#include "GameObject.h"
 
-using namespace std;
+using std::string;
 
-class Block
+class Block : public GameObject
 {
 public:
 	Block();
-	virtual ~Block();
+	~Block();
 
-	void initialize(glm::vec3 _position, glm::vec2 _size, string _texturePath, int _health);
-	void setPos(glm::vec3 _position);
-	glm::vec3 getPos();
-	HitBox* getBox();
+	bool initialize(const std::string& _id, glm::vec3 _center, glm::vec2 _size, float _rotation, 
+					GraphicsComponent::ptr _graphicsComponent);
 
 private:
-	glm::vec2			size;
-	glm::vec3			position;
-	string 				texturePath;
+	int health;
 
-	int 				health;
-
-	HitBox*				hitBox;
-
+	virtual void	update(double _dt);
 };
 
 #endif /* BLOCK_H_ */

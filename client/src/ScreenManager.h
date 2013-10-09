@@ -16,6 +16,7 @@ public:
 	//ErrorCode
 	~ScreenManager();
 
+	bool initialize(std::shared_ptr<ICoreSystem> _iCoreSystem);
 	void update(float _dt, std::shared_ptr<IGraphics> _graphics);
 	bool onInput(const std::vector<IInput::Event>& _events);
 	bool removeScreen(ScreenState* _screen);
@@ -34,6 +35,8 @@ private:
 
 	bool readScreen(const boost::filesystem::path& _screenFile);
 	void buttonPressed(const std::string& _func) override;
+
+	std::shared_ptr<ICoreSystem>	iCoreSystem;
 };
 
 #endif

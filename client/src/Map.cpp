@@ -28,7 +28,7 @@ void Map::initialize(	glm::vec2 _playAreaSize, float _frameThickness,
 	frameTextureName		= _frameTextureName;
 
 	setPlayAreaBounds(_playAreaSize);
-	initBlockArray(24); //Hardcoded for demo ONLY!!
+	//initBlockArray(24); //Hardcoded for demo ONLY!!
 	tempSetBlockPos();
 }
 
@@ -38,12 +38,34 @@ void Map::setPlayAreaBounds(glm::vec2 _size)
 	playAreaSize.y		= _size.y + frameThickness;
 }
 
-void Map::initBlockArray(int _size)
+void Map::initBlockArray(int _size, GraphicsComponent::ptr _graphicsComponent)
 {
-	blockList.resize(_size);
-	blockList[0].initialize(glm::vec3(1,1, 0), glm::vec2(8,4), "blocks/orange_01", 1);
+	//blockList.resize(_size);
+	//blockList[0].initialize(glm::vec2(1,1), glm::vec2(8,4), "blocks/orange_01", 1);
 
+	int screenWidth = 1280;
+	int screenHeight = 1024;
+	glm::vec2 size = glm::vec2(128,64);
+	glm::vec3 origo = glm::vec3(0 + size.x / 2., screenHeight/2, 0);
+	
+	int columns = 10;
+	int rows = 3;
+	blockList.resize(columns * rows);
 
+	glm::vec3 startPosition = origo;
+	for(int i = 0; i < blockList.size(); i++)
+	{
+		int y = i % columns;
+		if(y == 0)
+		{
+			startPosition.x = origo.x;
+			startPosition.y += size.y;
+		}
+
+		blockList[i].initialize("UNDEFINED", startPosition, size, 0, _graphicsComponent);
+		startPosition.x += size.x;
+	}
+	
 }
 void Map::remBlockArray()
 {

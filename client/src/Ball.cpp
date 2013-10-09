@@ -1,12 +1,8 @@
-#include "Ball.hpp"
+#include "Ball.h"
 
-Ball::Ball(glm::vec3 _position, float _radius, std::string _textureName)
+Ball::Ball() : GameObject()
 {
-	position			= _position;
-	radius				= _radius;
-	textureName			= _textureName;
 
-	hitBox				= new HitBox(position, glm::vec2(radius * 1.5, radius * 1.5));
 }
 
 Ball::~Ball()
@@ -14,27 +10,24 @@ Ball::~Ball()
 
 }
 
-glm::vec3 Ball::getPos()
+bool Ball::initialize(const std::string& _id, glm::vec3 _center, glm::vec2 _size, float _rotation, 
+					GraphicsComponent::ptr _graphicsComponent, PhysicsComponent::ptr _physicsComponent)
 {
-	return position;
+	if(!GameObject::initialize(_id, _center, _size, _rotation, _graphicsComponent))
+	{
+		return false;
+	}
+
+	physicsComponent = _physicsComponent;
+	velocity = glm::vec2(0.5,1);
+	acceleration = 2.0f;
+	return true;
 }
 
-void Ball::setPos(glm::vec3 _position)
+void Ball::update(double _dt)
 {
-	position = _position;
-}
+	physicsComponent->update(this, _dt);
 
-glm::vec2 Ball::getVelocity()
-{
-	return velocity;
-}
-
-void Ball::setVelocity(glm::vec2 _velocity)
-{
-	velocity = _velocity;
-}
-
-float Ball::getRadius()
-{
-	return radius;
+	center += glm::vec3(velocity, center.z) * acceleration * (float)_dt;
+	graphicsComponent->addSpriteToFrame("player/ball", center, size, rotation);
 }

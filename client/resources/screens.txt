@@ -30,7 +30,7 @@ screen
 		textName blocks/pink_01
 		position 640/200/0
 		size 400/200
-		func A
+		func goto/login
 	/button
 /screen
 screen

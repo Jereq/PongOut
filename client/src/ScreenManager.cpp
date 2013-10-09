@@ -1,6 +1,7 @@
 #include "ScreenManager.h"
 
 #include "MenuState.h"
+#include "GameState.h"
 
 #include <boost/filesystem/fstream.hpp>
 #include <iostream>
@@ -19,13 +20,20 @@ inline float screenPositionToClip( const float _screenDimension, const float _sc
 ScreenManager::ScreenManager(const boost::filesystem::path& _rootDir, FunctionHandler* _funcHandler)
 	: funcHandler(_funcHandler)
 {
-	readScreen(_rootDir / "resources" / "screens.txt");
+	//readScreen(_rootDir / "resources" / "screens.txt");
 	//registerScreenState("login", ScreenState::ptr(new MenuState("login")));
-	
+	registerScreenState("game", ScreenState::ptr(new GameState("game")));
 }
 
 ScreenManager::~ScreenManager()
 {
+}
+
+bool ScreenManager::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem)
+{
+	iCoreSystem = _iCoreSystem;
+
+	return true;
 }
 
 bool readFloats(std::vector<float>& _ret, const std::string& _strVal)
@@ -600,7 +608,7 @@ bool ScreenManager::openScreen(const std::string& _stateId)
 
 	if (!state->isInitialized())
 	{
-		if (!state->initialize())
+		if (!state->initialize(iCoreSystem))
 		{
 			return false;
 		}

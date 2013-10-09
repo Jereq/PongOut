@@ -90,7 +90,7 @@ bool GraphicsWindows::init()
 	hWnd = CreateWindowExW(WS_EX_LEFT, szAppName, L"PongOut",
 				WS_OVERLAPPEDWINDOW,
 				CW_USEDEFAULT, CW_USEDEFAULT,
-				CW_USEDEFAULT, CW_USEDEFAULT,
+				1280,1024,
 				NULL, NULL, hInstance, NULL);
 
 	ShowWindow(hWnd, SW_SHOWNORMAL);

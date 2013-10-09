@@ -15,6 +15,7 @@
 
 #include "Block.h"
 #include "MapResources.h"
+#include "GraphicsComponent.h"
 
 using namespace std;
 
@@ -28,9 +29,9 @@ public:
 	string getTextureName();
 	string getFrameTextureName();
 	glm::vec2 getSize();
-
-private:
-	void initBlockArray(int _size);
+	void initBlockArray(int _size, GraphicsComponent::ptr _graphicsComponent);
+public:
+	
 	void remBlockArray();
 	void tempSetBlockPos();
 
@@ -42,9 +43,6 @@ private:
 	glm::vec2		playAreaSize;
 
 	float 			frameThickness;
-
-
-
 };
 
 #endif /* MAP_H_ */

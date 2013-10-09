@@ -28,7 +28,7 @@ private:
 	std::vector<Image> images;
 	std::vector<InputField> inputFields;
 	std::string music;
-	virtual bool initialize();
+	virtual bool initialize(std::shared_ptr<ICoreSystem> _iCoreSystem);
 	virtual void onInput(const std::vector<IInput::Event> _events);
 	virtual bool onEntry();
 	virtual void update(const float _dt);

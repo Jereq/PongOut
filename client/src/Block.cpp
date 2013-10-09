@@ -1,5 +1,8 @@
 /*
  * Block.cpp
+ *
+ *
+ *
  */
 
 #include "Block.h"
@@ -8,31 +11,21 @@ Block::Block()
 {
 }
 
-Block::~Block()
+Block::~Block() {}
+
+bool Block::initialize(const std::string& _id, glm::vec3 _center, glm::vec2 _size, float _rotation, 
+					GraphicsComponent::ptr _graphicsComponent)
 {
+	if(!GameObject::initialize(_id, _center, _size, _rotation, _graphicsComponent))
+		return false;
+
+	return true;
 }
 
-void Block::initialize(glm::vec3 _position, glm::vec2 _size, string _texturePath, int _health)
+void Block::update(double _dt)
 {
-	position				= _position;
-	size 					= _size;
-	texturePath				= _texturePath;
-	health 					= _health;
 
-	hitBox = new HitBox(position, size);
-}
 
-void Block::setPos(glm::vec3 _position)
-{
-	position = _position;
-}
-
-glm::vec3 Block::getPos()
-{
-	return position;
-}
-
-HitBox* Block::getBox()
-{
-	return hitBox;
+	center.x = center.x + velocity.x * _dt;
+	graphicsComponent->addSpriteToFrame("blocks/orange_01", center, size, rotation);
 }
