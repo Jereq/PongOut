@@ -1,5 +1,5 @@
 #include "Game.h"
-#include "ICoreSystem.h"
+#include <CoreSystem/ICoreSystem.h>
 
 //#define _CRTDBG_MAP_ALLOC
 //#include <stdlib.h>

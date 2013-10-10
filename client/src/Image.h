@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <string>
-#include "IGraphics.h"
+#include <Graphics/IGraphics.h>
 
 class Image
 {

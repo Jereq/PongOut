@@ -2,7 +2,7 @@
 #include <boost/test/unit_test.hpp>
 #include <iostream>
 
-#include "ICoreSystem.h"
+#include <CoreSystem/ICoreSystem.h>
 
 struct cout_redirect {
     cout_redirect( std::streambuf * new_buffer )

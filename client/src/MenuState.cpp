@@ -1,5 +1,5 @@
 #include "MenuState.h"
-#include "ICoreSystem.h"
+#include <CoreSystem/ICoreSystem.h>
 
 
 MenuState::MenuState(const std::string _screenName)

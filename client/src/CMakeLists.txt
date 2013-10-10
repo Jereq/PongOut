@@ -61,27 +61,22 @@ include_directories("${PROJECT_BINARY_DIR}")
 
 include_directories("${PROJECT_SOURCE_DIR}")
 
-# Use platform dependent folder for platform dependent code.
-set(PLATFORM_PATH "Platform_${CMAKE_SYSTEM_NAME}")
-
-add_subdirectory(${PLATFORM_PATH})
+add_subdirectory(CoreSystem)
 add_subdirectory(Sound)
 add_subdirectory(ResourceLoader)
 add_subdirectory(Input)
+add_subdirectory(Graphics)
 
 set(EXTRA_LIBS ${EXTRA_LIBS}
 	Graphics
+	CoreSystem
 	Sound
 	Input
-)
-
-set(EXTRA_LIBS ${EXTRA_LIBS}
 	${Boost_LIBRARIES}
 )
 
 set(SOURCE_FILES
 	main.cpp
-	ICoreSystem.cpp ICoreSystem.h
 	Game.cpp Game.h
 	Map.cpp Map.h
 	Block.cpp Block.h

@@ -4,9 +4,9 @@
  *  File description: Contains code. You have been warned.
  */
 
-#include "Sound/SoundManager.h"
-#include "IGraphics.h"
-#include "Input/IInput.h"
+#include <Sound/SoundManager.h>
+#include <Graphics/IGraphics.h>
+#include <Input/IInput.h>
 #include <boost/filesystem.hpp>
 
 /**

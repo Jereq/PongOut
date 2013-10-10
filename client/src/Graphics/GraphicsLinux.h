@@ -3,7 +3,7 @@
 
 #include "GLSLProgram.h"
 #include "GraphicsLinux.h"
-#include "../IGraphics.h"
+#include "IGraphics.h"
 
 #include <boost/filesystem.hpp>
 

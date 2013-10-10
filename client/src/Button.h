@@ -2,8 +2,8 @@
 #define __BUTTON_H
 
 #include "GUIActionHandler.h"
-#include "Input/IInput.h"
-#include "IGraphics.h"
+#include <Input/IInput.h>
+#include <Graphics/IGraphics.h>
 
 #include <string>
 #include <glm/glm.hpp>

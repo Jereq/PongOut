@@ -1,8 +1,8 @@
 #ifndef __SCREENSTATE_H
 #define __SCREENSTATE_H
 
-#include "IGraphics.h"
-#include "Input/IInput.h"
+#include <Graphics/IGraphics.h>
+#include <Input/IInput.h>
 #include <string>
 
 class ScreenState

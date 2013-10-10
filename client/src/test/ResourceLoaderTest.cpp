@@ -2,7 +2,7 @@
 #include <boost/test/output_test_stream.hpp>
 #include <iostream>
 
-#include "ICoreSystem.h"
+#include <CoreSystem/ICoreSystem.h>
 #include "ResourceLoader/ResourceLoader.h"
 
 BOOST_AUTO_TEST_SUITE(ResourceLoaderTestSuite)

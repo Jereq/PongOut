@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../ICoreSystem.h"
-#include "GraphicsLinux.h"
-#include "Input/InputLinux.h"
+#include "ICoreSystem.h"
+#include <Graphics/GraphicsLinux.h>
+#include <Input/InputLinux.h>
 
 class CoreSystemLinux : public ICoreSystem
 {

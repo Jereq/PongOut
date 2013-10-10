@@ -12,7 +12,7 @@
 #include <string>
 
 #include "MapResources.h"
-#include "ICoreSystem.h"
+#include <CoreSystem/ICoreSystem.h>
 
 using namespace std;
 

@@ -2,8 +2,8 @@
 
 #include <glm/glm.hpp>
 #include <string>
-#include "Input/IInput.h"
-#include "IGraphics.h"
+#include <Input/IInput.h>
+#include <Graphics/IGraphics.h>
 
 class InputField
 {

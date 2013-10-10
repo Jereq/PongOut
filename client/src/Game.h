@@ -1,8 +1,8 @@
 #pragma once
 
 #include "FunctionHandler.h"
-#include "ICoreSystem.h"
 #include "ScreenManager.h"
+#include <CoreSystem/ICoreSystem.h>
 
 #include "Map.h"
 //#include "MapResources.h"
