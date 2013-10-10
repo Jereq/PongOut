@@ -6,9 +6,10 @@ include_directories(
 
 add_executable(PongOut-test
 	mainTest.cpp
-	soundTest.h
-	soundTest.cpp
+	SoundTest.cpp
 	../ICoreSystem.cpp
+	CoreSystemTest.cpp
+	ResourceLoaderTest.cpp
 )
 
 target_link_libraries(PongOut-test
