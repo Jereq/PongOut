@@ -38,6 +38,8 @@ public:
 	bool loadSounds(const boost::filesystem::path &_resourceDir);
 	void playSfx(const string _resourceName);
 	void changeBackgroundMusic(const string _resourceName);
+	void changeMusicVolume(float _volume);
+	void changeSfxVolume(float _volume);
 	
 private:
 	bool load(const ResourceLoader::Resource &_soundRes);

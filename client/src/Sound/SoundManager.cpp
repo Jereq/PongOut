@@ -196,6 +196,22 @@ void SoundManager::changeBackgroundMusic(const string _resourceName)
 	}
 }
 
+void SoundManager::changeMusicVolume(float _volume)
+{
+	settings.setMusicVolume(_volume);
+	
+	float currenVolume;
+	if(backgroundChannel->getVolume(&currenVolume) == FMOD_OK)
+	{
+		backgroundChannel->setVolume(currenVolume * settings.getMusicVolume());
+	}
+}
+
+void SoundManager::changeSfxVolume(float _volume)
+{
+	settings.setSfxVolume(_volume);
+}
+
 bool SoundManager::load(const ResourceLoader::Resource &_soundRes)
 {
 	if(_soundRes.type == "music")

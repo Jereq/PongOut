@@ -103,6 +103,10 @@ texture:text/username			textures/text_username.png
 texture:text/winner			textures/text_winner.png
 texture:regulator/bar			textures/regulator_bar.png
 texture:regulator/regulator		textures/regulator_regulator.png
-music:background			sounds/Bubble3.mid
+music:bubble				sounds/Bubble3.mp3
+music:techno				sounds/techno.mp3
+music:winner				sounds/winner.mp3
+music:loser				sounds/loser.mp3
 sfx:ball_vs_ball			sounds/ball_on_ball_collision.mp3
 sfx:block_explodes			sounds/block_explodes.mp3
+sfx:wall_collision			sounds/wall_collision.mp3
