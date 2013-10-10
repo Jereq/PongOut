@@ -1,7 +1,7 @@
 #ifndef __GRAPHICSWINDOWS_H
 #define __GRAPHICSWINDOWS_H
 
-#include "../IGraphics.h"
+#include "IGraphics.h"
 #include "D3D.h"
 #include "TestShader.h"
 #include "ErrorCodeList.h"

@@ -1,9 +1,9 @@
 #ifndef __CORESYSTEMWINDOWS_H
 #define __CORESYSTEMWINDOWS_H
 
-#include "../ICoreSystem.h"
-#include "GraphicsWindows.h"
-#include "Input/InputWindows.h"
+#include "ICoreSystem.h"
+#include <Graphics/GraphicsWindows.h>
+#include <Input/InputWindows.h>
 
 class CoreSystemWindows : public ICoreSystem
 {

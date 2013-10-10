@@ -10,7 +10,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	)
 
 	set(GRAPHICS_SOURCES
-		GraphicsWindows.cpp GraphicsWindow.h
+		GraphicsWindows.cpp GraphicsWindows.h
 		D3D.cpp D3D.h
 		TestShader.cpp TestShader.h
 		ErrorCodeList.h ErrorCodeList.h
@@ -23,6 +23,11 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 		${DirectX_D3DX10_LIBRARY}
 		${DirectX_D3D11_LIBRARY}
 		${DirectX_DXGI_LIBRARY}
+	)
+
+	add_custom_target(CopyShaders ALL
+		${CMAKE_COMMAND} -E copy_directory
+			${CMAKE_CURRENT_SOURCE_DIR}/shadersWindows ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/shaders
 	)
 
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -52,7 +57,7 @@ elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 	add_custom_target(CopyShaders ALL
 		${CMAKE_COMMAND} -E copy_directory
-			${CMAKE_CURRENT_SOURCE_DIR}/shadersLinux ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders
+			${CMAKE_CURRENT_SOURCE_DIR}/shadersLinux ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/shaders
 	)
 endif()
 

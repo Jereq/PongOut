@@ -22,6 +22,7 @@ public:
 	string type;
 	FMOD::Sound *sound;
 
-	Sound(const Sound&) = delete;
-	Sound& operator=(const Sound&) = delete;
+private:
+	Sound(const Sound&);
+	Sound& operator=(const Sound&);
 };

@@ -32,9 +32,6 @@ public:
 	SoundManager(void);
 	~SoundManager(void);
 
-	SoundManager(const SoundManager&) = delete;
-	SoundManager& operator=(const SoundManager&) = delete;
-
 	bool initialize(void);
 	void shutdown(void);
 
@@ -45,4 +42,7 @@ public:
 private:
 	bool load(const ResourceLoader::Resource &_soundRes);
 	void errorReport(const string filename, const string errorMessage);
+
+	SoundManager(const SoundManager&); // = delete;
+	SoundManager& operator=(const SoundManager&); // = delete;
 };

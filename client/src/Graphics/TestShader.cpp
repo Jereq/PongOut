@@ -6,8 +6,7 @@
 #include <D3D11.h>
 #include <fstream>
 #include "DXAssetInstancing.h"
-
-
+#include <CoreSystem/ICoreSystem.h>
 
 TestShader::TestShader() :	vertexShader(0), pixelShader(0), layout(0),
 	sampleState(0), positionBuffer(0)
@@ -23,7 +22,7 @@ ErrorCode TestShader::initialize(ID3D11Device* _device, HWND _hWnd)
 {
 	ErrorCode result;
 	
-	result = initializeShader(_device, _hWnd, "../src/Platform_Windows/shaders/test.vs", "../src/Platform_Windows/shaders/test.ps");
+	result = initializeShader(_device, _hWnd, "shaders/test.vs", "shaders/test.ps");
 	
 	return result;
 }
@@ -74,8 +73,9 @@ ErrorCode TestShader::initializeShader(ID3D11Device* _device, HWND _hWnd, LPCSTR
 	D3D11_INPUT_ELEMENT_DESC layoutDesc[2];
 	unsigned int numElements;
 
+	boost::filesystem::path rootDir = ICoreSystem::getInstance().lock()->getRootDir();
 	
-	result = D3DX11CompileFromFile(_vsFile, NULL, NULL, "VShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &vertexShaderBuffer, &errorMessage, NULL);
+	result = D3DX11CompileFromFile((rootDir / _vsFile).string().c_str(), NULL, NULL, "VShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &vertexShaderBuffer, &errorMessage, NULL);
 	if( FAILED(result) )
 	{
 		if(errorMessage)
@@ -86,7 +86,7 @@ ErrorCode TestShader::initializeShader(ID3D11Device* _device, HWND _hWnd, LPCSTR
 	if( FAILED(result) )
 		return ErrorCode::WGFX_CREATE_VS_FAIL;
 
-	result = D3DX11CompileFromFile(_psFile, NULL, NULL, "PShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pixelShaderBuffer, &errorMessage, NULL);
+	result = D3DX11CompileFromFile((rootDir / _psFile).string().c_str(), NULL, NULL, "PShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pixelShaderBuffer, &errorMessage, NULL);
 	if( FAILED(result) )
 	{
 		if(errorMessage)
@@ -97,7 +97,7 @@ ErrorCode TestShader::initializeShader(ID3D11Device* _device, HWND _hWnd, LPCSTR
 	if( FAILED(result) )
 		return ErrorCode::WGFX_CREATE_PS_FAIL;
 
-	result = D3DX11CompileFromFile("../src/Platform_Windows/shaders/spriteGS.gs", NULL, NULL, "GS", "gs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &geometryShaderBuffer, &errorMessage, NULL);
+	result = D3DX11CompileFromFile((rootDir / "shaders/spriteGS.gs").string().c_str(), NULL, NULL, "GS", "gs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &geometryShaderBuffer, &errorMessage, NULL);
 	if( FAILED(result) )
 	{
 		if(errorMessage)
