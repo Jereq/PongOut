@@ -3,10 +3,9 @@
 
 #include "UserManager.h"
 
-User::User(boost::shared_ptr<tcp::socket> _socket, boost::uuids::uuid _uuid)
-	: socket(_socket)
+User::User(boost::shared_ptr<tcp::socket> _socket)
+	: socket(_socket), status(UserStatus::UNVERIFIED)
 {
-	userData.uuid = _uuid;
 }
 
 
@@ -56,13 +55,18 @@ void User::addMsgToMsgQueue(const msgBase::ptr& _msgPtr )
 
 void User::listen()
 {
-	socket->async_read_some(boost::asio::buffer(msgListenBuffer), boost::bind(&User::handleIncomingMeassage, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+	if (socket->is_open())
+	{
+		socket->async_read_some(boost::asio::buffer(msgListenBuffer), boost::bind(&User::handleIncomingMeassage, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+	}
 }
 
 void User::handleIncomingMeassage( const boost::system::error_code& _error, size_t _bytesTransferred )
 {
 	if (_error == boost::asio::error::eof)
 	{
+		UserManager::getInstance()->users.erase(shared_from_this());
+		Log::addLog(Log::LogType::LOG_INFO, 1, "User " + std::to_string(getUserID()) + " disconnected: end of stream");
 		return;
 	} 
 	else if (_error)
@@ -122,19 +126,23 @@ void User::handleIncomingMeassage( const boost::system::error_code& _error, size
 	}
 }
 
-msgBase::userData User::getUserData()
+unsigned int User::getUserID()
 {
-	return userData;
-}
-
-void User::setUserNamePass(const std::string& _name, const std::string& _pass)
-{
-	userData.userName = _name;
-	userData.password = _pass;
+	return id;
 }
 
 void User::disconnect()
 {
 	socket->shutdown(boost::asio::socket_base::shutdown_both);
 	socket->close();
+}
+
+void User::setUserStatus( UserStatus _status )
+{
+	status = _status;
+}
+
+void User::setUserID( unsigned int _id )
+{
+	id = _id;
 }

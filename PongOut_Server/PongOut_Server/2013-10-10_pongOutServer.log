@@ -1,0 +1,66 @@
+8:21:1 ## INFO : PongOut server started!
+8:21:4 ## INFO : New connection established
+8:21:15 ## INFO : Username: a Logged in
+8:21:15 ## ERROR : The operation completed successfully
+8:21:25 ## INFO : UserID: 7 has disconnected!
+8:23:46 ## INFO : PongOut server started!
+8:23:55 ## INFO : New connection established
+8:53:38 ## INFO : PongOut server started!
+8:53:43 ## INFO : New connection established
+8:53:54 ## INFO : User 3452816845 disconnected: end of stream
+8:53:54 ## INFO : New connection established
+8:55:6 ## INFO : PongOut server started!
+8:55:10 ## INFO : New connection established
+8:55:16 ## INFO : User 3452816845 disconnected: end of stream
+8:55:16 ## INFO : New connection established
+8:55:50 ## INFO : PongOut server started!
+8:55:54 ## INFO : New connection established
+8:55:58 ## INFO : Username: a Logged in
+8:55:58 ## ERROR : The operation completed successfully
+8:56:13 ## INFO : UserID: 7 has disconnected!
+8:56:22 ## INFO : New connection established
+8:56:23 ## ERROR : Failed to create user with username: a
+8:56:23 ## ERROR : The operation completed successfully
+8:56:39 ## INFO : PongOut server started!
+8:56:45 ## INFO : New connection established
+8:56:50 ## INFO : User 3452816845 disconnected: end of stream
+8:56:50 ## INFO : New connection established
+8:57:13 ## INFO : PongOut server started!
+8:57:16 ## INFO : New connection established
+8:57:20 ## INFO : User 3452816845 disconnected: end of stream
+8:57:20 ## INFO : New connection established
+8:58:3 ## INFO : PongOut server started!
+8:58:15 ## INFO : New connection established
+8:58:31 ## ERROR : Failed to create user with username: a
+8:58:31 ## ERROR : The operation completed successfully
+8:59:40 ## INFO : PongOut server started!
+8:59:47 ## INFO : New connection established
+9:0:0 ## ERROR : Failed to create user with username: a
+9:0:0 ## ERROR : The operation completed successfully
+11:46:23 ## INFO : PongOut server started!
+11:46:29 ## INFO : New connection established
+11:47:16 ## INFO : PongOut server started!
+11:47:27 ## INFO : New connection established
+11:47:33 ## INFO : Username: a Logged in
+11:47:33 ## ERROR : The operation completed successfully
+11:48:29 ## INFO : PongOut server started!
+11:49:13 ## INFO : PongOut server started!
+11:49:22 ## INFO : New connection established
+11:49:32 ## INFO : Username: a Logged in
+11:49:32 ## ERROR : The operation completed successfully
+11:50:7 ## INFO : PongOut server started!
+11:50:17 ## INFO : New connection established
+11:51:11 ## INFO : Username: a Logged in
+11:51:11 ## ERROR : The operation completed successfully
+12:22:16 ## INFO : PongOut server started!
+12:22:44 ## INFO : New connection established
+12:22:59 ## INFO : Username: a Logged in
+12:22:59 ## ERROR : The operation completed successfully
+12:23:7 ## INFO : UserID: 7 has disconnected!
+12:57:6 ## INFO : PongOut server started!
+12:57:20 ## INFO : New connection established
+12:58:36 ## INFO : PongOut server started!
+12:58:45 ## INFO : New connection established
+12:58:45 ## ERROR : The operation completed successfully
+12:58:58 ## INFO : Username: a Logged in
+12:58:58 ## ERROR : The operation completed successfully

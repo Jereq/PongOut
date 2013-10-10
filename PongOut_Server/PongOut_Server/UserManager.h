@@ -6,6 +6,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <thread>
+#include <SQLManager.h>
 
 #include "SafeSet.h"
 #include "User.h"
@@ -35,6 +36,7 @@ private:
 	static boost::shared_ptr<UserManager> ptr;
 	boost::shared_ptr<boost::asio::io_service> ioService;
 	boost::shared_ptr<tcp::acceptor> acceptor;
-	std::thread ioThread;	
+	std::thread ioThread;
+	SQLManager sqlManager;
 };
 

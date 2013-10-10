@@ -9,19 +9,19 @@ public:
 
 	Chat(void);
 	~Chat(void);
-	void setMsg(std::string _msg, boost::uuids::uuid& _uuid, std::string _userName);
+	void setMsg(std::string _msg, unsigned int _id , std::string _userName);
 
 	virtual std::vector<char> getData() override;
 	virtual msgBase::ptr interpretPacket(const std::deque<char>& _buffer) override;
 	std::string getMsg();
-	boost::uuids::uuid getUUID();
+	unsigned int getUserID();
 	std::string getUserName();
-	void setUUID(const boost::uuids::uuid& _uuid);
+	void setUserID(unsigned int _id);
 	void setUserName(const std::string& _userName);
 
 private:
 
-	boost::uuids::uuid uuid;
+	unsigned int id;
 	std::string msg, user;
 };
 

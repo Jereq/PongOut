@@ -10,12 +10,12 @@ Chat::~Chat(void)
 {
 }
 
-void Chat::setMsg( std::string _msg, boost::uuids::uuid& _uuid, std::string _userName)
+void Chat::setMsg( std::string _msg, unsigned int _id, std::string _userName)
 {
-	uuid = _uuid;
+	id = _id;
 	msg = _msg;
 	user = _userName;
-	msgHeader.length = msg.length() + user.length() + (sizeof(std::uint16_t) * 2) + boost::uuids::uuid::static_size();
+	msgHeader.length = msg.length() + user.length() + (sizeof(std::uint16_t) * 2) + sizeof(unsigned int);
 }
 
 std::vector<char> Chat::getData()
@@ -24,7 +24,7 @@ std::vector<char> Chat::getData()
 	std::back_insert_iterator<std::vector<char>> iter(res);
 	pack(msgHeader, iter);
 	pack(user, iter);
-	pack(uuid, iter);
+	pack(id, iter);
 	pack(msg, iter);
 
 	return res;
@@ -36,7 +36,7 @@ msgBase::ptr Chat::interpretPacket( const std::deque<char>& _buffer )
 	std::deque<char>::const_iterator it = _buffer.cbegin();
 	it = unpack(cp->msgHeader, it);
 	it = unpack(cp->user, it);
-	it = unpack(cp->uuid, it);
+	it = unpack(cp->id, it);
 	it = unpack(cp->msg, it);
 	return cp;
 }
@@ -46,14 +46,14 @@ std::string Chat::getMsg()
 	return msg;
 }
 
-boost::uuids::uuid Chat::getUUID()
+unsigned int Chat::getUserID()
 {
-	return uuid;
+	return id;
 }
 
-void Chat::setUUID(const boost::uuids::uuid& _uuid )
+void Chat::setUserID(unsigned int _id )
 {
-	uuid = _uuid;
+	id = _id;
 }
 
 void Chat::setUserName( const std::string& _userName )

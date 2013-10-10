@@ -62,7 +62,7 @@ void Log::printFromQueue()
 		{
 			ptime ct = second_clock::local_time();
 
-			for (unsigned int i = 0; i < msgQueue.size(); i++)
+			while (!msgQueue.empty())
 			{
 				if (prio > msgQueue.front().prio)
 				{

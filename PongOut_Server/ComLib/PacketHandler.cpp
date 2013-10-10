@@ -1,9 +1,14 @@
 #include "stdafx.h"
 #include "PacketHandler.h"
 #include "Chat.h"
-#include "Login.h"
+#include "RequestLogin.h"
+#include "ResponseLogin.h"
 #include "ResponseFriendlist.h"
 #include "RequestFriendlist.h"
+#include "RequestCreateUser.h"
+#include "RequestLogout.h"
+#include "ResponseCreateUser.h"
+#include "ResponseConnect.h"
 
 PacketHandler& PacketHandler::getInstance()
 {
@@ -33,8 +38,13 @@ void PacketHandler::initRegister()
 {
 	registerPacket(msgBase::ptr(new Chat()));
 	registerPacket(msgBase::ptr(new ResponseFriendlist()));
-	registerPacket(msgBase::ptr(new Login()));
+	registerPacket(msgBase::ptr(new RequestLogin()));
+	registerPacket(msgBase::ptr(new ResponseLogin()));
 	registerPacket(msgBase::ptr(new RequestFriendlist()));
+	registerPacket(msgBase::ptr(new RequestCreateUser()));
+	registerPacket(msgBase::ptr(new RequestLogout()));
+	registerPacket(msgBase::ptr(new ResponseCreateUser()));
+	registerPacket(msgBase::ptr(new ResponseConnect()));
 }
 
 msgBase::header PacketHandler::getMeassageHeader( const std::vector<char>& _buff )

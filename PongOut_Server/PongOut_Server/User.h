@@ -9,7 +9,6 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <queue>
 #include <boost/array.hpp>
-#include <boost/uuid/uuid.hpp>
 
 #include "PacketHandler.h"
 #include "msgbase.h"
@@ -22,16 +21,25 @@ class User : public boost::enable_shared_from_this<User>
 {
 public:
 
+	enum class UserStatus
+	{
+		UNVERIFIED,
+		USER,
+		ADMIN
+	};
+
+
 	typedef boost::shared_ptr<User> ptr;
 
-	User(boost::shared_ptr<tcp::socket> _socket, boost::uuids::uuid _uuid);
+	User(boost::shared_ptr<tcp::socket> _socket);
 	~User(void);
 
 	boost::shared_ptr<tcp::socket> getSocket();
 	void addMsgToMsgQueue(const msgBase::ptr& _msgPtr);
 	void listen();
-	msgBase::userData getUserData();
-	void setUserNamePass(const std::string& _name, const std::string& _pass);
+	unsigned int getUserID();
+	void setUserStatus(UserStatus _status);
+	void setUserID(unsigned int _id);
 	void disconnect();
 
 private:
@@ -46,7 +54,8 @@ private:
 	std::vector<char> msgWriteBuffer;
 	std::deque<char> fullMsgBuffer;
 	std::mutex msgBufferLock;
-	msgBase::userData userData;
+	unsigned int id;
 	msgBase::header head;
+	UserStatus status;
 };
 

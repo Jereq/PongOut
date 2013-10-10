@@ -41,8 +41,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>E:\Projekt\PongOut\PongOut_Server\ComLib;C:\Boost\include\boost;C:\Boost\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Boost\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\Projekt\PongOut\PongOut_Server\SQLManager;E:\Projekt\PongOut\PongOut_Server\ComLib;C:\Boost\include\boost;C:\Program Files %28x86%29\Microsoft SQL Server\110\SDK\Include;C:\Boost\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Microsoft SQL Server\110\SDK\Lib;C:\Boost\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -102,6 +102,9 @@
   <ItemGroup>
     <ProjectReference Include="..\ComLib\ComLib.vcxproj">
       <Project>{e6b28c69-f37b-48a5-ac32-175d8fe21993}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\SQLManager\SQLManager.vcxproj">
+      <Project>{6e73a346-4da1-4f99-88cd-fd8c8fb2cff1}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

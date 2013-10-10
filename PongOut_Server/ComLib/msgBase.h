@@ -2,7 +2,6 @@
 #include <cstdint>
 #include <vector>
 #include <deque>
-#include <boost/uuid/uuid.hpp>
 #include <boost/shared_ptr.hpp>
 #include <iterator>
 #include <map>
@@ -15,12 +14,16 @@ public:
 	enum class MsgType : std::uint16_t
 	{
 		CHAT = 1,
-		LOGIN,
-		LOGOUT,
-		CREATEUSER,
+		RESPONSECONNECT,
+		REQUESTLOGIN,
+		RESPONSELOGIN,
+		REQUESTLOGOUT,
+		REQUESTCREATEUSER,
+		RESPONSECREATEUSER,
 		REMINDUSER,
 		REQUESTFRIENDLIST,
 		RESPONSEFRIENDLIST,
+		INTERNALMESSAGE,
 	};
 
 	struct header
@@ -28,20 +31,6 @@ public:
 		MsgType type;
 		std::uint16_t length;
 	};
-
-	struct userData
-	{
-		std::string userName, password;
-		boost::uuids::uuid uuid;
-
-		userData() {}
-		userData(std::string _userName, std::string _password, boost::uuids::uuid _uuid)
-		{
-			userName = _userName;
-			password = _password;
-			uuid = _uuid;
-		}
-	};	
 
 	msgBase(MsgType _type);
 	virtual ~msgBase(void);
@@ -79,16 +68,6 @@ template<typename inIter>
 
 			std::copy((char*) &strLen, (char*) &strLen + sizeof(strLen), _dest);
 			std::copy(_str.begin(), _str.end(), _dest);
-		}
-	};
-
-template<typename inIter>
-	class implPack<boost::uuids::uuid, inIter>
-	{
-	public:
-		static void _pack(const boost::uuids::uuid& _uuid, inIter _dest)
-		{
-			std::copy(_uuid.begin(), _uuid.end(), _dest);
 		}
 	};
 
@@ -160,17 +139,6 @@ template<typename outIter>
 			_source = unpack(len, _source);
 			_msg = std::string(_source, _source + len);
 			return _source + len;
-		}
-	};
-
-template<typename outIter>
-	class implUnpack<boost::uuids::uuid, outIter>
-	{
-	public:
-		static outIter _unpack(boost::uuids::uuid& _uuid, outIter _source)
-		{
-			std::copy(_source, _source + boost::uuids::uuid::static_size(), _uuid.begin());
-			return _source + boost::uuids::uuid::static_size();
 		}
 	};
 

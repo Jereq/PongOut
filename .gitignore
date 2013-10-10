@@ -30,3 +30,5 @@
 **/build*/
 *.orig
 **/Thumbs.db
+PongOut_Server/SQLHandler
+PongOut_Server/SQLConn/

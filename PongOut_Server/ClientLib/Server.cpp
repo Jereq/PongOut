@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "Server.h"
-#include <queue>
 
-
-Server::Server(const std::string _ipAdress, std::uint16_t _port) : addr(_ipAdress), port(_port), soc(io)
+Server::Server(const std::string _ipAdress, std::uint16_t _port)
+	: addr(_ipAdress),
+	port(_port),
+	soc(io)
 {
 	 PacketHandler::getInstance().initRegister();
 }
@@ -13,9 +14,14 @@ Server::~Server(void)
 {
 }
 
-void Server::connect(const std::string& _userName, const std::string& _password)
+void Server::connect()
 {
-	userName = _userName;
+	if (soc.is_open())
+	{
+		soc.shutdown(boost::asio::socket_base::shutdown_both);
+		soc.close();
+	}
+
 	tcp::resolver res(io);
 	std::stringstream ss;
 	ss << port;
@@ -27,46 +33,71 @@ void Server::connect(const std::string& _userName, const std::string& _password)
 	}
 	catch (boost::system::system_error& e)
 	{
-		std::cout << "Failed to connect to server." << std::endl;
-		std::cout << e.what() << std::endl;
+		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "Failed to connect to server!"));
 		return;
 	}
 
-	Login::ptr lp = Login::ptr(new Login());
+	listen();
+
+	if (ioThread.joinable())
+	{
+		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "Waiting for previous connection to end..."));
+		ioThread.join();
+	}
+
+	ioThread = std::thread(boost::bind(&Server::startIO, shared_from_this()));
+}
+
+void Server::login( const std::string& _userName, const std::string& _password )
+{
+	RequestLogin::ptr lp = RequestLogin::ptr(new RequestLogin());
 	lp->setLogin(_userName, _password);
 	write(lp);
-	listen();
-	ioThread = std::thread(boost::bind(&Server::startIO, shared_from_this()));
+}
+
+void Server::logout()
+{
+	RequestLogout::ptr p = RequestLogout::ptr(new RequestLogout());
+	write(p);
+	soc.close();
+	ioThread.join();
 }
 
 void Server::write( msgBase::ptr _msg )
 {
-	msgWriteBufffer = _msg->getData();
-	boost::asio::async_write(soc, boost::asio::buffer(msgWriteBufffer), boost::bind(&Server::handleWrite, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+	if (soc.is_open())
+	{
+		msgWriteBufffer = _msg->getData();
+		boost::asio::async_write(soc, boost::asio::buffer(msgWriteBufffer), boost::bind(&Server::handleWrite, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+	}
 }
 
 void Server::handleWrite( const boost::system::error_code& _err, size_t _byte )
 {
 	if (_err)
 	{
-		std::cerr << _err.message() << std::endl;
+		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, _err.message()));
 	}	
 }
 
 void Server::listen()
 {
-	soc.async_read_some(boost::asio::buffer(msgListenBuffer), boost::bind(&Server::handleIncomingMessage, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+	if (soc.is_open())
+	{
+		soc.async_read_some(boost::asio::buffer(msgListenBuffer), boost::bind(&Server::handleIncomingMessage, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+	}
 }
 
 void Server::handleIncomingMessage(const boost::system::error_code& _error, size_t _bytesTransferred)
 {
 	if (_error == boost::asio::error::eof)
 	{
+		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "disconnected by server"));
 		return;
 	} 
 	else if (_error)
 	{
-		std::cout << _error.message() << std::endl;
+		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, _error.message()));
 		return;
 	}
 
@@ -130,28 +161,34 @@ void Server::messageActionSwitch( const msgBase::header& _header, const std::deq
 	{
 	case msgBase::MsgType::CHAT:
 		{
-			Chat::ptr cp = boost::static_pointer_cast<Chat>(p);
-			std::cout << cp->getUserName() << ": " << cp->getMsg() << std::endl;
+			messages.push(message(msgBase::MsgType::CHAT, p));
 			break;
-			//TODO: Call ClientEventLib chat event here when done!!
 		}
 
 	case msgBase::MsgType::RESPONSEFRIENDLIST:
 		{
-			ResponseFriendlist::ptr rfl = boost::static_pointer_cast<ResponseFriendlist>(p);
-			friends = rfl->getAllFriends();
-			std::cout << "Friends list received:" << std::endl;
+			messages.push(message(msgBase::MsgType::RESPONSEFRIENDLIST, p));
+			break;
+		}
+	case  msgBase::MsgType::RESPONSELOGIN:
+		{
+			messages.push(message(msgBase::MsgType::RESPONSELOGIN, p));
+			break;
+		}
 
-			for (auto a : friends)
-			{
-				std::cout << a.first << "  :  " << a.second << std::endl;
-			}
-
+	case msgBase::MsgType::RESPONSECREATEUSER:
+		{
+			messages.push(message(msgBase::MsgType::RESPONSECREATEUSER, p));
+			break;
+		}
+	case msgBase::MsgType::RESPONSECONNECT:
+		{
+			messages.push(message(msgBase::MsgType::RESPONSECONNECT, p));
 			break;
 		}
 
 	default:
-		std::cerr << "Received unknown packet: " << (int)p->getHeader().type << std::endl;
+		messages.push(message(p->getHeader().type, p));
 		break;
 	}
 }
@@ -162,26 +199,43 @@ void Server::requestFriends()
 	write(rf);
 }
 
+void Server::createAccount( std::string _userName, std::string _userPassword )
+{
+	RequestCreateUser::ptr rcu = RequestCreateUser::ptr(new RequestCreateUser());
+	rcu->setCredentials(_userName, _userPassword);
+	write(rcu);
+}
+
 void Server::startIO()
 {
 	io.run();
+	std::cout << "IO thread done." << std::endl;
 }
 
-void Server::sendChatMsg( std::string _name, std::string _msg )
+//void Server::sendChatMsg( std::string _name, std::string _msg )
+//{
+//	Chat::ptr cp = Chat::ptr(new Chat());
+//
+//	for (auto a : friends)
+//	{
+//		if (a.first == _name)
+//		{
+//			cp->setMsg(_msg, a.second, userName);
+//			write(cp);
+//
+//			return;
+//		}
+//	}
+//
+//	std::cout << "Friend \"" << _name << "\" does not exist." << std::endl;
+//}
+
+Server::message Server::getNextMessage()
 {
-	Chat::ptr cp = Chat::ptr(new Chat());
+	return messages.pop();
+}
 
-	boost::uuids::uuid toUUID; 
-
-	for (auto a : friends)
-	{
-		if (a.first == _name)
-		{
-			toUUID = a.second;
-			break;
-		}
-	}
-
-	cp->setMsg(_msg, toUUID, userName);
-	write(cp);
+int Server::getMsgQueueSize()
+{
+	return messages.baseQueue.size();
 }

@@ -4,8 +4,6 @@
 #include <msgBase.h>
 #include <Chat.h>
 #include <vector>
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
 #include <boost/shared_ptr.hpp>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -32,20 +30,6 @@ namespace UnitTest1
 			facit[1] = 0;
 			facit[2] = 100;
 			facit[3] = 0;
-
-			Assert::AreEqual(facit.size(), res.size(), L"Size mismatch", LINE_INFO());
-			Assert::IsTrue(facit == res, L"Data mismatch", LINE_INFO());
-		}
-
-		TEST_METHOD(PackUUID)
-		{
-			boost::uuids::uuid u = boost::uuids::random_generator()();
-			std::vector<char> res;
-			std::back_insert_iterator<std::vector<char>> it(res);
-
-			msgBase::pack(u, it);
-
-			std::vector<char> facit(u.begin(), u.end());
 
 			Assert::AreEqual(facit.size(), res.size(), L"Size mismatch", LINE_INFO());
 			Assert::IsTrue(facit == res, L"Data mismatch", LINE_INFO());
@@ -129,22 +113,6 @@ namespace UnitTest1
 
 			Assert::IsTrue(sourceHeader.length == res.length, L"Header length mismatch", LINE_INFO());
 			Assert::IsTrue(sourceHeader.type == res.type, L"Header type mismatch", LINE_INFO());
-		}
-
-		TEST_METHOD(UnPackUUID)
-		{
-			boost::uuids::uuid sourceUUID = boost::uuids::random_generator()();
-			std::vector<char> sourceVector;
-			std::back_insert_iterator<std::vector<char>> sit(sourceVector);
-
-			msgBase::pack(sourceUUID, sit);
-
-			std::vector<char>::const_iterator rit = sourceVector.cbegin();
-			boost::uuids::uuid res;
-
-			rit = msgBase::unpack(res, rit);
-
-			Assert::IsTrue(sourceUUID == res, L"UUID mismatch", LINE_INFO());
 		}
 
 		TEST_METHOD(UnPackString)

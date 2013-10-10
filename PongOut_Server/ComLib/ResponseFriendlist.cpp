@@ -11,7 +11,7 @@ ResponseFriendlist::~ResponseFriendlist(void)
 {
 }
 
-void ResponseFriendlist::addToFriendList( const std::pair<std::string, boost::uuids::uuid>& _friend)
+void ResponseFriendlist::addToFriendList(const std::pair<std::string, unsigned int>& _friend)
 {
 	friends.push_back(_friend);
 }
@@ -38,7 +38,7 @@ msgBase::ptr ResponseFriendlist::interpretPacket( const std::deque<char>& _buffe
 	return gfp;
 }
 
-std::vector<std::pair<std::string, boost::uuids::uuid>> ResponseFriendlist::getAllFriends()
+std::vector<std::pair<std::string, unsigned int>> ResponseFriendlist::getAllFriends()
 {
 	return friends;
 }

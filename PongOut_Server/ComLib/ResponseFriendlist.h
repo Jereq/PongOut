@@ -11,16 +11,16 @@ public:
 	ResponseFriendlist(void);
 	virtual ~ResponseFriendlist(void);
 
-	void addToFriendList(const std::pair<std::string, boost::uuids::uuid>& _friend);
+	void addToFriendList(const std::pair<std::string, unsigned int>& _friend);
 
 	virtual std::vector<char> getData() override;
 	virtual msgBase::ptr interpretPacket(const std::deque<char>& _buffer) override;
 
-	std::vector<std::pair<std::string, boost::uuids::uuid>> getAllFriends();
+	std::vector<std::pair<std::string, unsigned int>> getAllFriends();
 
 private:
 
-	std::vector<std::pair<std::string, boost::uuids::uuid>> friends;
+	std::vector<std::pair<std::string, unsigned int>> friends;
 	
 };
 

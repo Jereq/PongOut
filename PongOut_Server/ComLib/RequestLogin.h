@@ -1,14 +1,14 @@
 #pragma once
 #include "msgbase.h"
 
-class Login : public msgBase
+class RequestLogin : public msgBase
 {
 public:
 
-	typedef boost::shared_ptr<Login> ptr;
+	typedef boost::shared_ptr<RequestLogin> ptr;
 
-	Login(void);
-	virtual ~Login(void);
+	RequestLogin(void);
+	virtual ~RequestLogin(void);
 
 	virtual std::vector<char> getData() override;
 	virtual msgBase::ptr interpretPacket(const std::deque<char>& _buffer) override;

@@ -1,13 +1,15 @@
 #include "stdafx.h"
+#include "UserManager.h"
 
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
 #include <Chat.h>
-#include <Login.h>
+#include <RequestLogin.h>
+#include <ResponseLogin.h>
 #include <ResponseFriendlist.h>
 #include <RequestFriendlist.h>
+#include <RequestCreateUser.h>
+#include <ResponseCreateUser.h>
+#include <ResponseConnect.h>
 #include <stdexcept>
-#include "UserManager.h"
 
 boost::shared_ptr<UserManager> UserManager::ptr;
 
@@ -41,11 +43,12 @@ void UserManager::listenForNewClientConnections()
 
 void UserManager::handleIncomingClient( boost::shared_ptr<tcp::socket> _soc, const boost::system::error_code& _errorCode )
 {
-	boost::uuids::uuid uid = boost::uuids::random_generator()();
-	User::ptr u = User::ptr(new User(_soc, uid));
+	User::ptr u = User::ptr(new User(_soc));
+	ResponseConnect::ptr rc = ResponseConnect::ptr(new ResponseConnect());
+	u->addMsgToMsgQueue(rc);
 	users.insert(u);
 	u->listen();
-	Log::addLog(Log::LogType::LOG_INFO, 4, "New user connected");
+	Log::addLog(Log::LogType::LOG_INFO, 4, "New connection established");
 	listenForNewClientConnections();
 }
 
@@ -74,45 +77,95 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 			User::ptr toUser;
 			for (User::ptr user : users.baseSet)
 			{
-				if (user->getUserData().uuid == cp->getUUID())
+				if (user->getUserID() == cp->getUserID())
 				{
 					toUser = user;
 					break;
 				}
 			}
 
-			cp->setUUID(_user->getUserData().uuid);
+			cp->setUserID(_user->getUserID());
 			toUser->addMsgToMsgQueue(cp);
 
 			break;
 			//TODO: Call ClientEventLib chat event here when done!!
 		}
 
-	case msgBase::MsgType::LOGIN:
+	case msgBase::MsgType::REQUESTLOGIN:
 		{
-			Login::ptr lp = boost::static_pointer_cast<Login>(p);
-			_user->setUserNamePass(lp->getUsername(), lp->getPassword());
+			RequestLogin::ptr lp = boost::static_pointer_cast<RequestLogin>(p);
+			ResponseLogin::ptr rlp = ResponseLogin::ptr(new ResponseLogin());
 
-			Log::addLog(Log::LogType::LOG_INFO, 4, "Username: " + lp->getUsername() + " Logged in");
+			long res = sqlManager.verifyUser(lp->getUsername(), lp->getPassword());
+
+			if (res != -1)
+			{
+				_user->setUserID(res);
+				_user->setUserStatus(User::UserStatus::USER);
+				Log::addLog(Log::LogType::LOG_INFO, 4, "Username: " + lp->getUsername() + " Logged in");
+				rlp->setLoginFailure(false);
+			} 
+			else
+			{
+				Log::addLog(Log::LogType::LOG_INFO, 4, lp->getUsername() + " failed to login!");
+				rlp->setLoginFailure(true);
+			}
+
+			_user->addMsgToMsgQueue(rlp);
+			
 
 			break;
 		}
 
 	case msgBase::MsgType::REQUESTFRIENDLIST:
 		{
-			ResponseFriendlist::ptr rfl = ResponseFriendlist::ptr(new ResponseFriendlist());
+			//ResponseFriendlist::ptr rfl = ResponseFriendlist::ptr(new ResponseFriendlist());
 
-			for (User::ptr user : users.baseSet)
-			{
-				std::pair<std::string, boost::uuids::uuid> tmpPair(user->getUserData().userName, user->getUserData().uuid);
-				rfl->addToFriendList(tmpPair);
-			}
+			//for (User::ptr user : users.baseSet)
+			//{
+			//	TODO: redo friends list request
+			//	std::pair<std::string, boost::uuids::uuid> tmpPair(user->getUserData().userName, user->getUserData().uuid);
+			//	rfl->addToFriendList(tmpPair);
+			//}
 
-			_user->addMsgToMsgQueue(rfl);
+			//_user->addMsgToMsgQueue(rfl);
 
 			break;
 		}
 
+	case msgBase::MsgType::REQUESTCREATEUSER:
+		{
+			RequestCreateUser::ptr cu = boost::static_pointer_cast<RequestCreateUser>(p);
+			ResponseCreateUser::ptr rcu = ResponseCreateUser::ptr(new ResponseCreateUser());
+
+
+			long res = sqlManager.createUser(cu->getUserName(), cu->getUserPassword());
+
+			if (res != -1)
+			{
+				Log::addLog(Log::LogType::LOG_INFO, 3, "User created with userID: " + std::to_string(res));
+				_user->setUserID(res);
+				_user->setUserStatus(User::UserStatus::USER);
+				rcu->setCreateFailure(false);
+			} 
+			else
+			{
+				Log::addLog(Log::LogType::LOG_ERROR, 1, "Failed to create user with username: " + cu->getUserName());
+				rcu->setCreateFailure(true);
+			}
+
+			_user->addMsgToMsgQueue(rcu);
+
+			break;
+		}
+
+	case msgBase::MsgType::REQUESTLOGOUT:
+		{
+			Log::addLog(Log::LogType::LOG_INFO, 4, "UserID: " + std::to_string(_user->getUserID()) + " has disconnected!");
+			_user->disconnect();
+			users.erase(_user);			
+			break;
+		}
 	default:
 		Log::addLog(Log::LogType::LOG_ERROR, 0,"Received packet that are not yet implemented: " + p->getType());
 		break;
@@ -126,8 +179,20 @@ void UserManager::startIO()
 
 void UserManager::startIOPrivate()
 {
-	ioService->run();
-	Log::addLog(Log::LogType::LOG_INFO, 3,"IO services stopped");
+	try
+	{
+		ioService->run();
+
+		Log::addLog(Log::LogType::LOG_DEBUG, 3,"IO services stopped");
+	}
+	catch (const boost::system::error_code& err)
+	{
+		Log::addLog(Log::LogType::LOG_ERROR, 2, err.message());
+	}
+	catch (...)
+	{
+		Log::addLog(Log::LogType::LOG_ERROR, 0, "Uncaught exception in IO thread. Fix!");
+	}
 }
 
 void UserManager::destroy()
