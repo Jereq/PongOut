@@ -19,9 +19,9 @@ bool Ball::initialize(const std::string& _id, glm::vec3 _center, glm::vec2 _size
 	}
 
 	physicsComponent = _physicsComponent;
-	velocity = glm::vec2(0.5,1);
-	acceleration = 1.0f;
-	radius = size.x;
+	velocity = glm::vec2(0.5,0.5);
+	acceleration = 2.f;
+	radius = size.x * 0.5f;
 	return true;
 }
 

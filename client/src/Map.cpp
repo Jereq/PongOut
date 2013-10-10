@@ -34,7 +34,7 @@ void Map::initialize(	glm::vec2 _playAreaSize, float _frameThickness,
 
 bool Map::addObject(Paddle::ptr _paddle)
 {
-	for(int i = 0; i < paddles.size(); i++)
+	for(unsigned int i = 0; i < paddles.size(); i++)
 	{
 		//we found a duplicate
 		if(paddles[i]->getId() == _paddle->getId())
@@ -49,7 +49,7 @@ bool Map::addObject(Paddle::ptr _paddle)
 
 bool Map::addObject(Ball::ptr _ball)
 {
-	for(int i = 0; i < balls.size(); i++)
+	for(unsigned int i = 0; i < balls.size(); i++)
 	{
 		if(balls[i]->getId() == _ball->getId())
 			return false;
@@ -71,17 +71,41 @@ void Map::initBlockArray(int _size, GraphicsComponent::ptr _graphicsComponent)
 	//blockList.resize(_size);
 	//blockList[0].initialize(glm::vec2(1,1), glm::vec2(8,4), "blocks/orange_01", 1);
 
-	int screenWidth = playAreaSize.x;
-	int screenHeight = playAreaSize.y;
+	int screenWidth = (int)playAreaSize.x;
+	int screenHeight = (int)playAreaSize.y;
 	glm::vec2 size = glm::vec2(64,32);
-	glm::vec3 origo = glm::vec3(playAreaSize.x / 2 + size.x / 2., playAreaSize.y/2, 0);
+	glm::vec3 origo = glm::vec3(playAreaSize.x / 2. - size.x, playAreaSize.y/2, 0);
 	
-	int columns = 5;
-	int rows = 3;
-	//blocks.resize(columns * rows);
+	int columns = 10;
+	int rows = 15;
+	blocks.resize(columns * rows);
+
+	const static std::string blockTextures[] = {
+		"blocks/dark_magenta_01",
+		"blocks/dark_magenta_02",
+		"blocks/dark_magenta_03",
+		"blocks/dark_magenta_04",
+		"blocks/dark_magenta_05",
+		"blocks/light_magenta_01",
+		"blocks/light_magenta_02",
+		"blocks/light_magenta_03",
+		"blocks/light_magenta_04",
+		"blocks/light_magenta_05",
+		"blocks/orange_01",
+		"blocks/orange_02",
+		"blocks/orange_03",
+		"blocks/orange_04",
+		"blocks/orange_05",
+		"blocks/pink_01",
+		"blocks/pink_02",
+		"blocks/pink_03",
+		"blocks/pink_04",
+		"blocks/pink_05",
+	};
+	const static int NUM_TEX = sizeof(blockTextures) / sizeof(std::string);
 
 	glm::vec3 startPosition = origo;
-	for(int i = 0; i < _size; i++)
+	for(int i = 0; i < blocks.size(); i++)
 	{
 		int y = i % columns;
 		if(y == 0)
@@ -91,9 +115,9 @@ void Map::initBlockArray(int _size, GraphicsComponent::ptr _graphicsComponent)
 		}
 
 		Block::ptr block = Block::ptr(new Block());
-		std::string id = "block" + i;		
-		block->initialize(id, startPosition, size, 0, _graphicsComponent);
-		blocks.push_back(block);
+		std::string id = "block" + std::to_string(i);		
+		block->initialize(id, startPosition, size, 0, _graphicsComponent, blockTextures[(i * 7) % NUM_TEX]);
+		blocks[i] = block;
 
 		startPosition.x += size.x;
 	}

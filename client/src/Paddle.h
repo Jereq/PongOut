@@ -10,7 +10,9 @@ class Paddle : public GameObject
 private:
 	InputComponent::ptr		inputComponent;
 	PhysicsComponent::ptr	physicsComponent;
+	glm::vec2	targetPos;
 
+	friend class InputComponent;
 public:
 	Paddle();
 	~Paddle();

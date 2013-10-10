@@ -17,7 +17,7 @@ texture:blocks/orange_04		textures/box_orange_04.png
 texture:blocks/orange_05		textures/box_orange_05.png
 texture:blocks/pink_01			textures/box_pink_01.png
 texture:textureNotFound			textures/textureNotFound.png
-texture:background/mainmenu_01		background_prototype.png
+texture:background/mainmenu_01		textures/background_prototype.png
 texture:blocks/pink_02			textures/box_pink_02.png
 texture:blocks/pink_03			textures/box_pink_03.png
 texture:blocks/pink_04			textures/box_pink_04.png

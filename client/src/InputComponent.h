@@ -5,6 +5,7 @@
 #include "InputState.h"
 
 class GameObject;
+class Paddle;
 
 class InputComponent
 {
@@ -16,7 +17,7 @@ public:
 
 	virtual bool initialize(InputState::ptr _inputState);
 	virtual void update(GameObject* _gameObject, double _dt);
-
+	virtual void moveToTarget(Paddle& _paddle, double _dt);
 private:
 	InputState::ptr inputState;
 };
