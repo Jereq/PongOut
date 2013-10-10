@@ -20,6 +20,9 @@ public:
 	virtual void moveToTarget(Paddle& _paddle, double _dt);
 private:
 	InputState::ptr inputState;
+
+	bool keyLeft;
+	bool keyRight;
 };
 
 #endif

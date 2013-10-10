@@ -33,7 +33,7 @@ private:
 	bool registerScreenState(const std::string& _stateId, ScreenState::ptr _state);
 	bool goBack();
 
-	bool readScreen(const boost::filesystem::path& _screenFile);
+	bool readScreens(const boost::filesystem::path& _screenFile);
 	void buttonPressed(const std::string& _func) override;
 
 	std::shared_ptr<ICoreSystem>	iCoreSystem;

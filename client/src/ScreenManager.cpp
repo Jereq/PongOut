@@ -7,6 +7,8 @@
 #include <iostream>
 #include <sstream>
 
+int lineCount = 0;
+
 inline float screenSizeToClip( const float _screenDimension, const float _screenSize )
 {
     return _screenSize / _screenDimension * 2.f;
@@ -20,9 +22,6 @@ inline float screenPositionToClip( const float _screenDimension, const float _sc
 ScreenManager::ScreenManager(const boost::filesystem::path& _rootDir, FunctionHandler* _funcHandler)
 	: funcHandler(_funcHandler)
 {
-	//readScreen(_rootDir / "resources" / "screens.txt");
-	//registerScreenState("login", ScreenState::ptr(new MenuState("login")));
-	registerScreenState("game", ScreenState::ptr(new GameState("game")));
 }
 
 ScreenManager::~ScreenManager()
@@ -32,6 +31,17 @@ ScreenManager::~ScreenManager()
 bool ScreenManager::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem)
 {
 	iCoreSystem = _iCoreSystem;
+
+	if (!readScreens(iCoreSystem->getRootDir() / "resources" / "screens.txt"))
+	{
+		std::cout << "Error encountered at line " << lineCount << std::endl;
+		return false;
+	}
+
+	if (!registerScreenState("game", ScreenState::ptr(new GameState("game"))))
+	{
+		return false;
+	}
 
 	return true;
 }
@@ -83,7 +93,7 @@ bool readButton(Button& _button, std::istream& _is, glm::vec2 _screenSize)
 		{
 			return false;
 		}
-
+		lineCount++;
 		if (line.empty())
 		{
 			continue;
@@ -214,7 +224,7 @@ bool readInputField(InputField& _inputField, std::istream& _is, glm::vec2 _scree
 		{
 			return false;
 		}
-
+		lineCount++;
 		if (line.empty())
 		{
 			continue;
@@ -313,7 +323,7 @@ bool readImage(Image& _image, std::istream& _is, glm::vec2 _screenSize)
 		{
 			return false;
 		}
-
+		lineCount++;
 		if (line.empty())
 		{
 			continue;
@@ -398,7 +408,131 @@ bool readImage(Image& _image, std::istream& _is, glm::vec2 _screenSize)
 	return true;
 }
 
-bool ScreenManager::readScreen(const boost::filesystem::path& _screenFile)
+bool readScreen(MenuState::ptr& _screen, std::istream& _is, ScreenManager* _screenMgr)
+{
+	std::string screenName;
+	std::string backgroundName;
+	std::vector<Button> buttons;
+	std::vector<Image> images;
+	std::vector<InputField> inputFields;
+	glm::vec2 screenSize(800, 600);
+	std::string music;
+
+	while(true)
+	{
+		std::string line;
+
+		std::getline(_is, line);
+		lineCount++;
+		std::istringstream ss(line);
+
+		char t;
+		ss.get(t);
+
+		if (line == "/screen")
+		{
+			break;
+		}
+
+		if (t != '\t')
+		{
+			return false;
+		}
+
+		std::string type;
+		std::string val1;
+
+		ss >> type >> val1;
+
+		if (type.empty())
+		{
+			continue;
+		}
+
+		if(type == "id")
+		{
+			if (!screenName.empty() || val1.empty())
+			{
+				return false;
+			}
+
+			screenName = val1;
+		}
+		else if(type == "background")
+		{
+			if (!backgroundName.empty() || val1.empty())
+			{
+				return false;
+			}
+
+			backgroundName = val1;
+		}
+		else if(type == "button")
+		{
+			Button b(_screenMgr);
+			if (!readButton(b, _is, screenSize))
+			{
+				return false;
+			}
+
+			buttons.push_back(b);
+		}
+		else if( type == "image")
+		{
+			Image image;
+			if(!readImage(image, _is, screenSize))
+			{
+				return false;
+			}
+
+			images.push_back(image);
+		}
+		else if(type == "inputField")
+		{
+			InputField inputField;
+			if(!readInputField(inputField, _is, screenSize))
+				return false;
+
+			inputFields.push_back(inputField);
+		}
+		else if (type == "screenSize")
+		{
+			std::vector<float> sizeVals;
+			if (!readFloats(sizeVals, val1) || sizeVals.size() != 2)
+			{
+				return false;
+			}
+
+			screenSize.x = sizeVals[0];
+			screenSize.y = sizeVals[1];
+		}
+		else if(type == "music")
+		{
+			if (!music.empty() || val1.empty())
+			{
+				return false;
+			}
+
+			music = val1;
+		}
+	}
+
+	if (screenName.empty() || backgroundName.empty())
+	{
+		return false;
+	}
+
+	_screen.reset(new MenuState(screenName));
+	_screen->addButtons(buttons);
+	_screen->addImages(images);
+	_screen->addInputFields(inputFields);
+	_screen->setBackground(backgroundName);
+	_screen->setMusic(music);
+
+	return true;	
+}
+
+bool ScreenManager::readScreens(const boost::filesystem::path& _screenFile)
 {
 	boost::filesystem::fstream file(_screenFile);
 
@@ -413,6 +547,8 @@ bool ScreenManager::readScreen(const boost::filesystem::path& _screenFile)
 		if(!std::getline(file, line))
 			break;
 
+		lineCount++;
+
 		if (line.empty())
 		{
 			continue;
@@ -420,122 +556,14 @@ bool ScreenManager::readScreen(const boost::filesystem::path& _screenFile)
 
 		if(line == "screen")
 		{
-			std::string screenName;
-			std::string backgroundName;
-			std::vector<Button> buttons;
-			std::vector<Image> images;
-			std::vector<InputField> inputFields;
-			glm::vec2 screenSize(800, 600);
-			std::string music;
-
-			while(true)
+			MenuState::ptr screen;
+			if (!readScreen(screen, file, this))
 			{
-				std::getline(file, line);
-				std::istringstream ss(line);
-
-				char t;
-				ss.get(t);
-
-				if (line == "/screen")
-				{
-					break;
-				}
-
-				if (t != '\t')
-				{
-					return false;
-				}
-
-				std::string type;
-				std::string val1;
-
-				ss >> type >> val1;
-
-				if (type.empty())
-				{
-					continue;
-				}
-
-				if(type == "id")
-				{
-					if (!screenName.empty() || val1.empty())
-					{
-						return false;
-					}
-
-					screenName = val1;
-				}
-				else if(type == "background")
-				{
-					if (!backgroundName.empty() || val1.empty())
-					{
-						return false;
-					}
-
-					backgroundName = val1;
-				}
-				else if(type == "button")
-				{
-					Button b(this);
-					if (!readButton(b, file, screenSize))
-					{
-						return false;
-					}
-					
-					buttons.push_back(b);
-				}
-				else if( type == "image")
-				{
-					Image image;
-					if(!readImage(image, file, screenSize))
-					{
-						return false;
-					}
-
-					images.push_back(image);
-				}
-				else if(type == "inputField")
-				{
-					InputField inputField;
-					if(!readInputField(inputField, file, screenSize))
-						return false;
-
-					inputFields.push_back(inputField);
-				}
-				else if (type == "screenSize")
-				{
-					std::vector<float> sizeVals;
-					if (!readFloats(sizeVals, val1) || sizeVals.size() != 2)
-					{
-						return false;
-					}
-
-					screenSize.x = sizeVals[0];
-					screenSize.y = sizeVals[1];
-				}
-				else if(type == "music")
-				{
-					if (!music.empty() || val1.empty())
-					{
-						return false;
-					}
-
-					music = val1;
-				}
-			}
-
-			if (screenName.empty() || backgroundName.empty())
-			{
+				std::cout << "Failed to read screen #" << registeredStates.size() + 1 << std::endl;
 				return false;
 			}
 
-			MenuState::ptr menuState(new MenuState(screenName));
-			menuState->addButtons(buttons);
-			menuState->addImages(images);
-			menuState->addInputFields(inputFields);
-			menuState->setBackground(backgroundName);
-			menuState->setMusic(music);
-			registerScreenState(screenName, menuState);		
+			registerScreenState(screen->getScreenName(), screen);		
 		}
 	}
 

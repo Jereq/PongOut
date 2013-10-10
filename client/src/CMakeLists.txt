@@ -5,8 +5,8 @@ project(PongOut)
 
 # The version number
 set(PongOut_VERSION_MAJOR 0)
-set(PongOut_VERSION_MINOR 0)
-set(PongOut_VERSION_PATCH 1)
+set(PongOut_VERSION_MINOR 1)
+set(PongOut_VERSION_PATCH 0)
 
 # Set default configuration type
 if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)

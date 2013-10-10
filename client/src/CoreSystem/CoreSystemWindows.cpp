@@ -152,7 +152,7 @@ LRESULT CALLBACK CoreSystemWindows::WndProc(HWND hwnd, UINT iMsg, WPARAM wParam,
 				if(rawInput->header.dwType == RIM_TYPEKEYBOARD)
 				{		
 					unsigned short key = rawInput->data.keyboard.VKey;
-					bool isDown = rawInput->data.keyboard.Flags == RI_KEY_MAKE;
+					bool isDown = !(rawInput->data.keyboard.Flags & RI_KEY_BREAK);
 
 					input->addFrameKey(key, isDown);
 				}

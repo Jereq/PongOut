@@ -2,7 +2,7 @@
 #include "Ball.h"
 #include "Paddle.h"
 #include "Map.h"
-
+#include <CoreSystem/ICoreSystem.h>
 
 bool PhysicsComponent::initialize(Map* _map)
 {
@@ -130,21 +130,25 @@ void PhysicsComponent::bounceOnPlayArea(GameObject* _gameObject, double _dt)
 	{
 		_gameObject->center.x = min.x + _gameObject->size.x / 2.0f;
 		_gameObject->velocity.x *= -1;
+		ICoreSystem::getInstance().lock()->getSounds()->playSfx("wall_collision");
 	}
 	else if (_gameObject->center.x + _gameObject->size.x / 2 > max.x)
 	{
 		_gameObject->center.x = max.x - _gameObject->size.x / 2.0f;
 		_gameObject->velocity.x *= -1;
+		ICoreSystem::getInstance().lock()->getSounds()->playSfx("wall_collision");
 	}
 	if(_gameObject->center.y - _gameObject->size.y / 2 < min.y)
 	{
 		_gameObject->center.y = min.y + _gameObject->size.y / 2.0f;
 		_gameObject->velocity.y *= -1;
+		ICoreSystem::getInstance().lock()->getSounds()->playSfx("wall_collision");
 	}
 	else if(_gameObject->center.y + _gameObject->size.y / 2 > max.y)
 	{
 		_gameObject->center.y = max.y - _gameObject->size.y / 2.0f;
 		_gameObject->velocity.y *= -1;
+		ICoreSystem::getInstance().lock()->getSounds()->playSfx("wall_collision");
 	}
 }
 
@@ -159,21 +163,25 @@ void PhysicsComponent::restrictToPlayArea(GameObject* _gameObject, double _dt)
 	if(_gameObject->center.x - _gameObject->size.x / 2 < min.x)
 	{
 		_gameObject->center.x = min.x + _gameObject->size.x / 2.0f;
+		_gameObject->velocity = glm::vec2(0.f);
 
 	}
 	else if (_gameObject->center.x + _gameObject->size.x / 2 > max.x)
 	{
 		_gameObject->center.x = max.x - _gameObject->size.x / 2.0f;
+		_gameObject->velocity = glm::vec2(0.f);
 
 	}
 	if(_gameObject->center.y - _gameObject->size.y / 2 < min.y)
 	{
 		_gameObject->center.y = min.y + _gameObject->size.y / 2.0f;
+		_gameObject->velocity = glm::vec2(0.f);
 
 	}
 	else if(_gameObject->center.y + _gameObject->size.y / 2 > max.y)
 	{
 		_gameObject->center.y = max.y - _gameObject->size.y / 2.0f;
+		_gameObject->velocity = glm::vec2(0.f);
 
 	}
 }
@@ -193,6 +201,8 @@ void PhysicsComponent::bounceOnBlock(Ball* _ball, double _dt)
 		{
 			_ball->velocity = glm::reflect(_ball->velocity, reflectDir);
 			b->canCollide = false;
+			
+			ICoreSystem::getInstance().lock()->getSounds()->playSfx("block_explodes");
 		}
 	}
 }
@@ -205,6 +215,8 @@ void PhysicsComponent::bounceOnPaddle(Ball* _ball, double _dt)
 		if (ballRectCollide(reflectDir, _ball, paddle.get()))
 		{
 			_ball->velocity = glm::normalize(glm::vec2(_ball->center - paddle->center)) * glm::length(_ball->velocity);
+			
+			ICoreSystem::getInstance().lock()->getSounds()->playSfx("wall_collision");
 		}
 	}
 }

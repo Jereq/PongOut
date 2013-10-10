@@ -8,6 +8,8 @@ inline glm::vec3 clipToScreenPosition( const glm::vec2 _screenDimension, const g
 }
 
 InputComponent::InputComponent()
+	: keyLeft(false),
+	keyRight(false)
 {
 
 }
@@ -66,6 +68,7 @@ void InputComponent::moveToTarget(Paddle& _paddle, double _dt)
 				double x = e.mouseMoveEvent.posX;
 				double y = e.mouseMoveEvent.posY;
 
+				_paddle.currentInput = Paddle::InputType::MOUSE;
 				_paddle.targetPos = glm::vec2(x,y);
 				//_gameObject->velocity = glm::vec2(x,y);
 			}
@@ -76,7 +79,26 @@ void InputComponent::moveToTarget(Paddle& _paddle, double _dt)
 			break;
 
 		case IInput::Event::Type::KEY:
-			{int a = 42;}
+			{
+				bool pressed = e.keyEvent.pressed;
+
+				switch (e.keyEvent.key)
+				{
+				case IInput::KeyCode::A:
+				case IInput::KeyCode::LEFT_ARROW:
+					_paddle.currentInput = Paddle::InputType::KEYBOARD;
+					keyLeft = pressed;
+					break;
+
+				case IInput::KeyCode::D:
+				case IInput::KeyCode::RIGHT_ARROW:
+					_paddle.currentInput = Paddle::InputType::KEYBOARD;
+					keyRight = pressed;
+					break;
+				}
+
+				_paddle.keyDir = (keyLeft ? -1.f : 0.f) + (keyRight ? 1.f : 0.f);
+			}
 			break;
 		}
 	}

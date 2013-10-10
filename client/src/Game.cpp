@@ -151,9 +151,13 @@ void Game::run()
 	std::cout << "Starting to run" << std::endl;
 	//std::cout << "Texture name: \n" << map->getTextureName() << std::endl;
 
-	screenManager.initialize(systemPtr);
+	if (!screenManager.initialize(systemPtr))
+	{
+		std::cout << "Failed to initialize the screen manager." << std::endl;
+		return;
+	}
 
-	if (!screenManager.openScreen("game"))
+	if (!screenManager.openScreen("login"))
 	{
 		std::cout << "Failed to open screen" << std::endl;
 		return;

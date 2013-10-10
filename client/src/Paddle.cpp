@@ -1,7 +1,9 @@
 #include "Paddle.h"
 
 Paddle::Paddle()
-	: GameObject()
+	: GameObject(),
+	keyDir(0.f),
+	currentInput(InputType::KEYBOARD)
 {
 }
 
@@ -27,11 +29,27 @@ void Paddle::update(double _dt)
 	inputComponent->moveToTarget(*this, _dt);
 
 	float speedMult = 2.f;
-	float maxSpeed = 2.f;
+	float maxSpeed = 1.f;
 	float accelaration = 2.f;
+
+	float KEY_ACCELERATION = 0.001f;
 	
-	float diffX = targetPos.x - center.x;
-	velocity.x = diffX * accelaration;
+	if (currentInput == InputType::KEYBOARD)
+	{
+		if (keyDir != 0.f)
+		{
+			velocity.x += (float)(keyDir * 5.f * _dt);
+		}
+		else
+		{
+			velocity.x *= glm::pow(KEY_ACCELERATION, (float)_dt);
+		}
+	}
+	else
+	{
+		float diffX = targetPos.x - center.x;
+		velocity.x = diffX * accelaration;
+	}
 
 	velocity.x = glm::max(velocity.x, -maxSpeed);
 	velocity.x = glm::min(velocity.x, maxSpeed);

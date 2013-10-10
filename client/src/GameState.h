@@ -25,6 +25,7 @@ public:
 private:
 	virtual bool initialize(std::shared_ptr<ICoreSystem> _iCoreSystem);
 	virtual void onInput(const std::vector<IInput::Event> _events);
+	virtual bool onEntry() override;
 	virtual void update(const float _dt);
 	virtual void draw(std::shared_ptr<IGraphics> _graphics);
 

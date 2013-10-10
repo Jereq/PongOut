@@ -36,6 +36,7 @@ bool MenuState::onEntry()
 	}
 
 	active = true;
+	ICoreSystem::getInstance().lock()->getSounds()->changeBackgroundMusic(music);
 
 	return true;
 }
@@ -77,13 +78,6 @@ void MenuState::onInput(const std::vector<IInput::Event> _events)
 			break;
 		}
 	}
-}
-
-bool MenuState::onEntry()
-{
-	ICoreSystem::getInstance().lock()->getSounds()->changeBackgroundMusic(music);
-
-	return true;
 }
 
 void MenuState::setBackground(const std::string _backgroundName)

@@ -60,6 +60,13 @@ void GameState::onInput(const std::vector<IInput::Event> _events)
 	inputState.setFrameEvents(_events);
 }
 
+bool GameState::onEntry()
+{
+	iCoreSystem->getSounds()->changeBackgroundMusic("techno");
+
+	return ScreenState::onEntry();
+}
+
 void GameState::update(const float _dt)
 {
 	//for(GameObject::ptr g : gameObjects)

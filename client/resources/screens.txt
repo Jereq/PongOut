@@ -2,7 +2,8 @@ screen
 	id login
 	background background/login
 	screenSize 1280/1024
-	
+	music bubble
+
 	inputField
 		id username
 		textureName input/box
@@ -30,7 +31,7 @@ screen
 		textureNormal f
 		position 1216/64/0
 		size 60/60
-		func goto/mainmenu
+		func login
 	/button
 
 	button
@@ -242,6 +243,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 80/830/0
 		size 102/62
+		func sudden
 	/button
 
 	button
@@ -249,6 +251,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 180/830/0
 		size 102/62
+		func sudden
 	/button
 
 	button
@@ -256,20 +259,31 @@ screen
 		textureNormal button/game_settings_unselected
 		position 280/830/0
 		size 102/62
+		func sudden
 	/button
 
 	button
 		id suddendeathButt15min
 		textureNormal button/game_settings_unselected
-		position
+		position 0/0/0
 		size 102/62
+		func sudden
 	/button
 
 	button
 		id suddendeathButtRandom
 		textureNormal button/game_settings_unselected
-		position
+		position 0/0/0
 		size 102/62
+		func sudden
+	/button
+
+	button
+		id startDemoGame
+		textureNormal button/host
+		position 640/512/0
+		size 96/58
+		func goto/game
 	/button
 /screen
 

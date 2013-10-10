@@ -11,6 +11,13 @@ private:
 	InputComponent::ptr		inputComponent;
 	PhysicsComponent::ptr	physicsComponent;
 	glm::vec2	targetPos;
+	float keyDir;
+	enum class InputType
+	{
+		MOUSE,
+		KEYBOARD
+	};
+	InputType currentInput;
 
 	friend class InputComponent;
 public:

@@ -105,7 +105,7 @@ void Map::initBlockArray(int _size, GraphicsComponent::ptr _graphicsComponent)
 	const static int NUM_TEX = sizeof(blockTextures) / sizeof(std::string);
 
 	glm::vec3 startPosition = origo;
-	for(int i = 0; i < blocks.size(); i++)
+	for(unsigned int i = 0; i < blocks.size(); i++)
 	{
 		int y = i % columns;
 		if(y == 0)
