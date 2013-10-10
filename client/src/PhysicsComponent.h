@@ -3,15 +3,20 @@
 
 #include "boost/filesystem.hpp"
 
-#include "Map.h"
+class Map;
 
 class GameObject;
+class Ball;
+class Paddle;
+
 
 class PhysicsComponent
 {
 public:
 	typedef std::shared_ptr<PhysicsComponent> ptr;
 	virtual void bounceOnPlayArea(GameObject* _gameObject, double _dt);
+	virtual void bounceOnBlock(Ball* _ball, double _dt);
+	virtual void bounceOnPaddle(Ball* _ball, double _dt);
 	virtual void restrictToPlayArea(GameObject* _gameObject, double _dt);
 	virtual bool initialize(Map* _map);
 

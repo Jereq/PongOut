@@ -32,7 +32,7 @@ private:
 
 	IGraphics::ptr graphics;
 	InputState	inputState;
-	Map* map;
+	Map* world;
 };
 
 #endif

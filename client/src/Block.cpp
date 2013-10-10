@@ -9,6 +9,7 @@
 
 Block::Block()
 {
+	canCollide = true;
 }
 
 Block::~Block() {}
@@ -26,6 +27,7 @@ void Block::update(double _dt)
 {
 
 
-	center.x = center.x + velocity.x * _dt;
-	graphicsComponent->addSpriteToFrame("blocks/orange_01", center, size, rotation);
+	//center.x = center.x + velocity.x * _dt;
+	if(canCollide)
+		graphicsComponent->addSpriteToFrame("blocks/orange_01", center, size, rotation);
 }

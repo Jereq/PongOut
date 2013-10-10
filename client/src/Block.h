@@ -24,7 +24,9 @@ public:
 
 	bool initialize(const std::string& _id, glm::vec3 _center, glm::vec2 _size, float _rotation, 
 					GraphicsComponent::ptr _graphicsComponent);
+	bool canCollide;
 
+	typedef std::shared_ptr<Block> ptr;
 private:
 	int health;
 

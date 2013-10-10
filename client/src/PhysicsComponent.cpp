@@ -1,6 +1,8 @@
 #include "PhysicsComponent.h"
+#include "Ball.h"
+#include "Paddle.h"
 
-
+#include "Map.h"
 bool PhysicsComponent::initialize(Map* _map)
 {
 	map = _map;
@@ -69,6 +71,99 @@ void PhysicsComponent::restrictToPlayArea(GameObject* _gameObject, double _dt)
 	else if(_gameObject->center.y + _gameObject->size.y / 2 > max.y)
 	{
 		_gameObject->center.y = max.y - _gameObject->size.y / 2.0;
+
+	}
+}
+
+void PhysicsComponent::bounceOnBlock(Ball* _ball, double _dt)
+{
+	//check ball position one tick forward
+	float x	= (_ball->center.x  + _ball->velocity.x * _dt - _ball->size.x / 2.0);	
+	float y	= (_ball->center.y  + _ball->velocity.y * _dt - _ball->size.y / 2.0);
+	float ballOriginY = y;
+	float ballOriginX = x;
+	float radius = _ball->radius;
+
+	for(Block::ptr b : map->blocks)
+	{
+		if(!b->canCollide)
+			continue;
+
+		//rectangle
+		float rleftX	= b->center.x - b->size.x / 2.0;
+		float rrightX	= b->center.x + b->size.x / 2.0;
+		float rTopY		= b->center.y + b->size.y / 2.0;
+		float rBottomY	= b->center.y - b->size.y / 2.0;
+
+		if(x < rleftX)
+			x = rleftX;
+		if(x > rrightX)
+			x = rrightX;
+		if(y < rTopY)
+			y = rTopY;
+		if(y > rBottomY)
+			y = rBottomY;
+
+		if( (ballOriginX - x) * (ballOriginX - x) + (ballOriginY - y) * (ballOriginY - y) < (radius * radius) )
+		{
+			glm::vec2 n = glm::vec2(b->center.x - _ball->center.x, b->center.y - _ball->center.y);
+			glm::vec2 v = _ball->velocity;
+			float dotN = glm::dot(n,n);
+			float dotV = glm::dot(v,v);
+			glm::vec2 newVelocity = _ball->velocity;
+			newVelocity -= (2.0f * (dotV / dotN)) * n;
+			newVelocity = glm::normalize(newVelocity);
+			_ball->velocity = newVelocity;
+
+			b->canCollide = false;
+			
+			return;
+		}
+
+	}
+}
+
+void PhysicsComponent::bounceOnPaddle(Ball* _ball, double _dt)
+{
+	//check ball position one tick forward
+	float x	= (_ball->center.x  + _ball->velocity.x * _dt - _ball->size.x / 2.0);	
+	float y	= (_ball->center.y  + _ball->velocity.y * _dt - _ball->size.y / 2.0);
+	float ballOriginY = y;
+	float ballOriginX = x;
+	float radius = _ball->radius;
+
+	for(Paddle::ptr paddle : map->paddles)
+	{
+		//rectangle
+		float rleftX	= paddle->center.x - paddle->size.x / 2.0;
+		float rrightX	= paddle->center.x + paddle->size.x / 2.0;
+		float rTopY		= paddle->center.y + paddle->size.y / 2.0;
+		float rBottomY	= paddle->center.y - paddle->size.y / 2.0;
+
+		if(x < rleftX)
+			x = rleftX;
+		if(x > rrightX)
+			x = rrightX;
+		if(y < rTopY)
+			y = rTopY;
+		if(y > rBottomY)
+			y = rBottomY;
+
+		if( (ballOriginX - x) * (ballOriginX - x) + (ballOriginY - y) * (ballOriginY - y) < (radius * radius) )
+		{
+			glm::vec2 n = glm::vec2(paddle->center.x - _ball->center.x, paddle->center.y - _ball->center.y);
+			glm::vec2 v = _ball->velocity;
+			float dotN = glm::dot(n,n);
+			float dotV = glm::dot(v,v);
+			glm::vec2 newVelocity = _ball->velocity;
+			newVelocity -= (2.0f * (dotV / dotN)) * n;
+			newVelocity = glm::normalize(newVelocity);
+			_ball->velocity = newVelocity;
+
+		
+			
+			return;
+		}
 
 	}
 }
