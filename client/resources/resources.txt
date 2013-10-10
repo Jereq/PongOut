@@ -1,3 +1,4 @@
+texture:textureNotFound			textures/textureNotFound.png
 texture:player/ball			textures/ball_prototype.png
 texture:player/paddle			textures/paddle.png
 texture:blocks/dark_magenta_01		textures/box_dark_magenta_01.png
@@ -16,8 +17,6 @@ texture:blocks/orange_03		textures/box_orange_03.png
 texture:blocks/orange_04		textures/box_orange_04.png
 texture:blocks/orange_05		textures/box_orange_05.png
 texture:blocks/pink_01			textures/box_pink_01.png
-texture:textureNotFound		textures/textureNotFound.png
-texture:background/mainmenu_01		background_prototype.png
 texture:blocks/pink_02			textures/box_pink_02.png
 texture:blocks/pink_03			textures/box_pink_03.png
 texture:blocks/pink_04			textures/box_pink_04.png
@@ -61,7 +60,7 @@ texture:input/box			textures/input_box.png
 texture:input/chat			textures/input_chat.png
 texture:input/player_search		textures/input_player_search.png
 texture:output/chat_window		textures/chat_window.png
-texture:output/player_list_game_lobby	textures/player_list_game_lobby
+texture:output/player_list_game_lobby	textures/player_list_game_lobby.png
 texture:output/player_list_high_scores	textures/player_list_high_scores.png
 texture:text/5min			textures/text_5min.png
 texture:text/10min			textures/text_10min.png

@@ -290,6 +290,7 @@ bool readInputField(InputField& _inputField, std::istream& _is, glm::vec2 _scree
 
 	return true;
 }
+
 bool readImage(Image& _image, std::istream& _is, glm::vec2 _screenSize)
 {
 	std::string imageId;
@@ -388,6 +389,7 @@ bool readImage(Image& _image, std::istream& _is, glm::vec2 _screenSize)
 
 	return true;
 }
+
 bool ScreenManager::readScreen(const boost::filesystem::path& _screenFile)
 {
 	boost::filesystem::fstream file(_screenFile);
@@ -563,6 +565,7 @@ bool ScreenManager::onInput(const std::vector<IInput::Event>& _events)
 {
 	//for (auto it = screens.rbegin(); it !=
 	screens.back()->onInput(_events);
+
 	return true;
 }
 

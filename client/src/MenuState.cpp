@@ -22,6 +22,24 @@ bool MenuState::initialize()
 	return true;
 }
 
+bool MenuState::onEntry()
+{
+	IInput::Event fakeEvent;
+	fakeEvent.type = IInput::Event::Type::MOUSE_MOVE;
+	fakeEvent.mouseMoveEvent.posY = 10000;
+	fakeEvent.mouseMoveEvent.posX = 10000;
+
+	for(Button& b : buttons)
+	{
+		b.onInput(fakeEvent);
+	}
+
+	active = true;
+
+	return true;
+}
+
+
 void MenuState::addButtons(std::vector<Button> _buttons)
 {
 	buttons.insert(buttons.end(),_buttons.begin(), _buttons.end());
