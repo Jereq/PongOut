@@ -1,7 +1,7 @@
 #ifndef __GRAPHICSCOMPONENT_H
 #define __GRAPHICSCOMPONENT_H
 
-#include "IGraphics.h"
+#include <Graphics/IGraphics.h>
 
 class GameObject;
 
