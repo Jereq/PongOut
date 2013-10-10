@@ -33,7 +33,7 @@ private:
 	virtual bool onEntry();
 	virtual void update(const float _dt);
 	virtual void draw(std::shared_ptr<IGraphics> _graphics);
-	
+	virtual bool onEntry();
 };
 
 #endif

@@ -1,66 +1,292 @@
 screen
-	id mainmenu
-	background background/mainmenu_01
-	screenSize 1280/1024
-	image
-		id t1
-		texture blocks/pink_01
-		position 640/800/0
-		size 1200/400
-	/image
-	image
-		id t2
-		texture blocks/dark_magenta_01
-		position 640/550/0
-		size 1200/20
-	/image
-	button
-		id b1
-		textureNormal blocks/dark_magenta_01
-		textureHovered blocks/orange_01
-		textName blocks/pink_01
-		position 640/400/0
-		size 400/200
-		func back
-	/button
-	button
-		id b2
-		textureNormal blocks/orange_01
-		textureHovered blocks/dark_magenta_01
-		textName blocks/pink_01
-		position 640/200/0
-		size 400/200
-		func goto/login
-	/button
-/screen
-screen
 	id login
-	background player/ball
+	background background/login
 	screenSize 1280/1024
+	
 	inputField
 		id username
-		textureName A
-		position 600/300/0
-		size 400/100
+		textureName input/box
+		position 700/600/0
+		size 220/62
 	/inputField
+
 	inputField
 		id password
-		textureName B
-		position 600/180/0
-		size 400/100
+		textureName input/box
+		position 700/500/0
+		size 220/62
 	/inputField
+
 	button
 		id b1
-		textureNormal blocks/pink_01
-		position 64/64/0
-		size 64/64
+		textureNormal button/exit
+		position 45/64/0
+		size 60/60
 		func exit
 	/button
+
 	button
 		id b2
 		textureNormal f
-		position 64/128/0
-		size 64/64
-		func login
+		position 1216/64/0
+		size 60/60
+		func goto/mainmenu
 	/button
+
+	button
+		id toCreateProfile
+		textureNormal button/create_profile
+		position 700/400/0
+		size 238/59
+		func goto/createprofile
+	/button
+
+	image
+		id usernametext
+		texture text/username
+		position 450/600/0
+		size 102/40
+	/image
+
+	image
+		id passwordtext
+		texture text/password
+		position 450/500/0
+		size 102/54
+	/image
+/screen
+
+screen
+	id createprofile
+	background background/create_profile
+	screenSize 1280/1024
+
+	inputField
+		id createUsername
+		textureName input/box
+		position 700/600/0
+		size 220/62
+	/inputField
+
+	inputField
+		id createPassword
+		textureName input/box
+		position 700/500/0
+		size 220/62
+	/inputField
+
+	inputField
+		id confirmPassword
+		textureName input/box
+		position 700/400/0
+		size 220/62
+	/inputField
+
+	button
+		id backCreateProfile
+		textureNormal button/back
+		position 45/64/0
+		size 60/60
+		func back
+	/button
+
+	image
+		id createUsernameText
+		texture text/username
+		position 450/600/0
+		size 102/40
+	/image
+
+	image
+		id createPasswordText
+		texture text/new_password
+		position 450/500/0
+		size 188/40
+	/image
+
+	image
+		id confirmPasswordText
+		texture text/confirm_password
+		position 450/400/0
+		size 255/40
+	/image
+/screen
+
+screen
+	id mainmenu
+	background background/main_menu
+	screenSize 1280/1024
+
+	button
+		id exitFromMain
+		textureNormal button/exit
+		position 45/64/0
+		size 60/60
+		func exit
+	/button
+
+	button
+		id Logout
+		textureNormal button/log_out
+		position 1200/65/0
+		size 124/65
+		func back
+	/button
+
+	button
+		id toProfileFromMain
+		textureNormal button/profile
+		position 1180/940/0
+		size 191/66
+		func goto/profilesettings
+	/button
+
+	button
+		id toGameLobby
+		textureNormal button/game_lobby
+		position 640/750/0
+		size 301/96
+		func goto/gamelobby
+	/button
+
+	button
+		id toHighscores
+		textureNormal button/high_scores_main_menu
+		position 640/600/0
+		size 210/131
+		func goto/highscores
+	/button
+
+	button
+		id toSettings
+		textureNormal button/settings
+		position 640/400/0
+		size 202/131
+		func goto/settings
+	/button
+/screen
+
+screen
+	id gamelobby
+	background background/game_lobby
+	screenSize 1280/1024
+
+	button
+		id toProfileFromLobby
+		textureNormal button/profile
+		position 1180/940/0
+		size 191/66
+		func goto/profilesettings 
+	/button
+
+	button
+		id toHighscoresFromLobby
+		textureNormal button/high_scores_game_lobby
+		position 950/940/0
+		size 257/70
+		func goto/highscores
+	/button
+
+	button
+		id exitFromLobby
+		textureNormal button/exit
+		position 45/64/0
+		size 60/60
+		func exit
+	/button
+
+	image
+		id suddenDeathSetting
+		texture text/sudden_death_time
+		position 150/930/0
+		size 219/40
+	/image
+
+	image
+		id suddenDeathTextNone
+		texture text/none
+		position 80/730/0
+		size 65/16
+	/image
+
+	image
+		id suddenDeathText5min
+		texture text/5min
+		position 150/730/0
+		size 65/16
+	/image
+
+	image
+		id suddenDeathText10min
+		texture text/10min
+		position 250/730/0
+		size 65/16
+	/image
+
+	image
+		id suddenDeathText15min
+		texture text/15min
+		position 350/730/0
+		size 66/16
+	/image
+
+	image
+		id suddenDeathTextRandom
+		texture text/random
+		position 450/730/0
+		size 82/16
+	/image
+
+	button
+		id suddendeathButtNone
+		textureNormal button/game_settings_unselected
+		position 80/830/0
+		size 102/62
+	/button
+
+	button
+		id suddendeathButt5min
+		textureNormal button/game_settings_unselected
+		position 180/830/0
+		size 102/62
+	/button
+
+	button
+		id suddendeathButt10min
+		textureNormal button/game_settings_unselected
+		position 280/830/0
+		size 102/62
+	/button
+
+	button
+		id suddendeathButt15min
+		textureNormal button/game_settings_unselected
+		position
+		size 102/62
+	/button
+
+	button
+		id suddendeathButtRandom
+		textureNormal button/game_settings_unselected
+		position
+		size 102/62
+	/button
+/screen
+
+screen
+	id settings
+	background background/settings
+	screenSize 1280/1024
+/screen
+
+screen
+	id profilesettings
+	background background/profile_settings
+	screensize 1280/1024
+/screen
+
+screen
+	id highscores
+	background background/high_scores
+	screenSize 1280/1024
 /screen
