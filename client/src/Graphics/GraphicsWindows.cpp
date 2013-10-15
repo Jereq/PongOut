@@ -90,7 +90,7 @@ bool GraphicsWindows::init()
 	hWnd = CreateWindowExW(WS_EX_LEFT, szAppName, L"PongOut",
 				WS_OVERLAPPEDWINDOW,
 				CW_USEDEFAULT, CW_USEDEFAULT,
-				1280,1024,
+				1280,720,
 				NULL, NULL, hInstance, NULL);
 
 	ShowWindow(hWnd, SW_SHOWNORMAL);
@@ -166,8 +166,8 @@ ErrorCode GraphicsWindows::createBuffers(ID3D11Buffer*& _vBuffer, ID3D11Buffer*&
 	unsigned long* indices	= new unsigned long[indexCount];
 	SpriteVertex*sv			= new SpriteVertex[vertexCount];
 
-	memset(sv, 0, sizeof(SpriteVertex) * vertexCount);
-	memcpy(sv, &frameSprites[_index].vertices[0], sizeof(SpriteVertex) * vertexCount);//we need to do a conversion from vector to * because of pSysMem
+	//memset(sv, 0, sizeof(SpriteVertex) * vertexCount);
+	//memmove(sv, &frameSprites[_index].vertices[0], sizeof(SpriteVertex) * vertexCount);//we need to do a conversion from vector to * because of pSysMem
 
 	unsigned int i;
 	for(i=0; i<indexCount; i++)
@@ -182,7 +182,7 @@ ErrorCode GraphicsWindows::createBuffers(ID3D11Buffer*& _vBuffer, ID3D11Buffer*&
 	vertexBufferDesc.StructureByteStride= 0;
 
 	// Give the subresource structure a pointer to the vertex data.
-	vertexData.pSysMem			= sv;
+	vertexData.pSysMem			= &frameSprites[_index].vertices[0];//sv;
 	vertexData.SysMemPitch		= 0;
 	vertexData.SysMemSlicePitch	= 0;
 
@@ -211,6 +211,9 @@ ErrorCode GraphicsWindows::createBuffers(ID3D11Buffer*& _vBuffer, ID3D11Buffer*&
 
 	delete [] indices;
 	indices = 0;
+
+	delete [] sv;
+	sv = 0;
 
 	return ErrorCode::WGFX_BUFFER_INIT_OK;
 }

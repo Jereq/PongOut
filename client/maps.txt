@@ -1,0 +1,48 @@
+def Block
+	id 1
+	health 1
+	texture blocks/dark_magenta_01
+	/end
+	id 2
+	health 2
+	//texture blocks/dark_magenta_01
+	texture blocks/orange_01
+	/end
+	id 3
+	health 1
+	texture blocks/pink_02
+	/end
+	id 4
+	health 2
+	//texture blocks/dark_magenta_02
+	texture blocks/orange_02
+	/end
+	id 5
+	health 1
+	texture blocks/dark_magenta_03
+	/end
+	id 6
+	health 2
+	texture blocks/dark_magenta_03
+	texture blocks/orange_03
+	/end
+/def
+
+def Map
+	id 1
+	name Map1
+	texture 
+	
+	row 0000330000
+	row 0022002200
+	row 1100110011
+	row 1100110011
+	row 0022002200
+	row 0000330000
+	row 0000330000
+	row 0022002200
+	row 1100110011
+	row 1100110011
+	row 0022002200
+	row 0000330000
+/def

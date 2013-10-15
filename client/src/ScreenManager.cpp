@@ -38,10 +38,10 @@ bool ScreenManager::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem)
 		return false;
 	}
 
-	if (!registerScreenState("game", ScreenState::ptr(new GameState("game"))))
-	{
-		return false;
-	}
+	//if (!registerScreenState("game", ScreenState::ptr(new GameState("game"))))
+	//{
+	//	return false;
+	//}
 
 	return true;
 }
@@ -567,6 +567,13 @@ bool ScreenManager::readScreens(const boost::filesystem::path& _screenFile)
 		}
 	}
 
+	GameState::ptr gameState = GameState::ptr(new GameState);
+	gameState->addStateAction(this);
+	if (!registerScreenState("game", gameState))
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -577,6 +584,7 @@ void ScreenManager::update(float _dt, std::shared_ptr<IGraphics> _graphics)
 
 	for(auto screen : screens)
 	{
+
 		if(screen->isActive())
 			screensToUpdate.push_back(screen);
 	}

@@ -6,7 +6,8 @@
  */
 
 #include "Map.h"
-
+#include <iostream>
+#include <boost/filesystem/fstream.hpp>
 Map::Map()
 {
 	frameThickness 			= 0.f;
@@ -17,7 +18,7 @@ Map::Map()
 
 Map::~Map()
 {
-	remBlockArray();
+	//remBlockArray();
 }
 
 void Map::initialize(	glm::vec2 _playAreaSize, float _frameThickness,
@@ -28,8 +29,13 @@ void Map::initialize(	glm::vec2 _playAreaSize, float _frameThickness,
 	frameTextureName		= _frameTextureName;
 
 	setPlayAreaBounds(_playAreaSize);
-	//initBlockArray(24); //Hardcoded for demo ONLY!!
-	tempSetBlockPos();
+
+	if(blocks.size() != 0)
+		blocks.clear();
+	if(balls.size() != 0)
+		balls.clear();
+	if(paddles.size() != 0)
+		paddles.clear();
 }
 
 bool Map::addObject(Paddle::ptr _paddle)
@@ -66,62 +72,144 @@ void Map::setPlayAreaBounds(glm::vec2 _size)
 	playAreaSize.y		= _size.y + frameThickness;
 }
 
-void Map::initBlockArray(int _size, GraphicsComponent::ptr _graphicsComponent)
+struct BlockType
 {
-	//blockList.resize(_size);
-	//blockList[0].initialize(glm::vec2(1,1), glm::vec2(8,4), "blocks/orange_01", 1);
+	int id;
+	int health;
+	std::vector<std::string> textures;
+};
 
-	int screenWidth = (int)playAreaSize.x;
-	int screenHeight = (int)playAreaSize.y;
-	glm::vec2 size = glm::vec2(64,32);
-	glm::vec3 origo = glm::vec3(playAreaSize.x / 2. - size.x, playAreaSize.y/2, 0);
+struct Level
+{
+	int id;
+	std::string name;
+	std::string texture;
+
+	std::vector<Block> rows;
+
+};
+
+bool readMapFile(std::vector<Block::ptr>& _blocks, const std::string& levelName, const glm::vec2& _playAreaSize, GraphicsComponent::ptr _graphicsComponent)
+{
+	boost::filesystem::fstream file("../maps.txt");
 	
-	int columns = 10;
-	int rows = 15;
-	blocks.resize(columns * rows);
-
-	const static std::string blockTextures[] = {
-		"blocks/dark_magenta_01",
-		"blocks/dark_magenta_02",
-		"blocks/dark_magenta_03",
-		"blocks/dark_magenta_04",
-		"blocks/dark_magenta_05",
-		"blocks/light_magenta_01",
-		"blocks/light_magenta_02",
-		"blocks/light_magenta_03",
-		"blocks/light_magenta_04",
-		"blocks/light_magenta_05",
-		"blocks/orange_01",
-		"blocks/orange_02",
-		"blocks/orange_03",
-		"blocks/orange_04",
-		"blocks/orange_05",
-		"blocks/pink_01",
-		"blocks/pink_02",
-		"blocks/pink_03",
-		"blocks/pink_04",
-		"blocks/pink_05",
-	};
-	const static int NUM_TEX = sizeof(blockTextures) / sizeof(std::string);
-
-	glm::vec3 startPosition = origo;
-	for(unsigned int i = 0; i < blocks.size(); i++)
+	if(file == NULL)
 	{
-		int y = i % columns;
-		if(y == 0)
-		{
-			startPosition.x = origo.x;
-			startPosition.y += size.y;
-		}
-
-		Block::ptr block = Block::ptr(new Block());
-		std::string id = "block" + std::to_string(i);		
-		block->initialize(id, startPosition, size, 0, _graphicsComponent, blockTextures[(i * 7) % NUM_TEX]);
-		blocks[i] = block;
-
-		startPosition.x += size.x;
+		return false;
 	}
-	
+
+	std::vector<BlockType> blockTypes;
+	glm::vec2 size = glm::vec2(64,32);
+	glm::vec3 origo = glm::vec3(_playAreaSize.x / 2. - size.x, _playAreaSize.y-size.y, 0);
+
+	while(true)
+	{
+		std::string line;
+
+		if(!std::getline(file,line))
+			break;
+
+		std::getline(file,line);
+		
+		BlockType block;
+		int id = 0, health = 0;
+		block.id = id;
+		block.health = 0;
+
+		Level level;
+		int row = 0;
+		while(true)
+		{
+			
+			int sep = line.find_first_of(' ');
+			int end = line.size();
+			if(line == "/def")
+				break;
+
+			if(line.substr(0, sep) == "\tid")
+			{
+				block.id = atoi(line.substr(sep+1,end).c_str());
+			}
+			else if(line.substr(0, sep) == "\thealth")
+			{
+				block.health = atoi(line.substr(sep+1,end).c_str());
+			}
+			else if(line.substr(0, sep) == "\ttexture")
+			{
+				block.textures.push_back(line.substr(sep+1,end));
+			}
+			else if(line.substr(0, sep) == "\t/end")
+			{
+				blockTypes.push_back(block);
+				block.textures.clear();
+			}
+
+
+			if(line.substr(0, sep) == "\tid")
+			{
+				level.id = atoi(line.substr(sep,end).c_str());
+			}
+			else if(line.substr(0, sep) == "\tname")
+			{
+				level.name = line.substr(sep+1,end);
+			}
+			else if(line.substr(0, sep) == "\ttexture")
+			{
+				level.texture = line.substr(sep+1,end);
+			}
+			else if(line.substr(0, sep) == "\trow")
+			{
+				std::string idTypes = line.substr(sep+1,end);
+
+				for(int i = 0; i < idTypes.size(); i++)
+				{
+					std::string val = idTypes.substr(i,1);
+					if(val == "0")
+						continue;
+
+					float x = origo.x + i * size.x;
+					printf("{%f %f %f}\n",x , origo.y + row * size.y, 0);
+					glm::vec3 position = glm::vec3(x, origo.y - row * size.y, 0);
+					Block::ptr b = Block::ptr(new Block());
+					int id = atoi(val.c_str());
+					std::string texture = "";
+					for(BlockType btype : blockTypes)
+					{
+						if(id == btype.id)
+							texture = btype.textures[0];
+					}
+
+
+					b->initialize("block", position, size, 0, _graphicsComponent, texture);
+					_blocks.push_back(b);
+				}
+				printf("---\n");
+				row++;
+			}
+			std::getline(file, line);
+		}
+	}
+
+	blockTypes.clear();
+	file.close();
+
+	return true;
+};
+
+bool Map::loadMap(std::string _mapName, GraphicsComponent::ptr gc, InputComponent::ptr ic, PhysicsComponent::ptr pc )
+{
+	bool result;
+	result = readMapFile(blocks, _mapName, playAreaSize, gc);	
+
+	Ball::ptr b = Ball::ptr(new Ball());
+	result = b->initialize("ball1", glm::vec3(600,400,-0.1), glm::vec2(32,32), 0, GraphicsComponent::ptr(gc), PhysicsComponent::ptr(pc));
+	addObject(b);
+
+	Paddle::ptr p = Paddle::ptr(new Paddle());
+	result = p->initialize("paddle1", glm::vec3(400,100,0), glm::vec2(128,32), 0, GraphicsComponent::ptr(gc), InputComponent::ptr(ic), PhysicsComponent::ptr(pc));
+	addObject(p);
+
+	return result;
 }
 void Map::remBlockArray()
 {

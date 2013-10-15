@@ -16,6 +16,9 @@
 #include "Block.h"
 #include "MapResources.h"
 #include "GraphicsComponent.h"
+#include "InputComponent.h"
+#include "PhysicsComponent.h"
+
 #include "Paddle.h"
 #include "Ball.h"
 
@@ -23,13 +26,13 @@ class Map {
 public:
 	Map();
 	virtual ~Map();
-	void initialize(	glm::vec2 _playAreaSize, float _frameThickness,
-						string _bgTextureName, string _frameTextureName							);
+	void initialize(glm::vec2 _playAreaSize, float _frameThickness,
+						string _bgTextureName, string _frameTextureName	);
 	void update(double _dt);
 	string getTextureName();
 	string getFrameTextureName();
 	glm::vec2 getSize();
-	void initBlockArray(int _size, GraphicsComponent::ptr _graphicsComponent);
+	bool loadMap(std::string mapName, GraphicsComponent::ptr gc, InputComponent::ptr ic, PhysicsComponent::ptr pc);
 
 	bool addObject(Paddle::ptr _paddle);
 	bool addObject(Ball::ptr _ball);
