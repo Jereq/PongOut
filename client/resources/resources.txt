@@ -115,7 +115,7 @@ texture:text/username			textures/text_username.png
 texture:text/winner			textures/text_winner.png
 texture:regulator/bar			textures/regulator_bar.png
 texture:regulator/regulator		textures/regulator_regulator.png
-music:bubble				sounds/Bubble3.mp3
+music:bubble				sounds/bubble3.mp3
 music:techno				sounds/techno.mp3
 music:winner				sounds/winner.mp3
 music:loser				sounds/loser.mp3

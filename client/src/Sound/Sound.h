@@ -11,7 +11,8 @@ namespace FMOD
 class Sound
 {
 public:
-	Sound(Sound &&_other);
+	Sound(Sound& _other);
+	Sound(Sound &&_other) noexcept;
 	Sound(string _resourceName = "undefined", string _type = "undefined",
 		float _volume = 1.0f);
 	~Sound(void);
@@ -23,6 +24,5 @@ public:
 	FMOD::Sound *sound;
 
 private:
-	Sound(const Sound&);
 	Sound& operator=(const Sound&);
 };
