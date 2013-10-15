@@ -18,6 +18,9 @@ namespace fs = boost::filesystem;
 #include <sstream>
 #include <stdexcept>
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 const int GraphicsLinux::MAJOR_GL_VERSION = 4;
 const int GraphicsLinux::MINOR_GL_VERSION = 0;
 
@@ -166,6 +169,21 @@ bool GraphicsLinux::init()
 	projectionMatrix = glm::ortho(-1.f, 1.f, -1.f, 1.f, 1.f, -1.f);
 
 	glClearColor(1.f, 0.f, 1.f, 1.f);
+
+	FT_Library library;
+
+	FT_Error error = FT_Init_FreeType(&library);
+	if (error)
+	{
+		return false;
+	}
+
+	FT_Face face;
+	error = FT_New_Face(library, "/usr/share/fonts/truetype/freefont/FreeMono.ttf", 0, &face);
+	if (error)
+	{
+		return false;
+	}
 
 	return true;
 }

@@ -1,5 +1,11 @@
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/")
 
+find_package(Freetype REQUIRED)
+
+include_directories(	
+	${FREETYPE_INCLUDE_DIRS}
+)
+
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	find_package(Directx11 REQUIRED)
 
@@ -67,6 +73,7 @@ add_library(Graphics
 
 target_link_libraries(Graphics
 	${GRAPHICS_LIBS}
+	${FREETYPE_LIBRARIES}
 	ResourceLoader
 )
 
