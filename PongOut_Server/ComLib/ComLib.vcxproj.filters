@@ -39,28 +39,31 @@
     <ClInclude Include="Chat.h">
       <Filter>Header Files\Msg sub clases</Filter>
     </ClInclude>
-    <ClInclude Include="ResponseFriendlist.h">
+    <ClInclude Include="ConnectResponse.h">
       <Filter>Header Files\Msg sub clases</Filter>
     </ClInclude>
-    <ClInclude Include="RequestFriendlist.h">
+    <ClInclude Include="LoginRequest.h">
       <Filter>Header Files\Msg sub clases</Filter>
     </ClInclude>
-    <ClInclude Include="RequestCreateUser.h">
+    <ClInclude Include="LoginResponse.h">
       <Filter>Header Files\Msg sub clases</Filter>
     </ClInclude>
-    <ClInclude Include="RequestLogin.h">
+    <ClInclude Include="LogoutRequest.h">
       <Filter>Header Files\Msg sub clases</Filter>
     </ClInclude>
-    <ClInclude Include="ResponseLogin.h">
+    <ClInclude Include="CreateUserRequest.h">
       <Filter>Header Files\Msg sub clases</Filter>
     </ClInclude>
-    <ClInclude Include="ResponseCreateUser.h">
+    <ClInclude Include="CreateUserResponse.h">
       <Filter>Header Files\Msg sub clases</Filter>
     </ClInclude>
-    <ClInclude Include="RequestLogout.h">
+    <ClInclude Include="FriendlistRequest.h">
       <Filter>Header Files\Msg sub clases</Filter>
     </ClInclude>
-    <ClInclude Include="ResponseConnect.h">
+    <ClInclude Include="FriendlistResponse.h">
+      <Filter>Header Files\Msg sub clases</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMessage.h">
       <Filter>Header Files\Msg sub clases</Filter>
     </ClInclude>
   </ItemGroup>
@@ -77,28 +80,31 @@
     <ClCompile Include="Chat.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
-    <ClCompile Include="ResponseFriendlist.cpp">
+    <ClCompile Include="ConnectResponse.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
-    <ClCompile Include="RequestFriendlist.cpp">
+    <ClCompile Include="LoginRequest.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
-    <ClCompile Include="RequestCreateUser.cpp">
+    <ClCompile Include="LoginResponse.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
-    <ClCompile Include="RequestLogin.cpp">
+    <ClCompile Include="LogoutRequest.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
-    <ClCompile Include="ResponseLogin.cpp">
+    <ClCompile Include="CreateUserRequest.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
-    <ClCompile Include="ResponseCreateUser.cpp">
+    <ClCompile Include="CreateUserResponse.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
-    <ClCompile Include="RequestLogout.cpp">
+    <ClCompile Include="FriendlistRequest.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
-    <ClCompile Include="ResponseConnect.cpp">
+    <ClCompile Include="FriendlistResponse.cpp">
+      <Filter>Source Files\Msg sub clases</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMessage.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
   </ItemGroup>

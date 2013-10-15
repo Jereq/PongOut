@@ -82,7 +82,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameMaster.h" />
     <ClInclude Include="Log.h" />
+    <ClInclude Include="Referee.h" />
     <ClInclude Include="SafeSet.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -90,8 +92,10 @@
     <ClInclude Include="UserManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GameMaster.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="PongOut_Server.cpp" />
+    <ClCompile Include="Referee.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

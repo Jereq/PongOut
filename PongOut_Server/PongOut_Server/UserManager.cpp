@@ -1,14 +1,16 @@
 #include "stdafx.h"
 #include "UserManager.h"
+#include "GameMaster.h"
 
 #include <Chat.h>
-#include <RequestLogin.h>
-#include <ResponseLogin.h>
-#include <ResponseFriendlist.h>
-#include <RequestFriendlist.h>
-#include <RequestCreateUser.h>
-#include <ResponseCreateUser.h>
-#include <ResponseConnect.h>
+#include <LoginRequest.h>
+#include <LoginResponse.h>
+#include <FriendlistResponse.h>
+#include <FriendlistRequest.h>
+#include <CreateUserRequest.h>
+#include <CreateUserResponse.h>
+#include <ConnectResponse.h>
+#include <GameMessage.h>
 #include <stdexcept>
 
 boost::shared_ptr<UserManager> UserManager::ptr;
@@ -44,7 +46,7 @@ void UserManager::listenForNewClientConnections()
 void UserManager::handleIncomingClient( boost::shared_ptr<tcp::socket> _soc, const boost::system::error_code& _errorCode )
 {
 	User::ptr u = User::ptr(new User(_soc));
-	ResponseConnect::ptr rc = ResponseConnect::ptr(new ResponseConnect());
+	ConnectResponse::ptr rc = ConnectResponse::ptr(new ConnectResponse());
 	u->addMsgToMsgQueue(rc);
 	users.insert(u);
 	u->listen();
@@ -91,10 +93,10 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 			//TODO: Call ClientEventLib chat event here when done!!
 		}
 
-	case msgBase::MsgType::REQUESTLOGIN:
+	case msgBase::MsgType::LOGINREQUEST:
 		{
-			RequestLogin::ptr lp = boost::static_pointer_cast<RequestLogin>(p);
-			ResponseLogin::ptr rlp = ResponseLogin::ptr(new ResponseLogin());
+			LoginRequest::ptr lp = boost::static_pointer_cast<LoginRequest>(p);
+			LoginResponse::ptr rlp = LoginResponse::ptr(new LoginResponse());
 
 			long res = sqlManager.verifyUser(lp->getUsername(), lp->getPassword());
 
@@ -117,9 +119,9 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 			break;
 		}
 
-	case msgBase::MsgType::REQUESTFRIENDLIST:
+	case msgBase::MsgType::FRIENDLISTREQUEST:
 		{
-			//ResponseFriendlist::ptr rfl = ResponseFriendlist::ptr(new ResponseFriendlist());
+			//FriendlistResponse::ptr rfl = FriendlistResponse::ptr(new FriendlistResponse());
 
 			//for (User::ptr user : users.baseSet)
 			//{
@@ -133,10 +135,10 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 			break;
 		}
 
-	case msgBase::MsgType::REQUESTCREATEUSER:
+	case msgBase::MsgType::CREATEUSERREQUEST:
 		{
-			RequestCreateUser::ptr cu = boost::static_pointer_cast<RequestCreateUser>(p);
-			ResponseCreateUser::ptr rcu = ResponseCreateUser::ptr(new ResponseCreateUser());
+			CreateUserRequest::ptr cu = boost::static_pointer_cast<CreateUserRequest>(p);
+			CreateUserResponse::ptr rcu = CreateUserResponse::ptr(new CreateUserResponse());
 
 
 			long res = sqlManager.createUser(cu->getUserName(), cu->getUserPassword());
@@ -159,11 +161,18 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 			break;
 		}
 
-	case msgBase::MsgType::REQUESTLOGOUT:
+	case msgBase::MsgType::LOGOUTREQUEST:
 		{
 			Log::addLog(Log::LogType::LOG_INFO, 4, "UserID: " + std::to_string(_user->getUserID()) + " has disconnected!");
 			_user->disconnect();
 			users.erase(_user);			
+			break;
+		}
+
+	case msgBase::MsgType::GAMEMESSAGE:
+		{
+			GameMessage::ptr gmp = boost::static_pointer_cast<GameMessage>(p);
+			GameMaster::getInstance().handleGameMessage(gmp);
 			break;
 		}
 	default:

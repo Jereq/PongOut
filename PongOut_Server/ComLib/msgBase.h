@@ -14,16 +14,18 @@ public:
 	enum class MsgType : std::uint16_t
 	{
 		CHAT = 1,
-		RESPONSECONNECT,
-		REQUESTLOGIN,
-		RESPONSELOGIN,
-		REQUESTLOGOUT,
-		REQUESTCREATEUSER,
-		RESPONSECREATEUSER,
+		CONNECTRESPONSE,			//could be replaced with ACKNOWLEDGELAST if message ID where implemented
+		LOGINREQUEST,
+		LOGINRESPONSE,				//could be replaced with ACKNOWLEDGELAST if message ID where implemented
+		LOGOUTREQUEST,
+		CREATEUSERREQUEST,
+		CREATEUSERRESPONSE,			//could be replaced with ACKNOWLEDGELAST if message ID where implemented
 		REMINDUSER,
-		REQUESTFRIENDLIST,
-		RESPONSEFRIENDLIST,
+		FRIENDLISTREQUEST,
+		FRIENDLISTRESPONSE,
 		INTERNALMESSAGE,
+		GAMEMESSAGE,
+		ACKNOWLEDGELAST,			//TODO: make fisk!!
 	};
 
 	struct header

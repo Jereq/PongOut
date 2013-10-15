@@ -2,14 +2,14 @@
 
 #include "msgbase.h"
 
-class ResponseLogin : public msgBase
+class LoginResponse : public msgBase
 {
 public:
 
-	typedef boost::shared_ptr<ResponseLogin> ptr;
+	typedef boost::shared_ptr<LoginResponse> ptr;
 
-	ResponseLogin(void);
-	virtual ~ResponseLogin(void);
+	LoginResponse(void);
+	virtual ~LoginResponse(void);
 
 	virtual std::vector<char> getData() override;
 	virtual msgBase::ptr interpretPacket(const std::deque<char>& _buffer) override;

@@ -9,14 +9,15 @@ msgBase::msgBase(MsgType _type)
 	if (typeMap.size() == 0)
 	{
 		typeMap.insert(std::pair<MsgType, std::string>(MsgType::CHAT, "CHAT"));
-		typeMap.insert(std::pair<MsgType, std::string>(MsgType::REQUESTLOGIN, "LOGIN REQUEST"));
-		typeMap.insert(std::pair<MsgType, std::string>(MsgType::RESPONSELOGIN, "LOGIN RESPONSE"));
-		typeMap.insert(std::pair<MsgType, std::string>(MsgType::REQUESTLOGOUT, "LOGOUT REQUEST"));
-		typeMap.insert(std::pair<MsgType, std::string>(MsgType::REQUESTCREATEUSER, "CREATEUSER REQUEST"));
-		typeMap.insert(std::pair<MsgType, std::string>(MsgType::RESPONSECREATEUSER, "CREATEUSER RESPONSE"));
+		typeMap.insert(std::pair<MsgType, std::string>(MsgType::LOGINREQUEST, "LOGIN REQUEST"));
+		typeMap.insert(std::pair<MsgType, std::string>(MsgType::LOGINRESPONSE, "LOGIN RESPONSE"));
+		typeMap.insert(std::pair<MsgType, std::string>(MsgType::LOGOUTREQUEST, "LOGOUT REQUEST"));
+		typeMap.insert(std::pair<MsgType, std::string>(MsgType::CREATEUSERREQUEST, "CREATEUSER REQUEST"));
+		typeMap.insert(std::pair<MsgType, std::string>(MsgType::CREATEUSERRESPONSE, "CREATEUSER RESPONSE"));
 		typeMap.insert(std::pair<MsgType, std::string>(MsgType::REMINDUSER, "REMINDUSER"));
-		typeMap.insert(std::pair<MsgType, std::string>(MsgType::REQUESTFRIENDLIST, "FRIENDLIST REQUEST"));
-		typeMap.insert(std::pair<MsgType, std::string>(MsgType::RESPONSEFRIENDLIST, "FRIENDLIST RESPONSE"));
+		typeMap.insert(std::pair<MsgType, std::string>(MsgType::FRIENDLISTREQUEST, "FRIENDLIST REQUEST"));
+		typeMap.insert(std::pair<MsgType, std::string>(MsgType::FRIENDLISTRESPONSE, "FRIENDLIST RESPONSE"));
+		typeMap.insert(std::pair<MsgType, std::string>(MsgType::GAMEMESSAGE, "GAME MESSAGE"));
 	}
 }
 

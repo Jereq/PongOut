@@ -10,14 +10,14 @@
 #include <queue>
 
 #include "Chat.h"
-#include "RequestLogin.h"
-#include "ResponseFriendlist.h"
-#include "RequestFriendlist.h"
-#include "RequestCreateUser.h"
-#include "ResponseLogin.h"
-#include "RequestLogout.h"
-#include "ResponseCreateUser.h"
-#include "ResponseConnect.h"
+#include "LoginRequest.h"
+#include "FriendlistResponse.h"
+#include "FriendlistRequest.h"
+#include "CreateUserRequest.h"
+#include "LoginResponse.h"
+#include "LogoutRequest.h"
+#include "CreateUserResponse.h"
+#include "ConnectResponse.h"
 #include "SafeQueue.h"
 
 using boost::asio::ip::tcp;

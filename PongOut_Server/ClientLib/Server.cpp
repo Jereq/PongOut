@@ -50,14 +50,14 @@ void Server::connect()
 
 void Server::login( const std::string& _userName, const std::string& _password )
 {
-	RequestLogin::ptr lp = RequestLogin::ptr(new RequestLogin());
+	LoginRequest::ptr lp = LoginRequest::ptr(new LoginRequest());
 	lp->setLogin(_userName, _password);
 	write(lp);
 }
 
 void Server::logout()
 {
-	RequestLogout::ptr p = RequestLogout::ptr(new RequestLogout());
+	LogoutRequest::ptr p = LogoutRequest::ptr(new LogoutRequest());
 	write(p);
 	soc.close();
 	ioThread.join();
@@ -165,25 +165,25 @@ void Server::messageActionSwitch( const msgBase::header& _header, const std::deq
 			break;
 		}
 
-	case msgBase::MsgType::RESPONSEFRIENDLIST:
+	case msgBase::MsgType::FRIENDLISTRESPONSE:
 		{
-			messages.push(message(msgBase::MsgType::RESPONSEFRIENDLIST, p));
+			messages.push(message(msgBase::MsgType::FRIENDLISTRESPONSE, p));
 			break;
 		}
-	case  msgBase::MsgType::RESPONSELOGIN:
+	case  msgBase::MsgType::LOGINRESPONSE:
 		{
-			messages.push(message(msgBase::MsgType::RESPONSELOGIN, p));
+			messages.push(message(msgBase::MsgType::LOGINRESPONSE, p));
 			break;
 		}
 
-	case msgBase::MsgType::RESPONSECREATEUSER:
+	case msgBase::MsgType::CREATEUSERRESPONSE:
 		{
-			messages.push(message(msgBase::MsgType::RESPONSECREATEUSER, p));
+			messages.push(message(msgBase::MsgType::CREATEUSERRESPONSE, p));
 			break;
 		}
-	case msgBase::MsgType::RESPONSECONNECT:
+	case msgBase::MsgType::CONNECTRESPONSE:
 		{
-			messages.push(message(msgBase::MsgType::RESPONSECONNECT, p));
+			messages.push(message(msgBase::MsgType::CONNECTRESPONSE, p));
 			break;
 		}
 
@@ -195,13 +195,13 @@ void Server::messageActionSwitch( const msgBase::header& _header, const std::deq
 
 void Server::requestFriends()
 {
-	RequestFriendlist::ptr rf = RequestFriendlist::ptr(new RequestFriendlist());
+	FriendlistRequest::ptr rf = FriendlistRequest::ptr(new FriendlistRequest());
 	write(rf);
 }
 
 void Server::createAccount( std::string _userName, std::string _userPassword )
 {
-	RequestCreateUser::ptr rcu = RequestCreateUser::ptr(new RequestCreateUser());
+	CreateUserRequest::ptr rcu = CreateUserRequest::ptr(new CreateUserRequest());
 	rcu->setCredentials(_userName, _userPassword);
 	write(rcu);
 }

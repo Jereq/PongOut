@@ -1,17 +1,17 @@
 #pragma once
 #include "msgbase.h"
-#include <utility>
-
-class RequestFriendlist :	public msgBase
+class ConnectResponse :	public msgBase
 {
 public:
 
-	typedef boost::shared_ptr<RequestFriendlist> ptr;
+	typedef boost::shared_ptr<ConnectResponse> ptr;
 
-	RequestFriendlist(void);
-	virtual ~RequestFriendlist(void);
+	ConnectResponse(void);
+	virtual ~ConnectResponse(void);
 
 	virtual std::vector<char> getData() override;
 	virtual msgBase::ptr interpretPacket(const std::deque<char>& _buffer) override;
+
+private:
 };
 

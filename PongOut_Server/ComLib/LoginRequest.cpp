@@ -1,17 +1,17 @@
 #include "stdafx.h"
-#include "RequestLogin.h"
+#include "LoginRequest.h"
 
 
-RequestLogin::RequestLogin(void) : msgBase(msgBase::MsgType::REQUESTLOGIN)
+LoginRequest::LoginRequest(void) : msgBase(msgBase::MsgType::LOGINREQUEST)
 {
 }
 
 
-RequestLogin::~RequestLogin(void)
+LoginRequest::~LoginRequest(void)
 {
 }
 
-std::vector<char> RequestLogin::getData()
+std::vector<char> LoginRequest::getData()
 {
 	std::vector<char> res;
 	std::back_insert_iterator<std::vector<char>> it(res);
@@ -21,9 +21,9 @@ std::vector<char> RequestLogin::getData()
 	return res;
 }
 
-msgBase::ptr RequestLogin::interpretPacket( const std::deque<char>& _buffer )
+msgBase::ptr LoginRequest::interpretPacket( const std::deque<char>& _buffer )
 {
-	RequestLogin::ptr lp = RequestLogin::ptr(new RequestLogin());
+	LoginRequest::ptr lp = LoginRequest::ptr(new LoginRequest());
 	std::deque<char>::const_iterator it = _buffer.cbegin();
 	it = unpack(lp->msgHeader, it);
 	it = unpack(lp->userName, it);
@@ -31,25 +31,25 @@ msgBase::ptr RequestLogin::interpretPacket( const std::deque<char>& _buffer )
 	return lp;
 }
 
-void RequestLogin::setLogin( const std::string& _userName, const std::string& _password )
+void LoginRequest::setLogin( const std::string& _userName, const std::string& _password )
 {
 	userName = _userName;
 	password = encryptPassword(_password);
 	msgHeader.length = userName.length() + password.length() + sizeof(std::uint16_t) * 2;
 }
 
-std::string RequestLogin::encryptPassword( std::string _password )
+std::string LoginRequest::encryptPassword( std::string _password )
 {
 	//TODO: encrypt password!!
 	return _password;
 }
 
-std::string RequestLogin::getUsername()
+std::string LoginRequest::getUsername()
 {
 	return userName;
 }
 
-std::string RequestLogin::getPassword()
+std::string LoginRequest::getPassword()
 {
 	return password;
 }

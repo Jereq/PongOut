@@ -1,17 +1,18 @@
 #pragma once
+
 #include "msgbase.h"
-class ResponseConnect :	public msgBase
+
+class LogoutRequest : public msgBase
 {
 public:
 
-	typedef boost::shared_ptr<ResponseConnect> ptr;
+	typedef boost::shared_ptr<LogoutRequest> ptr;
 
-	ResponseConnect(void);
-	virtual ~ResponseConnect(void);
+	LogoutRequest(void);
+	virtual ~LogoutRequest(void);
 
 	virtual std::vector<char> getData() override;
 	virtual msgBase::ptr interpretPacket(const std::deque<char>& _buffer) override;
 
-private:
 };
 

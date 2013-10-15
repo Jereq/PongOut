@@ -1,14 +1,15 @@
 #include "stdafx.h"
 #include "PacketHandler.h"
 #include "Chat.h"
-#include "RequestLogin.h"
-#include "ResponseLogin.h"
-#include "ResponseFriendlist.h"
-#include "RequestFriendlist.h"
-#include "RequestCreateUser.h"
-#include "RequestLogout.h"
-#include "ResponseCreateUser.h"
-#include "ResponseConnect.h"
+#include "LoginRequest.h"
+#include "LoginResponse.h"
+#include "FriendlistResponse.h"
+#include "FriendlistRequest.h"
+#include "CreateUserRequest.h"
+#include "LogoutRequest.h"
+#include "CreateUserResponse.h"
+#include "ConnectResponse.h"
+#include "GameMessage.h"
 
 PacketHandler& PacketHandler::getInstance()
 {
@@ -37,14 +38,15 @@ msgBase::ptr PacketHandler::interpretMessage( msgBase::MsgType _type, const std:
 void PacketHandler::initRegister()
 {
 	registerPacket(msgBase::ptr(new Chat()));
-	registerPacket(msgBase::ptr(new ResponseFriendlist()));
-	registerPacket(msgBase::ptr(new RequestLogin()));
-	registerPacket(msgBase::ptr(new ResponseLogin()));
-	registerPacket(msgBase::ptr(new RequestFriendlist()));
-	registerPacket(msgBase::ptr(new RequestCreateUser()));
-	registerPacket(msgBase::ptr(new RequestLogout()));
-	registerPacket(msgBase::ptr(new ResponseCreateUser()));
-	registerPacket(msgBase::ptr(new ResponseConnect()));
+	registerPacket(msgBase::ptr(new FriendlistResponse()));
+	registerPacket(msgBase::ptr(new LoginRequest()));
+	registerPacket(msgBase::ptr(new LoginResponse()));
+	registerPacket(msgBase::ptr(new FriendlistRequest()));
+	registerPacket(msgBase::ptr(new CreateUserRequest()));
+	registerPacket(msgBase::ptr(new LogoutRequest()));
+	registerPacket(msgBase::ptr(new CreateUserResponse()));
+	registerPacket(msgBase::ptr(new ConnectResponse()));
+	registerPacket(msgBase::ptr(new GameMessage()));
 }
 
 msgBase::header PacketHandler::getMeassageHeader( const std::vector<char>& _buff )

@@ -31,15 +31,15 @@ void waitForMsg(Server::ptr _s, int _timeToWait)
 
 		switch (tmp.type)
 		{
-		case msgBase::MsgType::RESPONSECREATEUSER:
+		case msgBase::MsgType::CREATEUSERRESPONSE:
 			{
-				ResponseCreateUser::ptr	rcu = boost::static_pointer_cast<ResponseCreateUser>(tmp.msg);
+				CreateUserResponse::ptr	rcu = boost::static_pointer_cast<CreateUserResponse>(tmp.msg);
 				cout << "Create account result: " << rcu->getCreateFailure() << endl;
 				break;
 			}
-		case msgBase::MsgType::RESPONSEFRIENDLIST:
+		case msgBase::MsgType::FRIENDLISTRESPONSE:
 			{
-				ResponseFriendlist::ptr rfl = boost::static_pointer_cast<ResponseFriendlist>(tmp.msg);
+				FriendlistResponse::ptr rfl = boost::static_pointer_cast<FriendlistResponse>(tmp.msg);
 				vector<pair<string, unsigned int>> friends = rfl->getAllFriends();
 
 				cout << "Friends list received:" << endl;
@@ -49,15 +49,15 @@ void waitForMsg(Server::ptr _s, int _timeToWait)
 				}
 				break;
 			}
-		case msgBase::MsgType::RESPONSELOGIN:
+		case msgBase::MsgType::LOGINRESPONSE:
 			{
-				ResponseLogin::ptr rlp = boost::static_pointer_cast<ResponseLogin>(tmp.msg);
+				LoginResponse::ptr rlp = boost::static_pointer_cast<LoginResponse>(tmp.msg);
 				cout << "Login result: " << rlp->getLoginFailure() << endl;
 				break;
 			}
-		case msgBase::MsgType::RESPONSECONNECT:
+		case msgBase::MsgType::CONNECTRESPONSE:
 			{
-				ResponseConnect::ptr rc = boost::static_pointer_cast<ResponseConnect>(tmp.msg);
+				ConnectResponse::ptr rc = boost::static_pointer_cast<ConnectResponse>(tmp.msg);
 				cout << "Connected successfully!" << endl;
 				break;
 			}
