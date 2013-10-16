@@ -66,12 +66,21 @@ add_subdirectory(Sound)
 add_subdirectory(ResourceLoader)
 add_subdirectory(Input)
 add_subdirectory(Graphics)
+add_subdirectory(../../PongOut_Server/ComLib ComLib)
+add_subdirectory(../../PongOut_Server/ClientLib ClientLib)
+
+include_directories(
+	../../PongOut_Server/ComLib
+	../../PongOut_Server/ClientLib
+)
 
 set(EXTRA_LIBS ${EXTRA_LIBS}
 	Graphics
 	CoreSystem
 	Sound
 	Input
+	ClientLib
+	ComLib
 	${Boost_LIBRARIES}
 )
 

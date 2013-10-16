@@ -45,9 +45,6 @@ public:
 	bool addObject(Ball::ptr _ball);
 
 public:
-	
-	void remBlockArray();
-	void tempSetBlockPos();
 
 	void setPlayAreaBounds(glm::vec2 _size);
 

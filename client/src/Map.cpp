@@ -100,8 +100,6 @@ bool readBlockTypes(std::vector<BlockType>& _blockTypes, std::istream& _is)
 			if(line == "/def")
 				break;
 
-
-
 		if(line.substr(0, sep) == "\tid")
 		{
 			block.id = atoi(line.substr(sep+1,end).c_str());
@@ -124,7 +122,7 @@ bool readBlockTypes(std::vector<BlockType>& _blockTypes, std::istream& _is)
 	return true;
 }
 
-bool readMap(std::vector<BlockData>& _blockIds, const std::vector<BlockType>& _blockTypes, Level& _level, std::istream& _is)
+bool readMap(std::vector<BlockData>& _blockData, const std::vector<BlockType>& _blockTypes, Level& _level, std::istream& _is)
 {
 	std::string name;
 	glm::vec2 size = glm::vec2(64,32);
@@ -163,7 +161,7 @@ bool readMap(std::vector<BlockData>& _blockIds, const std::vector<BlockType>& _b
 				bd.center = glm::vec3(_level.origo.x + i * size.x, 
 												_level.origo.y - row * size.y, 0);
 				
-				_blockIds.push_back(bd);
+				_blockData.push_back(bd);
 			}
 			row++;
 		}
@@ -173,18 +171,16 @@ bool readMap(std::vector<BlockData>& _blockIds, const std::vector<BlockType>& _b
 
 bool readMapFile(std::vector<Block::ptr>& _blocks, Level& _level, const glm::vec2& _playAreaSize, GraphicsComponent::ptr _graphicsComponent)
 {
-	boost::filesystem::fstream file("../maps.txt");
-	
+	boost::filesystem::fstream file("../maps.txt");	
 	if(file == NULL)
 	{
 		return false;
 	}
 
-	std::vector<BlockType> blockTypes;
-	std::vector<BlockData> blockIds;
-	glm::vec2 size = glm::vec2(64,32);
-
+	std::vector<BlockType> blockTypes;	// type of block
+	std::vector<BlockData> blockData;	// none-CoreSystem-dependent block data
 	
+	// read in block types and requested map
 	while(true)
 	{
 		std::string line;
@@ -195,25 +191,21 @@ bool readMapFile(std::vector<Block::ptr>& _blocks, Level& _level, const glm::vec
 		int sep = line.find_first_of(' ');
 		int end = line.size();
 
-		if(line == "/def")
-		{
-			break;
-		}
-		else if(line == "def Block")
+		if(line == "def Block")	// create types of blocks
 		{
 			readBlockTypes(blockTypes, file);
 		}
-		else if(line == "def Map")
+		else if(line == "def Map")	// create level
 		{
-			readMap(blockIds, blockTypes, _level, file);
+			readMap(blockData, blockTypes, _level, file);
 		}
 	}
 	file.close();
 
 	// initialize the blocks
-	for(unsigned int i = 0; i < blockIds.size(); i++)
+	for(unsigned int i = 0; i < blockData.size(); i++)
 	{
-		if(blockIds[i].typeId == 0)
+		if(blockData[i].typeId == 0)
 			continue;
 
 		Block::ptr b = Block::ptr(new Block());
@@ -221,17 +213,16 @@ bool readMapFile(std::vector<Block::ptr>& _blocks, Level& _level, const glm::vec
 		int typeId = 0;
 		for(int j = 0; j < blockTypes.size(); j++)
 		{
-			if(blockIds[i].typeId == blockTypes[j].id)
+			if(blockData[i].typeId == blockTypes[j].id)
 				typeId = j;
 		}
-		int id = blockIds[i].typeId;
 
-		b->initialize(blockIds[i], 0, blockTypes[typeId].textures, _graphicsComponent);
+		b->initialize(blockData[i], 0, blockTypes[typeId].textures, _graphicsComponent);
 		_blocks.push_back(b);
 
 	}
 	blockTypes.clear();
-	blockIds.clear();
+	blockData.clear();
 
 	return true;
 };
@@ -253,18 +244,7 @@ bool Map::loadMap(std::string _mapName, GraphicsComponent::ptr gc, InputComponen
 
 	return result;
 }
-void Map::remBlockArray()
-{
-	//delete [] blockList;
-}
-void Map::tempSetBlockPos()
-{
-	//Temporary setPos for the blocks, for demo ONLY!
-	for(int i = 0; i < 24; i++)
-	{
-		//blockList[i].setPos(glm::vec2(i, i));
-	}
-}
+
 std::string Map::getTextureName()
 {
 	return bgTextureName;

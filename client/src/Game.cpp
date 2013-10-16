@@ -1,6 +1,9 @@
 #include "Game.h"
 
 #include "PongOutConfig.h"
+
+#include <Server.h>
+
 //#include <chrono>
 #include <iostream>
 #include <stdio.h>
@@ -113,6 +116,9 @@ static std::string naiveUTF32toUTF8(char32_t _character)
 
 void Game::run()
 {
+	Server::ptr s(new Server("194.47.150.59", 6500));
+	s->connect();
+
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 
 	std::shared_ptr<ICoreSystem> systemPtr(system);
