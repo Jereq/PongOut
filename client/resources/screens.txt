@@ -212,7 +212,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 480/900/0
 		size 102/62
-		func sudden
+		func set/sudden/unlimited
 	/button
 
 	button
@@ -220,7 +220,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 578/900/0
 		size 102/62
-		func sudden
+		func set/sudden/300
 	/button
 
 	button
@@ -228,7 +228,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 676/900/0
 		size 102/62
-		func sudden
+		func set/sudden/600
 	/button
 
 	button
@@ -236,7 +236,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 774/900/0
 		size 102/62
-		func sudden
+		func set/sudden/900
 	/button
 
 	button
@@ -244,7 +244,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 872/900/0
 		size 102/62
-		func sudden
+		func set/sudden/random
 	/button
 
 	image
@@ -294,7 +294,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 480/700/0
 		size 102/62
-		func ballspeed
+		func set/ballspeed/1.0f
 	/button
 
 	button
@@ -302,7 +302,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 578/700/0
 		size 102/62
-		func ballspeed
+		func set/ballspeed/2.0f
 	/button
 
 	button
@@ -310,7 +310,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 676/700/0
 		size 102/62
-		func ballspeed
+		func set/ballspeed/3.0f
 	/button
 
 	button
@@ -318,7 +318,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 774/700/0
 		size 102/62
-		func ballspeed
+		func set/ballspeed/4.0f
 	/button
 
 	button
@@ -326,7 +326,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 872/700/0
 		size 102/62
-		func ballspeed
+		func set/ballspeed/random
 	/button
 
 	image
@@ -376,7 +376,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 112/900/0
 		size 102/62
-		func fow
+		func set/fow/on
 	/button
 
 	button
@@ -384,7 +384,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 210/900/0
 		size 102/62
-		func fow
+		func set/fow/off
 	/button
 
 	button
@@ -392,7 +392,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 308/900/0
 		size 102/62
-		func fow
+		func set/fow/random
 	/button
 
 	image
@@ -428,7 +428,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 112/700/0
 		size 102/62
-		func pow
+		func set/pow/on
 	/button
 
 	button
@@ -436,7 +436,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 210/700/0
 		size 102/62
-		func pow
+		func set/pow/off
 	/button
 
 	button
@@ -444,7 +444,7 @@ screen
 		textureNormal button/game_settings_unselected
 		position 308/700/0
 		size 102/62
-		func pow
+		func set/pow/random
 	/button
 
 	image
@@ -466,6 +466,50 @@ screen
 		texture text/random
 		position 300/650/0
 		size 82/16
+	/image
+
+	image
+		id chatOut
+		texture output/chat_window
+		position 325/341/0
+		size 510/375
+	/image
+
+	inputField
+		id chatIn
+		textureName input/chat
+		position 325/184/-1
+		size 510/61
+	/inputField
+
+	image
+		id friendList
+		texture output/player_list_game_lobby
+		position 760/367/0
+		size 238/323
+	/image
+
+	inputField
+		id playerSearch
+		textureName input/player_search
+		position 760/173/0
+		size 238/39
+	/inputField
+
+	button
+		id challengeGame
+		textureNormal button/challenge_unselected
+		textureHovered button/challenge_selected
+		position 1020/200/0
+		size 224/94
+		func goto/game
+	/button
+
+	image
+		id challengeText
+		texture button/challenge
+		position 1020/200/-1
+		size 186/77
 	/image
 
 	button
@@ -514,6 +558,27 @@ screen
 	background background/settings
 	screenSize 1920/1080
 	music bubble
+
+	image
+		id controlsText
+		texture text/controls
+		position 185/800/0
+		size 226/75
+	/image
+
+	image
+		id resolutionText
+		texture text/resolution
+		position 208/500/0
+		size 274/75
+	/image
+
+	image
+		id soundText
+		texture text/sound
+		position 1400/500/0
+		size 151/75
+	/image
 
 	button
 		id cancel

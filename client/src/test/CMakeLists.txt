@@ -10,6 +10,7 @@ add_executable(PongOut-test
 	CoreSystemTest.cpp
 	ResourceLoaderTest.cpp
 	CollisionTest.cpp
+	GameSettingsTest.cpp
 	../PhysicsComponent.cpp
 	../Map.cpp
 	../Block.cpp
@@ -18,6 +19,7 @@ add_executable(PongOut-test
 	../GameObject.cpp
 	../GraphicsComponent.cpp
 	../InputState.cpp
+	../GameSettings.cpp
 )
 
 target_link_libraries(PongOut-test
