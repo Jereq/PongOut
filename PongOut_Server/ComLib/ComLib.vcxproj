@@ -79,33 +79,31 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Chat.h" />
+    <ClInclude Include="CreateGame.h" />
     <ClInclude Include="CreateUserRequest.h" />
     <ClInclude Include="GameMessage.h" />
     <ClInclude Include="LogoutRequest.h" />
-    <ClInclude Include="ConnectResponse.h" />
-    <ClInclude Include="CreateUserResponse.h" />
+    <ClInclude Include="AcknowledgeLast.h" />
     <ClInclude Include="FriendlistResponse.h" />
     <ClInclude Include="LoginRequest.h" />
     <ClInclude Include="msgBase.h" />
     <ClInclude Include="PacketHandler.h" />
     <ClInclude Include="FriendlistRequest.h" />
-    <ClInclude Include="LoginResponse.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Chat.cpp" />
+    <ClCompile Include="CreateGame.cpp" />
     <ClCompile Include="CreateUserRequest.cpp" />
     <ClCompile Include="GameMessage.cpp" />
     <ClCompile Include="LogoutRequest.cpp" />
-    <ClCompile Include="ConnectResponse.cpp" />
-    <ClCompile Include="CreateUserResponse.cpp" />
+    <ClCompile Include="AcknowledgeLast.cpp" />
     <ClCompile Include="FriendlistResponse.cpp" />
     <ClCompile Include="LoginRequest.cpp" />
     <ClCompile Include="msgBase.cpp" />
     <ClCompile Include="PacketHandler.cpp" />
     <ClCompile Include="FriendlistRequest.cpp" />
-    <ClCompile Include="LoginResponse.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

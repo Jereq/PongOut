@@ -19,6 +19,12 @@
     <Filter Include="Header Files\Msg sub clases">
       <UniqueIdentifier>{2b857277-c550-4ddd-8f0c-970a57b38534}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Msg sub clases\Game messages">
+      <UniqueIdentifier>{1bee82f9-ebe8-4171-a58b-3a2fd4cbd063}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Msg sub clases\Game messages">
+      <UniqueIdentifier>{79798c99-c46d-4647-b69e-ef215aac340b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -39,22 +45,13 @@
     <ClInclude Include="Chat.h">
       <Filter>Header Files\Msg sub clases</Filter>
     </ClInclude>
-    <ClInclude Include="ConnectResponse.h">
-      <Filter>Header Files\Msg sub clases</Filter>
-    </ClInclude>
     <ClInclude Include="LoginRequest.h">
-      <Filter>Header Files\Msg sub clases</Filter>
-    </ClInclude>
-    <ClInclude Include="LoginResponse.h">
       <Filter>Header Files\Msg sub clases</Filter>
     </ClInclude>
     <ClInclude Include="LogoutRequest.h">
       <Filter>Header Files\Msg sub clases</Filter>
     </ClInclude>
     <ClInclude Include="CreateUserRequest.h">
-      <Filter>Header Files\Msg sub clases</Filter>
-    </ClInclude>
-    <ClInclude Include="CreateUserResponse.h">
       <Filter>Header Files\Msg sub clases</Filter>
     </ClInclude>
     <ClInclude Include="FriendlistRequest.h">
@@ -65,6 +62,12 @@
     </ClInclude>
     <ClInclude Include="GameMessage.h">
       <Filter>Header Files\Msg sub clases</Filter>
+    </ClInclude>
+    <ClInclude Include="AcknowledgeLast.h">
+      <Filter>Header Files\Msg sub clases</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateGame.h">
+      <Filter>Header Files\Msg sub clases\Game messages</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -80,22 +83,13 @@
     <ClCompile Include="Chat.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
-    <ClCompile Include="ConnectResponse.cpp">
-      <Filter>Source Files\Msg sub clases</Filter>
-    </ClCompile>
     <ClCompile Include="LoginRequest.cpp">
-      <Filter>Source Files\Msg sub clases</Filter>
-    </ClCompile>
-    <ClCompile Include="LoginResponse.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
     <ClCompile Include="LogoutRequest.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
     <ClCompile Include="CreateUserRequest.cpp">
-      <Filter>Source Files\Msg sub clases</Filter>
-    </ClCompile>
-    <ClCompile Include="CreateUserResponse.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
     </ClCompile>
     <ClCompile Include="FriendlistRequest.cpp">
@@ -106,6 +100,12 @@
     </ClCompile>
     <ClCompile Include="GameMessage.cpp">
       <Filter>Source Files\Msg sub clases</Filter>
+    </ClCompile>
+    <ClCompile Include="AcknowledgeLast.cpp">
+      <Filter>Source Files\Msg sub clases</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateGame.cpp">
+      <Filter>Source Files\Msg sub clases\Game messages</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

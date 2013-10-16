@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include "msgbase.h"
 
 class GameMessage :	public msgBase
@@ -23,14 +25,21 @@ public:
 		ACKNOWLEDGELAST,
 	};
 
-	GameMessage(GameMsgType _type);
+	GameMessage(void);
 	virtual ~GameMessage(void);
 
 	virtual std::vector<char> getData() override;
 	virtual msgBase::ptr interpretPacket(const std::deque<char>& _buffer) override;
 
+	void registerChild( GameMessage::ptr _childPtr );
+	GameMsgType getGameType();
+
 protected:
 
-	GameMsgType type;
+	GameMsgType gType;
+
+private:
+
+	std::map<GameMsgType, ptr> gameMsgMap;
 };
 

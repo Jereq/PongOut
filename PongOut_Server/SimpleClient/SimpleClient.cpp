@@ -31,12 +31,6 @@ void waitForMsg(Server::ptr _s, int _timeToWait)
 
 		switch (tmp.type)
 		{
-		case msgBase::MsgType::CREATEUSERRESPONSE:
-			{
-				CreateUserResponse::ptr	rcu = boost::static_pointer_cast<CreateUserResponse>(tmp.msg);
-				cout << "Create account result: " << rcu->getCreateFailure() << endl;
-				break;
-			}
 		case msgBase::MsgType::FRIENDLISTRESPONSE:
 			{
 				FriendlistResponse::ptr rfl = boost::static_pointer_cast<FriendlistResponse>(tmp.msg);
@@ -49,26 +43,18 @@ void waitForMsg(Server::ptr _s, int _timeToWait)
 				}
 				break;
 			}
-		case msgBase::MsgType::LOGINRESPONSE:
+		case msgBase::MsgType::ACKNOWLEDGELAST:
 			{
-				LoginResponse::ptr rlp = boost::static_pointer_cast<LoginResponse>(tmp.msg);
-				cout << "Login result: " << rlp->getLoginFailure() << endl;
-				break;
-			}
-		case msgBase::MsgType::CONNECTRESPONSE:
-			{
-				ConnectResponse::ptr rc = boost::static_pointer_cast<ConnectResponse>(tmp.msg);
+				AcknowledgeLast::ptr rc = boost::static_pointer_cast<AcknowledgeLast>(tmp.msg);
+
+				//TODO: fix AcknowledgeLast on client side
+
 				cout << "Connected successfully!" << endl;
 				break;
 			}
 		case  msgBase::MsgType::INTERNALMESSAGE:
 			{
 				cout << tmp.strMsg << endl;
-				break;
-			}
-		default:
-			{
-				cerr << "Received unknown packet: " << tmp.msg->getType() << endl;
 				break;
 			}
 		}
@@ -82,16 +68,25 @@ int _tmain(int argc, _TCHAR* argv[])
 	Server::ptr s(new Server("127.0.0.1", 6500));
 
 	string command, userName, password;
+	bool firstRun = true;
 
 	for (ever)
 	{
 		system("CLS");
-		waitForMsg(s, 5);
+
+		if (!firstRun)
+		{
+			waitForMsg(s, 5);
+		}
+
+		firstRun = false;
+		
 		cout << "======== Commands list ========" << endl 
 			 << "# Connect \t : \t Provide login information and connect to server" << endl  
 			 << "# Create \t\t : \t Create account" << endl
 			 << "# Login \t\t : \t Login to existing account" << endl
-			 << "# Logout \t\t : \t Logout from account" << endl;
+			 << "# Logout \t\t : \t Logout from account" << endl
+			 << "# Game \t\t : \t Create new game" << endl;
 		cin >> command;
 
 		if (command == "Connect" || command == "connect")
@@ -121,6 +116,10 @@ int _tmain(int argc, _TCHAR* argv[])
 			cout << "Provide new password: ";
 			cin >> password;
 			s->createAccount(userName, password);
+		}
+		else if (command == "Game" || command == "game")
+		{
+			s->createGame(0, 10, 10, 120, true, true);
 		}
 	}
 

@@ -4,12 +4,10 @@
 
 #include <Chat.h>
 #include <LoginRequest.h>
-#include <LoginResponse.h>
 #include <FriendlistResponse.h>
 #include <FriendlistRequest.h>
 #include <CreateUserRequest.h>
-#include <CreateUserResponse.h>
-#include <ConnectResponse.h>
+#include <AcknowledgeLast.h>
 #include <GameMessage.h>
 #include <stdexcept>
 
@@ -46,8 +44,9 @@ void UserManager::listenForNewClientConnections()
 void UserManager::handleIncomingClient( boost::shared_ptr<tcp::socket> _soc, const boost::system::error_code& _errorCode )
 {
 	User::ptr u = User::ptr(new User(_soc));
-	ConnectResponse::ptr rc = ConnectResponse::ptr(new ConnectResponse());
-	u->addMsgToMsgQueue(rc);
+	AcknowledgeLast::ptr ack = AcknowledgeLast::ptr(new AcknowledgeLast());
+	ack->setAck(msgBase::MsgType::CONNECTSUCCESS, false);
+	u->addMsgToMsgQueue(ack);
 	users.insert(u);
 	u->listen();
 	Log::addLog(Log::LogType::LOG_INFO, 4, "New connection established");
@@ -90,13 +89,12 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 			toUser->addMsgToMsgQueue(cp);
 
 			break;
-			//TODO: Call ClientEventLib chat event here when done!!
 		}
 
 	case msgBase::MsgType::LOGINREQUEST:
 		{
 			LoginRequest::ptr lp = boost::static_pointer_cast<LoginRequest>(p);
-			LoginResponse::ptr rlp = LoginResponse::ptr(new LoginResponse());
+			AcknowledgeLast::ptr ack = AcknowledgeLast::ptr(new AcknowledgeLast());
 
 			long res = sqlManager.verifyUser(lp->getUsername(), lp->getPassword());
 
@@ -105,15 +103,15 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 				_user->setUserID(res);
 				_user->setUserStatus(User::UserStatus::USER);
 				Log::addLog(Log::LogType::LOG_INFO, 4, "Username: " + lp->getUsername() + " Logged in");
-				rlp->setLoginFailure(false);
+				ack->setAck(msgBase::MsgType::LOGINREQUEST, false);
 			} 
 			else
 			{
 				Log::addLog(Log::LogType::LOG_INFO, 4, lp->getUsername() + " failed to login!");
-				rlp->setLoginFailure(true);
+				ack->setAck(msgBase::MsgType::LOGINREQUEST, false);
 			}
 
-			_user->addMsgToMsgQueue(rlp);
+			_user->addMsgToMsgQueue(ack);
 			
 
 			break;
@@ -138,7 +136,7 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 	case msgBase::MsgType::CREATEUSERREQUEST:
 		{
 			CreateUserRequest::ptr cu = boost::static_pointer_cast<CreateUserRequest>(p);
-			CreateUserResponse::ptr rcu = CreateUserResponse::ptr(new CreateUserResponse());
+			AcknowledgeLast::ptr ack = AcknowledgeLast::ptr(new AcknowledgeLast());
 
 
 			long res = sqlManager.createUser(cu->getUserName(), cu->getUserPassword());
@@ -148,15 +146,15 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 				Log::addLog(Log::LogType::LOG_INFO, 3, "User created with userID: " + std::to_string(res));
 				_user->setUserID(res);
 				_user->setUserStatus(User::UserStatus::USER);
-				rcu->setCreateFailure(false);
+				ack->setAck(msgBase::MsgType::CREATEUSERREQUEST, false);
 			} 
 			else
 			{
 				Log::addLog(Log::LogType::LOG_ERROR, 1, "Failed to create user with username: " + cu->getUserName());
-				rcu->setCreateFailure(true);
+				ack->setAck(msgBase::MsgType::CREATEUSERREQUEST, true);
 			}
 
-			_user->addMsgToMsgQueue(rcu);
+			_user->addMsgToMsgQueue(ack);
 
 			break;
 		}

@@ -2,9 +2,9 @@
 #include "GameMessage.h"
 
 
-GameMessage::GameMessage(GameMsgType _type ) : msgBase(msgBase::MsgType::GAMEMESSAGE)
+GameMessage::GameMessage() : msgBase(msgBase::MsgType::GAMEMESSAGE)
 {
-	type = _type;
+	
 }
 
 
@@ -12,21 +12,28 @@ GameMessage::~GameMessage(void)
 {
 }
 
+void GameMessage::registerChild( GameMessage::ptr _childPtr )
+{
+	gameMsgMap.insert(std::pair<GameMessage::GameMsgType, GameMessage::ptr>(_childPtr->getGameType(), _childPtr));
+}
+
 std::vector<char> GameMessage::getData()
 {
-	std::vector<char> res;
-	std::back_insert_iterator<std::vector<char>> iter(res);
-	pack(msgHeader, iter);
-
-	return res;
+	return std::vector<char>();
 }
 
 msgBase::ptr GameMessage::interpretPacket( const std::deque<char>& _buffer )
 {
-	GameMessage::ptr gmp = GameMessage::ptr(new GameMessage());
-	std::deque<char>::const_iterator it = _buffer.begin();
+	std::deque<char>::const_iterator it = _buffer.begin() + sizeof(header);
 
-	it = unpack(gmp->msgHeader, it);
+	GameMsgType childHead;
 
-	return gmp;
+	it = unpack(childHead, it);		
+
+	return gameMsgMap.at(childHead)->interpretPacket(_buffer);
+}
+
+GameMessage::GameMsgType GameMessage::getGameType()
+{
+	return gType;
 }

@@ -170,20 +170,10 @@ void Server::messageActionSwitch( const msgBase::header& _header, const std::deq
 			messages.push(message(msgBase::MsgType::FRIENDLISTRESPONSE, p));
 			break;
 		}
-	case  msgBase::MsgType::LOGINRESPONSE:
-		{
-			messages.push(message(msgBase::MsgType::LOGINRESPONSE, p));
-			break;
-		}
 
-	case msgBase::MsgType::CREATEUSERRESPONSE:
+	case msgBase::MsgType::ACKNOWLEDGELAST:
 		{
-			messages.push(message(msgBase::MsgType::CREATEUSERRESPONSE, p));
-			break;
-		}
-	case msgBase::MsgType::CONNECTRESPONSE:
-		{
-			messages.push(message(msgBase::MsgType::CONNECTRESPONSE, p));
+			messages.push(message(msgBase::MsgType::ACKNOWLEDGELAST, p));
 			break;
 		}
 
@@ -238,4 +228,20 @@ Server::message Server::getNextMessage()
 int Server::getMsgQueueSize()
 {
 	return messages.baseQueue.size();
+}
+
+void Server::createGame( int _mapID, int _ballSpeed, int _paddleSpeed, int _suddenDeathTime, char _fogOfWar, char _powerUps )
+{
+	CreateGame::ptr cgp = CreateGame::ptr(new CreateGame());
+	CreateGame::GameInitInfo info;
+
+	info.ballSpeed = _ballSpeed;
+	info.mapID = _mapID;
+	info.paddleSpeed = _paddleSpeed;
+	info.suddenDeathTime = _suddenDeathTime;
+	info.fogOfWar = _fogOfWar;
+	info.powerUps = _powerUps;
+
+	cgp->setGameParam(info);
+	write(cgp);
 }

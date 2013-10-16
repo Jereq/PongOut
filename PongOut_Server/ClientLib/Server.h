@@ -14,11 +14,12 @@
 #include "FriendlistResponse.h"
 #include "FriendlistRequest.h"
 #include "CreateUserRequest.h"
-#include "LoginResponse.h"
 #include "LogoutRequest.h"
-#include "CreateUserResponse.h"
-#include "ConnectResponse.h"
+#include "AcknowledgeLast.h"
+#include "CreateGame.h"
+
 #include "SafeQueue.h"
+
 
 using boost::asio::ip::tcp;
 
@@ -59,6 +60,7 @@ public:
 	void requestFriends();
 	void sendChatMsg(std::string _name, std::string _msg);
 	void createAccount(std::string _userName, std::string _userPassword);
+	void createGame(int _mapID, int _ballSpeed, int _paddleSpeed, int _suddenDeathTime, char _fogOfWar, char _powerUps);
 	message getNextMessage();
 	int getMsgQueueSize();
 

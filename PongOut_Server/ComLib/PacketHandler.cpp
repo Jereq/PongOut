@@ -2,14 +2,13 @@
 #include "PacketHandler.h"
 #include "Chat.h"
 #include "LoginRequest.h"
-#include "LoginResponse.h"
 #include "FriendlistResponse.h"
 #include "FriendlistRequest.h"
 #include "CreateUserRequest.h"
 #include "LogoutRequest.h"
-#include "CreateUserResponse.h"
-#include "ConnectResponse.h"
+#include "AcknowledgeLast.h"
 #include "GameMessage.h"
+#include "CreateGame.h"
 
 PacketHandler& PacketHandler::getInstance()
 {
@@ -40,13 +39,16 @@ void PacketHandler::initRegister()
 	registerPacket(msgBase::ptr(new Chat()));
 	registerPacket(msgBase::ptr(new FriendlistResponse()));
 	registerPacket(msgBase::ptr(new LoginRequest()));
-	registerPacket(msgBase::ptr(new LoginResponse()));
 	registerPacket(msgBase::ptr(new FriendlistRequest()));
 	registerPacket(msgBase::ptr(new CreateUserRequest()));
 	registerPacket(msgBase::ptr(new LogoutRequest()));
-	registerPacket(msgBase::ptr(new CreateUserResponse()));
-	registerPacket(msgBase::ptr(new ConnectResponse()));
-	registerPacket(msgBase::ptr(new GameMessage()));
+	registerPacket(msgBase::ptr(new AcknowledgeLast()));
+	
+	GameMessage::ptr gameMsg(new GameMessage());
+
+	gameMsg->registerChild(GameMessage::ptr(new CreateGame()));
+
+	registerPacket(gameMsg);
 }
 
 msgBase::header PacketHandler::getMeassageHeader( const std::vector<char>& _buff )
