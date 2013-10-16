@@ -684,6 +684,10 @@ void ScreenManager::buttonPressed(const std::string& _func)
 	{
 		goBack();
 	}
+	else if(_func.substr(0, 11) == "set/sudden/")
+	{
+
+	}
 	else
 	{
 		if (funcHandler)

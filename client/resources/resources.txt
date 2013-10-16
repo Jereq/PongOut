@@ -46,6 +46,7 @@ texture:button/game_settings_unselected	textures/button_game_settings_unselected
 texture:button/high_scores_game_lobby	textures/button_high_scores_game_lobby.png
 texture:button/high_scores_main_menu	textures/button_high_scores_main_menu.png
 texture:button/host			textures/button_host.png
+texture:button/login			textures/button_login.png
 texture:button/log_out			textures/button_log_out.png
 texture:button/profile			textures/button_profile.png
 texture:button/quit			textures/button_quit.png
@@ -67,10 +68,12 @@ texture:text/10min			textures/text_10min.png
 texture:text/15min			textures/text_15min.png
 texture:text/arrow_down			textures/text_arrow_down.png
 texture:text/arrow_up			textures/text_arrow_up.png
+texture:text/ball_speed			textures/text_ball_speed.png
 texture:text/confirm_password		textures/text_confirm_password.png
 texture:text/controls			textures/text_controls.png
 texture:text/fast			textures/text_fast.png
 texture:text/fire_ball			textures/text_fire_ball.png
+texture:text/fog_of_war			textures/text_fog_of_War.png
 texture:text/lightning			textures/text_lightning.png
 texture:text/loser			textures/text_loser.png
 texture:text/move_paddle_down		textures/text_move_paddle_down.png
@@ -83,6 +86,7 @@ texture:text/off			textures/text_off.png
 texture:text/old_password		textures/text_old_password.png
 texture:text/on				textures/text_on.png
 texture:text/password			textures/text_password.png
+texture:text/power_ups			textures/text_power_ups.png
 texture:text/random			textures/text_random.png
 texture:text/res_800x600		textures/text_res_800x600.png
 texture:text/res_1024x768		textures/text_res_1024x768.png
