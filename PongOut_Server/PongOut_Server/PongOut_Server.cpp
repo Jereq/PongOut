@@ -45,15 +45,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	UserManager::getInstance()->listenForNewClientConnections();
 	UserManager::getInstance()->startIO();
 
-	//SQLManager man;
-
-	//std::vector<int> tmp = man.getFriends(1);
-
-	//for (unsigned int i = 0; i < tmp.size(); i++)
-	//{
-	//	Log::addLog(Log::LogType::LOG_INFO, 1, "SQLManager output: " + std::to_string(tmp[i]));
-	//}	
-
 	while (!quit)
 	{
 	}

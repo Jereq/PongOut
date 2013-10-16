@@ -1,17 +1,18 @@
 #pragma once
-#include "msgbase.h"
-#include <utility>
 
-class RequestFriendlist :	public msgBase
+#include "msgbase.h"
+
+class LogoutRequest : public msgBase
 {
 public:
 
-	typedef boost::shared_ptr<RequestFriendlist> ptr;
+	typedef boost::shared_ptr<LogoutRequest> ptr;
 
-	RequestFriendlist(void);
-	virtual ~RequestFriendlist(void);
+	LogoutRequest(void);
+	virtual ~LogoutRequest(void);
 
 	virtual std::vector<char> getData() override;
 	virtual msgBase::ptr interpretPacket(const std::deque<char>& _buffer) override;
+
 };
 

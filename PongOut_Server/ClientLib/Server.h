@@ -10,15 +10,16 @@
 #include <queue>
 
 #include "Chat.h"
-#include "RequestLogin.h"
-#include "ResponseFriendlist.h"
-#include "RequestFriendlist.h"
-#include "RequestCreateUser.h"
-#include "ResponseLogin.h"
-#include "RequestLogout.h"
-#include "ResponseCreateUser.h"
-#include "ResponseConnect.h"
+#include "LoginRequest.h"
+#include "FriendlistResponse.h"
+#include "FriendlistRequest.h"
+#include "CreateUserRequest.h"
+#include "LogoutRequest.h"
+#include "AcknowledgeLast.h"
+#include "CreateGame.h"
+
 #include "SafeQueue.h"
+
 
 using boost::asio::ip::tcp;
 
@@ -59,6 +60,7 @@ public:
 	void requestFriends();
 	void sendChatMsg(std::string _name, std::string _msg);
 	void createAccount(std::string _userName, std::string _userPassword);
+	void createGame(int _mapID, int _ballSpeed, int _paddleSpeed, int _suddenDeathTime, char _fogOfWar, char _powerUps);
 	message getNextMessage();
 	int getMsgQueueSize();
 

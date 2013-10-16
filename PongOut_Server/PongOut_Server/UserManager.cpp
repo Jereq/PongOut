@@ -1,14 +1,14 @@
 #include "stdafx.h"
 #include "UserManager.h"
+#include "GameMaster.h"
 
 #include <Chat.h>
-#include <RequestLogin.h>
-#include <ResponseLogin.h>
-#include <ResponseFriendlist.h>
-#include <RequestFriendlist.h>
-#include <RequestCreateUser.h>
-#include <ResponseCreateUser.h>
-#include <ResponseConnect.h>
+#include <LoginRequest.h>
+#include <FriendlistResponse.h>
+#include <FriendlistRequest.h>
+#include <CreateUserRequest.h>
+#include <AcknowledgeLast.h>
+#include <GameMessage.h>
 #include <stdexcept>
 
 boost::shared_ptr<UserManager> UserManager::ptr;
@@ -44,8 +44,9 @@ void UserManager::listenForNewClientConnections()
 void UserManager::handleIncomingClient( boost::shared_ptr<tcp::socket> _soc, const boost::system::error_code& _errorCode )
 {
 	User::ptr u = User::ptr(new User(_soc));
-	ResponseConnect::ptr rc = ResponseConnect::ptr(new ResponseConnect());
-	u->addMsgToMsgQueue(rc);
+	AcknowledgeLast::ptr ack = AcknowledgeLast::ptr(new AcknowledgeLast());
+	ack->setAck(msgBase::MsgType::CONNECTSUCCESS, false);
+	u->addMsgToMsgQueue(ack);
 	users.insert(u);
 	u->listen();
 	Log::addLog(Log::LogType::LOG_INFO, 4, "New connection established");
@@ -88,13 +89,12 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 			toUser->addMsgToMsgQueue(cp);
 
 			break;
-			//TODO: Call ClientEventLib chat event here when done!!
 		}
 
-	case msgBase::MsgType::REQUESTLOGIN:
+	case msgBase::MsgType::LOGINREQUEST:
 		{
-			RequestLogin::ptr lp = boost::static_pointer_cast<RequestLogin>(p);
-			ResponseLogin::ptr rlp = ResponseLogin::ptr(new ResponseLogin());
+			LoginRequest::ptr lp = boost::static_pointer_cast<LoginRequest>(p);
+			AcknowledgeLast::ptr ack = AcknowledgeLast::ptr(new AcknowledgeLast());
 
 			long res = sqlManager.verifyUser(lp->getUsername(), lp->getPassword());
 
@@ -103,23 +103,23 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 				_user->setUserID(res);
 				_user->setUserStatus(User::UserStatus::USER);
 				Log::addLog(Log::LogType::LOG_INFO, 4, "Username: " + lp->getUsername() + " Logged in");
-				rlp->setLoginFailure(false);
+				ack->setAck(msgBase::MsgType::LOGINREQUEST, false);
 			} 
 			else
 			{
 				Log::addLog(Log::LogType::LOG_INFO, 4, lp->getUsername() + " failed to login!");
-				rlp->setLoginFailure(true);
+				ack->setAck(msgBase::MsgType::LOGINREQUEST, false);
 			}
 
-			_user->addMsgToMsgQueue(rlp);
+			_user->addMsgToMsgQueue(ack);
 			
 
 			break;
 		}
 
-	case msgBase::MsgType::REQUESTFRIENDLIST:
+	case msgBase::MsgType::FRIENDLISTREQUEST:
 		{
-			//ResponseFriendlist::ptr rfl = ResponseFriendlist::ptr(new ResponseFriendlist());
+			//FriendlistResponse::ptr rfl = FriendlistResponse::ptr(new FriendlistResponse());
 
 			//for (User::ptr user : users.baseSet)
 			//{
@@ -133,10 +133,10 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 			break;
 		}
 
-	case msgBase::MsgType::REQUESTCREATEUSER:
+	case msgBase::MsgType::CREATEUSERREQUEST:
 		{
-			RequestCreateUser::ptr cu = boost::static_pointer_cast<RequestCreateUser>(p);
-			ResponseCreateUser::ptr rcu = ResponseCreateUser::ptr(new ResponseCreateUser());
+			CreateUserRequest::ptr cu = boost::static_pointer_cast<CreateUserRequest>(p);
+			AcknowledgeLast::ptr ack = AcknowledgeLast::ptr(new AcknowledgeLast());
 
 
 			long res = sqlManager.createUser(cu->getUserName(), cu->getUserPassword());
@@ -146,24 +146,31 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 				Log::addLog(Log::LogType::LOG_INFO, 3, "User created with userID: " + std::to_string(res));
 				_user->setUserID(res);
 				_user->setUserStatus(User::UserStatus::USER);
-				rcu->setCreateFailure(false);
+				ack->setAck(msgBase::MsgType::CREATEUSERREQUEST, false);
 			} 
 			else
 			{
 				Log::addLog(Log::LogType::LOG_ERROR, 1, "Failed to create user with username: " + cu->getUserName());
-				rcu->setCreateFailure(true);
+				ack->setAck(msgBase::MsgType::CREATEUSERREQUEST, true);
 			}
 
-			_user->addMsgToMsgQueue(rcu);
+			_user->addMsgToMsgQueue(ack);
 
 			break;
 		}
 
-	case msgBase::MsgType::REQUESTLOGOUT:
+	case msgBase::MsgType::LOGOUTREQUEST:
 		{
 			Log::addLog(Log::LogType::LOG_INFO, 4, "UserID: " + std::to_string(_user->getUserID()) + " has disconnected!");
 			_user->disconnect();
 			users.erase(_user);			
+			break;
+		}
+
+	case msgBase::MsgType::GAMEMESSAGE:
+		{
+			GameMessage::ptr gmp = boost::static_pointer_cast<GameMessage>(p);
+			GameMaster::getInstance().handleGameMessage(gmp);
 			break;
 		}
 	default:

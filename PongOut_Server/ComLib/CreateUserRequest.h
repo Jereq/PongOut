@@ -1,13 +1,13 @@
 #pragma once
 #include "msgbase.h"
-class RequestCreateUser :	public msgBase
+class CreateUserRequest :	public msgBase
 {
 public:
 
-	typedef boost::shared_ptr<RequestCreateUser> ptr;
+	typedef boost::shared_ptr<CreateUserRequest> ptr;
 
-	RequestCreateUser(void);
-	virtual ~RequestCreateUser(void);
+	CreateUserRequest(void);
+	virtual ~CreateUserRequest(void);
 
 	virtual std::vector<char> getData() override;
 	virtual msgBase::ptr interpretPacket(const std::deque<char>& _buffer) override;

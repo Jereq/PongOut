@@ -2,14 +2,14 @@
 #include "msgbase.h"
 #include <utility>
 
-class ResponseFriendlist : public msgBase
+class FriendlistResponse : public msgBase
 {
 public:
 
-	typedef boost::shared_ptr<ResponseFriendlist> ptr;
+	typedef boost::shared_ptr<FriendlistResponse> ptr;
 
-	ResponseFriendlist(void);
-	virtual ~ResponseFriendlist(void);
+	FriendlistResponse(void);
+	virtual ~FriendlistResponse(void);
 
 	void addToFriendList(const std::pair<std::string, unsigned int>& _friend);
 

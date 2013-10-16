@@ -50,14 +50,14 @@ void Server::connect()
 
 void Server::login( const std::string& _userName, const std::string& _password )
 {
-	RequestLogin::ptr lp = RequestLogin::ptr(new RequestLogin());
+	LoginRequest::ptr lp = LoginRequest::ptr(new LoginRequest());
 	lp->setLogin(_userName, _password);
 	write(lp);
 }
 
 void Server::logout()
 {
-	RequestLogout::ptr p = RequestLogout::ptr(new RequestLogout());
+	LogoutRequest::ptr p = LogoutRequest::ptr(new LogoutRequest());
 	write(p);
 	soc.close();
 	ioThread.join();
@@ -165,25 +165,15 @@ void Server::messageActionSwitch( const msgBase::header& _header, const std::deq
 			break;
 		}
 
-	case msgBase::MsgType::RESPONSEFRIENDLIST:
+	case msgBase::MsgType::FRIENDLISTRESPONSE:
 		{
-			messages.push(message(msgBase::MsgType::RESPONSEFRIENDLIST, p));
-			break;
-		}
-	case  msgBase::MsgType::RESPONSELOGIN:
-		{
-			messages.push(message(msgBase::MsgType::RESPONSELOGIN, p));
+			messages.push(message(msgBase::MsgType::FRIENDLISTRESPONSE, p));
 			break;
 		}
 
-	case msgBase::MsgType::RESPONSECREATEUSER:
+	case msgBase::MsgType::ACKNOWLEDGELAST:
 		{
-			messages.push(message(msgBase::MsgType::RESPONSECREATEUSER, p));
-			break;
-		}
-	case msgBase::MsgType::RESPONSECONNECT:
-		{
-			messages.push(message(msgBase::MsgType::RESPONSECONNECT, p));
+			messages.push(message(msgBase::MsgType::ACKNOWLEDGELAST, p));
 			break;
 		}
 
@@ -195,13 +185,13 @@ void Server::messageActionSwitch( const msgBase::header& _header, const std::deq
 
 void Server::requestFriends()
 {
-	RequestFriendlist::ptr rf = RequestFriendlist::ptr(new RequestFriendlist());
+	FriendlistRequest::ptr rf = FriendlistRequest::ptr(new FriendlistRequest());
 	write(rf);
 }
 
 void Server::createAccount( std::string _userName, std::string _userPassword )
 {
-	RequestCreateUser::ptr rcu = RequestCreateUser::ptr(new RequestCreateUser());
+	CreateUserRequest::ptr rcu = CreateUserRequest::ptr(new CreateUserRequest());
 	rcu->setCredentials(_userName, _userPassword);
 	write(rcu);
 }
@@ -238,4 +228,20 @@ Server::message Server::getNextMessage()
 int Server::getMsgQueueSize()
 {
 	return messages.baseQueue.size();
+}
+
+void Server::createGame( int _mapID, int _ballSpeed, int _paddleSpeed, int _suddenDeathTime, char _fogOfWar, char _powerUps )
+{
+	CreateGame::ptr cgp = CreateGame::ptr(new CreateGame());
+	CreateGame::GameInitInfo info;
+
+	info.ballSpeed = _ballSpeed;
+	info.mapID = _mapID;
+	info.paddleSpeed = _paddleSpeed;
+	info.suddenDeathTime = _suddenDeathTime;
+	info.fogOfWar = _fogOfWar;
+	info.powerUps = _powerUps;
+
+	cgp->setGameParam(info);
+	write(cgp);
 }
