@@ -48,9 +48,6 @@ void GameState::load()
 
 	world->initialize(glm::vec2(800,800),20,"HELLO","HELLO");
 
-
-
-	
 	res = world->loadMap("Map1", gc, ic, pc);
 }
 
@@ -107,13 +104,10 @@ void GameState::update(const float _dt)
 	//{
 	//	g->update(_dt);
 	//}
-	world->update(_dt);
+	world->update(_dt, graphics);
 }
 
 void GameState::draw(std::shared_ptr<IGraphics> _graphics)
 {
-	glm::vec2 playArea = world->getSize();
-	glm::vec2 clipArea = glm::vec2( playArea.x / 1280. * 2.f, playArea.y / 1024. * 2.f);
-	_graphics->addRectangle(glm::vec3(0,0,0.01), clipArea, 0, "background/ingame_01");
 	_graphics->addRectangle(glm::vec3(0,0,0.1), glm::vec2(2,2), 0, "output/chat_window");
 }

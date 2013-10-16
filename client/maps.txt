@@ -5,7 +5,7 @@ def Block
 	/end
 	id 2
 	health 2
-	//texture blocks/dark_magenta_01
+	texture blocks/dark_magenta_01
 	texture blocks/orange_01
 	/end
 	id 3
@@ -14,7 +14,6 @@ def Block
 	/end
 	id 4
 	health 2
-	//texture blocks/dark_magenta_02
 	texture blocks/orange_02
 	/end
 	id 5
@@ -29,20 +28,22 @@ def Block
 /def
 
 def Map
-	id 1
 	name Map1
 	texture 
-	
-	row 0000330000
+
 	row 0022002200
 	row 1100110011
-	row 1100110011
-	row 0022002200
+	row 0033003300
+
+	name Map2
+	texture 
+
+	row 0022222200
 	row 0000330000
-	row 0000330000
-	row 0022002200
-	row 1100110011
-	row 1100110011
-	row 0022002200
-	row 0000330000
+
+	name Map3
+	texture background/ingame_01
+	row 001
+	row 1230000
+	row 00578402
 /def

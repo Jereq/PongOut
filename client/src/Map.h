@@ -22,13 +22,20 @@
 #include "Paddle.h"
 #include "Ball.h"
 
+struct Level
+{
+	std::string name;
+	std::string texture;
+	glm::vec3 origo;
+};
+
 class Map {
 public:
 	Map();
 	virtual ~Map();
 	void initialize(glm::vec2 _playAreaSize, float _frameThickness,
 						string _bgTextureName, string _frameTextureName	);
-	void update(double _dt);
+	void update(double _dt, IGraphics::ptr _graphics);
 	string getTextureName();
 	string getFrameTextureName();
 	glm::vec2 getSize();
@@ -53,6 +60,7 @@ public:
 	glm::vec2		playAreaSize;
 
 	float 			frameThickness;
+	Level level;
 };
 
 #endif /* MAP_H_ */
