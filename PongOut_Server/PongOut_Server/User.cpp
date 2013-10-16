@@ -71,7 +71,9 @@ void User::handleIncomingMeassage( const boost::system::error_code& _error, size
 	} 
 	else if (_error)
 	{
-		throw boost::system::error_code(_error);
+		UserManager::getInstance()->users.erase(shared_from_this());
+		Log::addLog(Log::LogType::LOG_INFO, 1, "User " + std::to_string(getUserID()) + " Aborted connection");
+		return;
 	}
 
 	int readChars = 0;

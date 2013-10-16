@@ -11,7 +11,7 @@ public:
 
 	static GameMaster& getInstance();
 
-	void handleGameMessage(GameMessage::ptr _message);
+	void handleGameMessage(GameMessage::ptr _message, User::ptr _initUser);
 
 private:
 

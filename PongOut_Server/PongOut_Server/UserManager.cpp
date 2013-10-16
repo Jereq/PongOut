@@ -170,7 +170,7 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 	case msgBase::MsgType::GAMEMESSAGE:
 		{
 			GameMessage::ptr gmp = boost::static_pointer_cast<GameMessage>(p);
-			GameMaster::getInstance().handleGameMessage(gmp);
+			GameMaster::getInstance().handleGameMessage(gmp, _user);
 			break;
 		}
 	default:

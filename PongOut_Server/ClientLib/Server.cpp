@@ -29,6 +29,7 @@ void Server::connect()
 	tcp::resolver::iterator resIt = res.resolve(q);
 	try
 	{
+		
 		boost::asio::connect(soc, resIt);
 	}
 	catch (boost::system::system_error& e)
