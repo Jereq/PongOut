@@ -67,6 +67,10 @@ elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	)
 endif()
 
+list(APPEND GRAPHICS_SOURCES
+	Font.cpp Font.h
+)
+
 add_library(Graphics
 	${GRAPHICS_SOURCES}
 )

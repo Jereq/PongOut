@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include "Font.h"
 #include "GLSLProgram.h"
 #include "GraphicsLinux.h"
 #include "IGraphics.h"
@@ -15,9 +15,17 @@
 
 class GraphicsLinux : public IGraphics
 {
+public:
+	enum class ErrorCode
+	{
+		OK,
+		GLYPH_COULD_NOT_BE_LOADED,
+	};
+
 private:
 	GLFWwindow* window;
 	GLSLProgram rectangleProgram;
+	GLSLProgram textProgram;
 	GLuint rectVaoHandle;
 	GLuint rectVboHandle;
 
@@ -31,7 +39,18 @@ private:
 		boost::filesystem::path path;
 		GLuint textureID;
 	};
+
 	std::map<std::string, LoadedImage> loadedTextures;
+
+	struct LoadedChar
+	{
+		GLuint textureID;
+		glm::vec2 origin;
+		glm::vec2 advance;
+	};
+
+	std::map<char32_t, LoadedChar> loadedChars;
+	Font menuFont;
 
 	struct Rectangle
 	{
@@ -46,9 +65,13 @@ private:
 	void initDevIL();
 	void printReport();
 	bool loadRectangleShader();
+	bool loadTextShader();
 	void initRectBuffer();
 
 	LoadedImage loadImage(const boost::filesystem::path& _imagePath);
+
+	ErrorCode loadChar(LoadedChar& _charOut, char32_t _character);
+	ErrorCode getChar(LoadedChar& _charOut, char32_t _character);
 
 	void bufferData(const recs_t& _rects);
 

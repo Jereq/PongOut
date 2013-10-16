@@ -18,9 +18,6 @@ namespace fs = boost::filesystem;
 #include <sstream>
 #include <stdexcept>
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
 const int GraphicsLinux::MAJOR_GL_VERSION = 4;
 const int GraphicsLinux::MINOR_GL_VERSION = 0;
 
@@ -89,10 +86,31 @@ bool GraphicsLinux::loadRectangleShader()
 		return false;
 	}
 
-	rectangleProgram.printActiveAttribs();
-	rectangleProgram.printActiveUniforms();
+	return true;
+}
 
-	rectangleProgram.use();
+bool GraphicsLinux::loadTextShader()
+{
+	static fs::path vertexShaderPath(rootDir / "shaders/basicRect.vert");
+	static fs::path geometryShaderPath(rootDir / "shaders/basicRect.geom");
+	static fs::path fragmentShaderPath(rootDir / "shaders/basicText.frag");
+
+	if (!textProgram.compileShaderFromFile(vertexShaderPath.string(), GLSLShaderType::VERTEX)
+			|| !textProgram.compileShaderFromFile(geometryShaderPath.string(), GLSLShaderType::GEOMETRY)
+			|| !textProgram.compileShaderFromFile(fragmentShaderPath.string(), GLSLShaderType::FRAGMENT))
+	{
+		fprintf(stderr, "%s", textProgram.log().c_str());
+		return false;
+	}
+
+	textProgram.bindAttribLocation(0, "vertexPosition");
+	textProgram.bindAttribLocation(1, "vertexSize");
+
+	if (!textProgram.link())
+	{
+		fprintf(stderr, "%s", textProgram.log().c_str());
+		return false;
+	}
 
 	return true;
 }
@@ -117,7 +135,7 @@ void GraphicsLinux::initRectBuffer()
 void GraphicsLinux::bufferData(const recs_t& _rects)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, rectVboHandle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(recs_t) * _rects.size(), _rects.data(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Rectangle) * _rects.size(), _rects.data(), GL_DYNAMIC_DRAW);
 }
 
 GraphicsLinux::GraphicsLinux(const fs::path& _rootDir, GLFWwindow* _window)
@@ -160,7 +178,11 @@ bool GraphicsLinux::init()
 
 	if (!loadRectangleShader())
 	{
-		glfwTerminate();
+		return false;
+	}
+
+	if (!loadTextShader())
+	{
 		return false;
 	}
 
@@ -170,17 +192,8 @@ bool GraphicsLinux::init()
 
 	glClearColor(1.f, 0.f, 1.f, 1.f);
 
-	FT_Library library;
-
-	FT_Error error = FT_Init_FreeType(&library);
-	if (error)
-	{
-		return false;
-	}
-
-	FT_Face face;
-	error = FT_New_Face(library, "/usr/share/fonts/truetype/freefont/FreeMono.ttf", 0, &face);
-	if (error)
+	Font::ErrorCode fErr = menuFont.init("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 24);
+	if (fErr != Font::ErrorCode::OK)
 	{
 		return false;
 	}
@@ -202,6 +215,15 @@ void GraphicsLinux::destroy()
 	}
 
 	rectangleProgram.free();
+
+	if (!loadedChars.empty())
+	{
+		for (auto& image : loadedChars)
+		{
+			glDeleteTextures(1, &image.second.textureID);
+		}
+		loadedChars.clear();
+	}
 
 	glDeleteVertexArrays(1, &rectVaoHandle);
 	glDeleteBuffers(1, &rectVboHandle);
@@ -260,6 +282,47 @@ GraphicsLinux::LoadedImage GraphicsLinux::loadImage(const fs::path& _imagePath)
 	return res;
 }
 
+GraphicsLinux::ErrorCode GraphicsLinux::loadChar(LoadedChar& _charOut, char32_t _character)
+{
+	Font::Glyph glyph;
+	Font::ErrorCode err = menuFont.getGlyph(glyph, 0x20AC);
+	if (err != Font::ErrorCode::OK)
+	{
+		return ErrorCode::GLYPH_COULD_NOT_BE_LOADED;
+	}
+
+	glGenTextures(1, &_charOut.textureID);
+	glBindTexture(GL_TEXTURE_2D, _charOut.textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, glyph.width, glyph.height, 0, GL_RED, GL_UNSIGNED_BYTE, glyph.bitBuffer.data());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	_charOut.origin = glyph.origin;
+	_charOut.advance = glyph.advance;
+
+	return ErrorCode::OK;
+}
+
+GraphicsLinux::ErrorCode GraphicsLinux::getChar(LoadedChar& _charOut, char32_t _character)
+{
+	auto it = loadedChars.find(_character);
+	if (it == loadedChars.end())
+	{
+		LoadedChar c;
+		if (loadChar(c, _character) != ErrorCode::OK)
+		{
+			return ErrorCode::GLYPH_COULD_NOT_BE_LOADED;
+		}
+
+		auto resPair = loadedChars.insert(std::make_pair(_character, c));
+		it = resPair.first;
+	}
+
+	_charOut = it->second;
+
+	return ErrorCode::OK;
+}
+
 void GraphicsLinux::addRectangle(glm::vec3 _center, glm::vec2 _size, float _rotation, std::string _id)
 {
 	if (loadedTextures.count(_id) == 0)
@@ -303,6 +366,26 @@ void GraphicsLinux::drawFrame()
 
 			recList.second.clear();
 		}
+	}
+
+	LoadedChar c;
+	ErrorCode err = getChar(c, 0x20AC);
+	if (err == ErrorCode::OK)
+	{
+		textProgram.use();
+		textProgram.setUniform("projectionMatrix", projectionMatrix);
+		textProgram.setUniform("tex", 0);
+		glActiveTexture(GL_TEXTURE0);
+
+		Rectangle r = {glm::vec3(-0.9f, 0.f, 0.5f), glm::vec2(0.08f), 0.04f};
+
+		glBindBuffer(GL_ARRAY_BUFFER, rectVboHandle);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Rectangle), &r, GL_DYNAMIC_DRAW);
+
+		glBindVertexArray(rectVaoHandle);
+
+		glBindTexture(GL_TEXTURE_2D, c.textureID);
+		glDrawArrays(GL_POINTS, 0, 1);
 	}
 
 	glfwSwapBuffers(window);

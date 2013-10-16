@@ -15,6 +15,6 @@ void main()
 	}
 	else
 	{
-		fragColor = texture(tex, texCoord);
+		fragColor = color;
 	}
 }
