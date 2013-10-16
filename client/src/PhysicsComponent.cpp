@@ -200,8 +200,13 @@ void PhysicsComponent::bounceOnBlock(Ball* _ball, double _dt)
 		if (ballRectCollide(reflectDir, _ball, b.get()))
 		{
 			_ball->velocity = glm::reflect(_ball->velocity, reflectDir);
-			b->canCollide = false;
 			
+			b->health--;
+
+			if(b->health <= 0)
+			{
+				b->canCollide = false;
+			}
 			ICoreSystem::getInstance().lock()->getSounds()->playSfx("block_explodes");
 		}
 	}

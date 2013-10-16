@@ -1,12 +1,45 @@
 #include "Game.h"
 
 #include "PongOutConfig.h"
+
+#include <Server.h>
+
 //#include <chrono>
 #include <iostream>
 #include <stdio.h>
 
 //#include <thread>
 #include <vector>
+#include <chrono>
+#include <thread>
+
+bool Game::serverAllow()
+{
+	for (int i = 0; i < s->getMsgQueueSize(); i++)
+	{
+		Server::message tmp = s->getNextMessage();
+
+		switch (tmp.type)
+		{
+		case msgBase::MsgType::ACKNOWLEDGELAST:
+			{
+				AcknowledgeLast::ptr rc = boost::static_pointer_cast<AcknowledgeLast>(tmp.msg);
+				
+				switch(rc->getType())
+				{
+				case msgBase::MsgType::LOGINREQUEST:
+				case msgBase::MsgType::CREATEUSERREQUEST:
+					bool allowed = rc->getBool();
+					return allowed;
+					break;		
+				}
+				
+			}
+			break;
+		}
+	}
+	return false;
+}
 
 void Game::onFunction(const std::string& _func)
 
@@ -22,9 +55,23 @@ void Game::onFunction(const std::string& _func)
 		std::string username = screenManager.getText("username");
 		std::string password = screenManager.getText("password");
 
-		if (username == "test" && password == "pass")
+		s->login(username,password);
+
+		if(!serverAllow())
 		{
 			screenManager.openScreen("mainmenu");
+		}
+	}
+	else if(_func == "createuser")
+	{
+		std::string username = screenManager.getText("username");
+		std::string password = screenManager.getText("password");
+
+		s->createAccount(username, password);
+
+		if(!serverAllow())
+		{
+			onFunction("login");
 		}
 	}
 }
@@ -34,8 +81,6 @@ Game::Game(ICoreSystem::ptr _system)
 	screenManager(_system.lock()->getRootDir(), this),
 	shouldStop(false)
 {
-	//map = new Map();
-	//map->initialize(glm::vec2(800.0f, 600.0f), 8, "background/mainmenu_01", "blocks/orange_01");
 }
 
 static std::string naiveUTF32toUTF8(char32_t _character)
@@ -113,6 +158,9 @@ static std::string naiveUTF32toUTF8(char32_t _character)
 
 void Game::run()
 {
+	s = Server::ptr(new Server("194.47.150.59", 6500));
+	s->connect();
+
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 
 	std::shared_ptr<ICoreSystem> systemPtr(system);
@@ -173,7 +221,6 @@ void Game::run()
 		deltaTime = currentTime - previousTime;
 		
 		std::vector<IInput::Event> events = input->getEvents(true);
-				//sounds->playSfx("ball_vs_ball");
 
 		float dt = (float)(deltaTime * 1000.f);
 		float bspeed = 0.075f;
@@ -185,12 +232,6 @@ void Game::run()
 
 		const static float FRAMES_PER_SECOND = 60.f;
 		const static float FRAME_TIME = 1.f / FRAMES_PER_SECOND;
-
-		//if (deltaTime < FRAME_TIME)
-		//{
-		//	//std::chrono::milliseconds dura((unsigned int)((FRAME_TIME - deltaTime) * 1000.f));
-		//	//std::this_thread::sleep_for(dura);
-		//}
 
 		graphics->drawFrame();
 		

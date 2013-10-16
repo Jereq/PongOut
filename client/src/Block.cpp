@@ -14,19 +14,23 @@ Block::Block() : GameObject()
 
 Block::~Block() {}
 
-bool Block::initialize(const std::string& _id, glm::vec3 _center, glm::vec2 _size, float _rotation, 
-					GraphicsComponent::ptr _graphicsComponent, const std::string& _texture)
+bool Block::initialize(const BlockData& _blockData, float _rotation, const std::vector<std::string>& _textures,
+						GraphicsComponent::ptr _graphicsComponent)
 {
-	if(!GameObject::initialize(_id, _center, _size, _rotation, _graphicsComponent))
+	if(!GameObject::initialize("block", _blockData.center, BLOCKSIZE, _rotation, _graphicsComponent))
 		return false;
 
-	texture = _texture;
+	for(int i = 0; i < _textures.size(); i++)
+	{
+		textures.push_back(_textures[i]);
+	}
 
+	health = textures.size();
 	return true;
 }
 
 void Block::update(double _dt)
 {
 	if(canCollide)
-		graphicsComponent->addSpriteToFrame(texture, center, size, rotation);
+		graphicsComponent->addSpriteToFrame(textures[health-1], center, size, rotation);
 }

@@ -14,6 +14,15 @@
 #include "glm/glm.hpp"
 #include "GameObject.h"
 
+static const glm::vec2 BLOCKSIZE = glm::vec2(64,32);
+
+struct BlockData
+{
+	int typeId;
+	int health;
+	glm::vec3 center;
+};
+
 using std::string;
 
 class Block : public GameObject
@@ -22,16 +31,15 @@ public:
 	Block();
 	~Block();
 
-	bool initialize(const std::string& _id, glm::vec3 _center, glm::vec2 _size, float _rotation, 
-					GraphicsComponent::ptr _graphicsComponent, const std::string& _texture);
+	bool initialize(const BlockData& _blockData, float _rotation, const std::vector<std::string>& _textures, GraphicsComponent::ptr _graphicsComponent);
 	bool canCollide;
-
+	virtual void	update(double _dt);
 	typedef std::shared_ptr<Block> ptr;
 private:
 	int health;
-	std::string texture;
+	std::vector<std::string> textures;
 
-	virtual void	update(double _dt);
+	friend class PhysicsComponent;
 };
 
 #endif /* BLOCK_H_ */

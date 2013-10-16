@@ -1,21 +1,21 @@
 screen
 	id login
 	background background/login
-	screenSize 1280/1024
+	screenSize 1920/1080
 	music bubble
 
 	inputField
 		id username
 		textureName input/box
 		position 700/600/0
-		size 220/62
+		size 440/62
 	/inputField
 
 	inputField
 		id password
 		textureName input/box
 		position 700/500/0
-		size 220/62
+		size 440/62
 	/inputField
 
 	button
@@ -63,25 +63,26 @@ screen
 	screenSize 1280/1024
 
 	inputField
-		id createUsername
+		id username
 		textureName input/box
 		position 700/600/0
-		size 220/62
+		size 440/62
 	/inputField
 
 	inputField
-		id createPassword
+		id password
 		textureName input/box
 		position 700/500/0
-		size 220/62
+		size 440/62
 	/inputField
 
-	inputField
+	button
 		id confirmPassword
-		textureName input/box
+		textureNormal input/box
 		position 700/400/0
-		size 220/62
-	/inputField
+		size 440/62
+		func createuser
+	/button
 
 	button
 		id backCreateProfile
@@ -117,7 +118,7 @@ screen
 	id mainmenu
 	background background/main_menu
 	screenSize 1280/1024
-
+	
 	button
 		id exitFromMain
 		textureNormal button/exit
@@ -171,7 +172,7 @@ screen
 	id gamelobby
 	background background/game_lobby
 	screenSize 1280/1024
-
+	music bubble
 	button
 		id toProfileFromLobby
 		textureNormal button/profile

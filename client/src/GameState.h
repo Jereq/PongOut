@@ -1,6 +1,7 @@
 #ifndef __GAMESTATE_H
 #define __GAMESTATE_H
 
+#include "GUIActionHandler.h"
 #include "ScreenState.h"
 #include "Block.h"
 #include "GameObject.h"
@@ -21,19 +22,25 @@ public:
 	typedef std::shared_ptr<GameState> ptr;
 
 	virtual std::string getText(const std::string& _elemId) const;
-
+	void addStateAction(GUIActionHandler* _actionHandler);
 private:
 	virtual bool initialize(std::shared_ptr<ICoreSystem> _iCoreSystem);
 	virtual void onInput(const std::vector<IInput::Event> _events);
 	virtual bool onEntry() override;
+	virtual bool onExit() override;
 	virtual void update(const float _dt);
 	virtual void draw(std::shared_ptr<IGraphics> _graphics);
 
+	void load();
 	std::vector<GameObject::ptr> gameObjects;
 
 	IGraphics::ptr graphics;
 	InputState	inputState;
 	Map* world;
+	GUIActionHandler* actionHandler;
+	GraphicsComponent::ptr gc;
+	InputComponent::ptr ic;
+	PhysicsComponent::ptr pc;
 };
 
 #endif
