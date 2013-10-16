@@ -5,7 +5,7 @@
 #include <CoreSystem/ICoreSystem.h>
 
 #include "Map.h"
-//#include "MapResources.h"
+#include <Server.h>
 
 /**
  *  Main game class responsible for managing screens and the game loop.
@@ -17,7 +17,8 @@ private:
 	Map*				map;
 	ScreenManager		screenManager;
 	bool				shouldStop;
-
+	Server::ptr s;
+	bool		serverAllow();
 	void onFunction(const std::string& _func) override;
 
 public:

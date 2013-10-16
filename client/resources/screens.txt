@@ -63,25 +63,26 @@ screen
 	screenSize 1280/1024
 
 	inputField
-		id createUsername
+		id username
 		textureName input/box
 		position 700/600/0
 		size 440/62
 	/inputField
 
 	inputField
-		id createPassword
+		id password
 		textureName input/box
 		position 700/500/0
 		size 440/62
 	/inputField
 
-	inputField
+	button
 		id confirmPassword
-		textureName input/box
+		textureNormal input/box
 		position 700/400/0
 		size 440/62
-	/inputField
+		func createuser
+	/button
 
 	button
 		id backCreateProfile

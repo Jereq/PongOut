@@ -15,13 +15,15 @@ add_library(ComLib
 	PacketHandler.cpp PacketHandler.h
 	stdafx.h
 
+	AcknowledgeLast.cpp AcknowledgeLast.h
 	Chat.cpp Chat.h
-	RequestCreateUser.cpp RequestCreateUser.h
-	RequestFriendlist.cpp RequestFriendlist.h
-	RequestLogin.cpp RequestLogin.h
-	RequestLogout.cpp RequestLogout.h
-	ResponseConnect.cpp ResponseConnect.h
-	ResponseCreateUser.cpp ResponseCreateUser.h
-	ResponseFriendlist.cpp ResponseFriendlist.h
-	ResponseLogin.cpp ResponseLogin.h
+	CreateUserRequest.cpp CreateUserRequest.h
+	FriendlistRequest.cpp FriendlistRequest.h
+	LoginRequest.cpp LoginRequest.h
+	LogoutRequest.cpp LogoutRequest.h
+	FriendlistResponse.cpp FriendlistResponse.h
+	msgBase.cpp msgBase.h
+	GameMessage.cpp GameMessage.h
+	CreateGame.cpp CreateGame.h
+	PacketHandler.cpp PacketHandler.h
 )
