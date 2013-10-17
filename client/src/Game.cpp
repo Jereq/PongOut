@@ -16,6 +16,7 @@
 
 bool Game::serverAllow()
 {
+	
 	for (int i = 0; i < s->getMsgQueueSize(); i++)
 	{
 		Server::message tmp = s->getNextMessage();
@@ -45,7 +46,6 @@ bool Game::serverAllow()
 void Game::onFunction(const std::string& _func)
 
 {
-	
 	std::cout << "Performing: " << _func << std::endl;
 
 	if (_func == "exit")
@@ -78,7 +78,11 @@ void Game::onFunction(const std::string& _func)
 	}
 	else if(_func == "host")
 	{
-		onFunction("game");
+		//s->createGame( gameSettings.getMapId(), gameSettings.getBallSpeed(), 1, gameSettings.getSuddenDeathTime(), gameSettings.getFOW(), gameSettings.getPOW());
+		//if(!serverAllow())
+		//{
+		//	onFunction("game");
+		//}
 	}
 	else if(_func.substr(0, 11) == "set/sudden/")
 	{
@@ -248,9 +252,6 @@ void Game::run()
 		printf("Failed to initialize renderer\n");
 		return;
 	}
-
-	
-
 	graphics->loadResources(systemPtr->getRootDir() / "resources");
 
 	SoundManager *sounds = systemPtr->getSounds();
@@ -270,8 +271,6 @@ void Game::run()
 	double previousTime = systemPtr->getTime();
 	double currentTime = previousTime;
 	double deltaTime = 0.f;
-
-	
 
 	std::cout << "Starting to run" << std::endl;
 	//std::cout << "Texture name: \n" << map->getTextureName() << std::endl;
@@ -299,19 +298,13 @@ void Game::run()
 		
 		std::vector<IInput::Event> events = input->getEvents(true);
 
-		float dt = (float)(deltaTime * 1000.f);
-		float bspeed = 0.075f;
-		float pspeed = 0.001f;
-		
-
 		screenManager.onInput(events);
 		screenManager.update((float)deltaTime, graphics);
 
 		const static float FRAMES_PER_SECOND = 60.f;
 		const static float FRAME_TIME = 1.f / FRAMES_PER_SECOND;
 
-		graphics->drawFrame();
-		
+		graphics->drawFrame();		
 	}
 
 	sounds->shutdown();

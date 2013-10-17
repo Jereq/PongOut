@@ -101,7 +101,7 @@ bool GameState::onExit()
 void GameState::update(const float _dt)
 {
 	
-	// check server for new info
+	/* check server for new info 
 	for (int i = 0; i < server->getMsgQueueSize(); i++)
 	{
 		Server::message tmp = server->getNextMessage();
@@ -110,18 +110,23 @@ void GameState::update(const float _dt)
 		{
 		case msgBase::MsgType::GAMEMESSAGE:
 			{
-
 			}
 			break;
 		case msgBase::MsgType::ACKNOWLEDGELAST:
 			{
+				AcknowledgeLast::ptr rc = boost::static_pointer_cast<AcknowledgeLast>(tmp.msg);
+
+				switch(rc->getType())
+				{
+	
+				}
 			}
 			break;
 		default:
 			break;
 		}
 	}
-
+	*/
 	world->update(_dt, graphics);
 }
 

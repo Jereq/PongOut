@@ -43,7 +43,7 @@ public:
 
 	void setPlayAreaBounds(glm::vec2 _size);
 
-	std::vector<Block::ptr>			blocks;
+	std::vector<Block::ptr>		blocks;
 	std::vector<Paddle::ptr>	paddles;
 	std::vector<Ball::ptr>		balls;
 

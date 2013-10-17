@@ -188,12 +188,21 @@ bool Map::loadMap(std::string _mapName, GraphicsComponent::ptr gc, InputComponen
 	}
 
 	Paddle::ptr p = Paddle::ptr(new Paddle);
-	p->initialize("paddle", glm::vec3(0, 100, 0), glm::vec2(128, 43), 0, gc, ic, pc);
+	p->initialize("paddle", glm::vec3(0, 100, 0), glm::vec2(128, 32), 0, gc, ic, pc);
+	paddles.push_back(p);
+
+	p = Paddle::ptr(new Paddle);
+	p->initialize("paddle1", glm::vec3(0,800,0), glm::vec2(128, 32), 0, gc, ic, pc);
 	paddles.push_back(p);
 
 	Ball::ptr b = Ball::ptr(new Ball);
 	b->initialize("ball", glm::vec3(0, 800, 0), glm::vec2(32,32), 0, gc, pc);
 	balls.push_back(b);
+
+	b = Ball::ptr(new Ball);
+	b->initialize("ball", glm::vec3(0, 0, 0), glm::vec2(32,32), 0, gc, pc);
+	balls.push_back(b);
+
 	return true;
 }
 
