@@ -1,7 +1,6 @@
 #include "D3D.h"
 
 #include <dxgi.h>
-#include <d3d11.h>
 #include <D3DX11.h>
 
 
@@ -287,8 +286,8 @@ ErrorCode D3D::initialize(HWND _hWnd)
 {
 	ErrorCode result;
 	int numerator, denominator;
-	screenWidth = 1280;
-	screenHeight = 1024;
+	screenWidth = 1920;
+	screenHeight = 1080;
 
 	// query DXGI for hardware setup information
 	ErrorCode dxgi_result = setDXGI(gpuMemory, gpuDescription, numerator, denominator, screenWidth, screenHeight);

@@ -7,7 +7,8 @@
 //#include <chrono>
 #include <iostream>
 #include <stdio.h>
-
+#include <stdlib.h>
+#include <time.h>
 //#include <thread>
 #include <vector>
 #include <chrono>
@@ -44,6 +45,7 @@ bool Game::serverAllow()
 void Game::onFunction(const std::string& _func)
 
 {
+	
 	std::cout << "Performing: " << _func << std::endl;
 
 	if (_func == "exit")
@@ -74,6 +76,75 @@ void Game::onFunction(const std::string& _func)
 			onFunction("login");
 		}
 	}
+	else if(_func.substr(0, 11) == "set/sudden/")
+	{
+		if(_func.substr(11) == "unlimited")
+		{
+			gameSettings.setSuddenDeathTime(-1);
+		}
+		else if(_func.substr(11) == "random")
+		{
+			int minutes = rand() % 1 + 16;
+			gameSettings.setSuddenDeathTime(minutes * 60);
+		}
+		else
+		{
+			gameSettings.setSuddenDeathTime(stoi(_func.substr(11)));
+		}
+	}
+	else if(_func.substr(0, 14) == "set/ballspeed/")
+	{
+		if(_func.substr(14) == "random")
+		{
+			gameSettings.setBallSpeed((float)rand() / (float)RAND_MAX * 10.f);
+		}
+		else
+		{
+			gameSettings.setBallSpeed(stof(_func.substr(14)));
+		}
+	}
+	else if(_func.substr(0, 8) == "set/fow/")
+	{
+		if(_func.substr(8) == "on")
+		{
+			gameSettings.setFOW(true);
+		}
+		else if(_func.substr(8) == "off")
+		{
+			gameSettings.setFOW(false);
+		}
+		else if(_func.substr(8) == "random")
+		{
+			int randomized = rand() % 2;
+			
+			if(randomized == 1)
+			{
+				gameSettings.setFOW(true);
+			}
+			gameSettings.setFOW(false);
+		}
+	}
+	else if(_func.substr(0, 8) == "set/pow/")
+	{
+		if(_func.substr(8) == "on")
+		{
+			gameSettings.setPOW(true);
+		}
+		else if(_func.substr(8) == "off")
+		{
+			gameSettings.setPOW(false);
+		}
+		else if(_func.substr(8) == "random")
+		{
+			int randomized = rand() % 2;
+
+			if(randomized == 1)
+			{
+				gameSettings.setPOW(true);
+			}
+			gameSettings.setPOW(false);
+		}
+	}
 }
 
 Game::Game(ICoreSystem::ptr _system)
@@ -81,6 +152,8 @@ Game::Game(ICoreSystem::ptr _system)
 	screenManager(_system.lock()->getRootDir(), this),
 	shouldStop(false)
 {
+	srand((unsigned int)time((NULL)));
+	rand();
 }
 
 static std::string naiveUTF32toUTF8(char32_t _character)
@@ -176,7 +249,7 @@ void Game::run()
 
 	graphics->loadResources(systemPtr->getRootDir() / "resources");
 
-	SoundManager* sounds = systemPtr->getSounds();
+	SoundManager *sounds = systemPtr->getSounds();
 	if(!sounds->initialize())
 	{
 		printf("Failed to initialize sound system\n");
@@ -205,7 +278,7 @@ void Game::run()
 		return;
 	}
 
-	if (!screenManager.openScreen("game"))
+	if (!screenManager.openScreen("login"))
 	{
 		std::cout << "Failed to open screen" << std::endl;
 		return;

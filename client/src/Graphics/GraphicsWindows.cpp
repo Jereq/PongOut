@@ -1,6 +1,6 @@
 #include "GraphicsWindows.h"
 #include "DXAssetInstancing.h"
-
+#include <iostream>
 #include <ResourceLoader/ResourceLoader.h>
 
 struct sprite

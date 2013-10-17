@@ -99,6 +99,7 @@ set(SOURCE_FILES
 	Image.cpp Image.h
 	InputField.cpp InputField.h
 	GameObject.cpp GameObject.h
+	GameSettings.h GameSettings.cpp
 	InputComponent.cpp InputComponent.h
 	GraphicsComponent.cpp GraphicsComponent.h
 	Paddle.cpp Paddle.h
