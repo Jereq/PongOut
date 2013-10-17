@@ -16,7 +16,7 @@
 #include "CreateUserRequest.h"
 #include "LogoutRequest.h"
 #include "AcknowledgeLast.h"
-#include "CreateGame.h"
+#include "CreateGameRequest.h"
 
 #include "SafeQueue.h"
 

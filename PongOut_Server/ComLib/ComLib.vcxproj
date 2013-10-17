@@ -79,7 +79,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Chat.h" />
-    <ClInclude Include="CreateGame.h" />
+    <ClInclude Include="CreateGameRequest.h" />
+    <ClInclude Include="CreateGameResponse.h" />
     <ClInclude Include="CreateUserRequest.h" />
     <ClInclude Include="GameMessage.h" />
     <ClInclude Include="LogoutRequest.h" />
@@ -94,7 +95,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Chat.cpp" />
-    <ClCompile Include="CreateGame.cpp" />
+    <ClCompile Include="CreateGameRequest.cpp" />
+    <ClCompile Include="CreateGameResponse.cpp" />
     <ClCompile Include="CreateUserRequest.cpp" />
     <ClCompile Include="GameMessage.cpp" />
     <ClCompile Include="LogoutRequest.cpp" />

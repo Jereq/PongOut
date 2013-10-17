@@ -23,9 +23,9 @@ void GameMaster::handleGameMessage( GameMessage::ptr _message, User::ptr _initUs
 {
 	switch (_message->getGameType())
 	{
-	case GameMessage::GameMsgType::INITGAMEREQUEST:
+	case GameMessage::GameMsgType::CREATEGAMEREQUEST:
 		{
-			CreateGame::ptr cgp = boost::static_pointer_cast<CreateGame>(_message);
+			CreateGameRequest::ptr cgp = boost::static_pointer_cast<CreateGameRequest>(_message);
 
 			Referee r;
 

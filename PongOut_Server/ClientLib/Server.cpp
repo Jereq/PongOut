@@ -233,8 +233,8 @@ int Server::getMsgQueueSize()
 
 void Server::createGame( int _mapID, int _ballSpeed, int _paddleSpeed, int _suddenDeathTime, char _fogOfWar, char _powerUps )
 {
-	CreateGame::ptr cgp = CreateGame::ptr(new CreateGame());
-	CreateGame::GameInitInfo info;
+	CreateGameRequest::ptr cgp = CreateGameRequest::ptr(new CreateGameRequest());
+	CreateGameRequest::GameInitInfo info;
 
 	info.ballSpeed = _ballSpeed;
 	info.mapID = _mapID;

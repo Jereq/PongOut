@@ -1,19 +1,15 @@
 #pragma once
+
 #include "gamemessage.h"
-class CreateGame : 	public GameMessage
+
+class CreateGameRequest : 	public GameMessage
 {
 public:
 
-	typedef boost::shared_ptr<CreateGame> ptr;
+	typedef boost::shared_ptr<CreateGameRequest> ptr;
 
-	struct GameInitInfo
-	{
-		int mapID, ballSpeed, paddleSpeed, suddenDeathTime;
-		char fogOfWar, powerUps;
-	};
-
-	CreateGame(void);
-	virtual ~CreateGame(void);
+	CreateGameRequest(void);
+	virtual ~CreateGameRequest(void);
 
 	virtual std::vector<char> getData() override;
 	virtual msgBase::ptr interpretPacket(const std::deque<char>& _buffer) override;
