@@ -190,7 +190,7 @@ void PhysicsComponent::bounceOnBlock(Ball* _ball, double _dt)
 {
 	glm::vec2 center(_ball->center.swizzle(glm::X, glm::Y));
 
-	for (const Block::ptr& b : map->blocks)
+	for (const BlockC::ptr& b : map->blocks)
 	{
 		if (!b->canCollide)
 			continue;

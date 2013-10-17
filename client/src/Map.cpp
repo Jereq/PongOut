@@ -24,7 +24,7 @@ Map::~Map()
 }
 
 void Map::initialize(	glm::vec2 _playAreaSize, float _frameThickness,
-						string _bgTextureName, string _frameTextureName							)
+						std::string _bgTextureName, std::string _frameTextureName							)
 {
 	frameThickness 			= _frameThickness;
 	bgTextureName 			= _bgTextureName;
@@ -74,119 +74,18 @@ void Map::setPlayAreaBounds(glm::vec2 _size)
 	playAreaSize.y		= _size.y + frameThickness;
 }
 
-struct BDATA
+inline glm::vec2 screenSizeToClip( const glm::vec2 _screenDimension, const glm::vec2 _screenSize )
 {
-	int id;
-	std::vector<std::string> textures;
-};
-
-bool Map::loadMap(std::string _mapName, GraphicsComponent::ptr gc, InputComponent::ptr ic, PhysicsComponent::ptr pc )
+	return glm::vec2( _screenSize.x / _screenDimension.x * 2.f, _screenSize.y / _screenDimension.y * 2.f);
+}
+ 
+inline glm::vec3 screenPositionToClip( const glm::vec2 _screenDimension, const glm::vec3 _screenPosition )
 {
-	bool result;
+	return glm::vec3(_screenPosition.x / _screenDimension.x * 2.f - 1.f, _screenPosition.y / _screenDimension.y * 2.f - 1.f, _screenPosition.z);
+}
 
-		TMLReader tml;
-	tml.readFile("../test.tml");
-
-	int MapId = 1;
-
-	// Fetch the nodes of interest
-	TMLNODE r = tml.getRoot();
-	TMLNODE mapNode, blockNode;
-	for( TMLNODE n : tml.getRoot().nodes )
-	{
-		if(n.name == "Map")
-		{
-			for(std::pair<std::string,std::string> m : n.members)
-			{
-				if(m.first == "id")
-				{
-					int id = atoi(m.second.c_str());
-					if(id == MapId)
-					{
-						mapNode = n;
-					}
-				}
-			}
-		}
-		if(n.name == "Blocks")
-		{
-			blockNode = n;
-		}
-	}
-
-	// fetch map info
-	int id;
-	std::string name;
-	std::vector<std::string> rows;
-	for(std::pair<std::string,std::string> m : mapNode.members)
-	{
-		if(m.first == "id")
-		{
-			id = atoi(m.second.c_str());
-		}
-		else if(m.first == "name")
-		{
-			name = m.second;
-		}
-		else if(m.first == "texture")
-		{
-			bgTextureName = m.second;
-		}
-		else if(m.first == "row")
-		{
-			rows.push_back(m.second);
-		}
-	}
-
-	// create blocks
-	int offX = 0;
-	int offY = 0;
-	for(std::string row : rows )
-	{
-		for(int i = 0; i < row.size(); i++)
-		{
-			std::string val = row.substr(i,1);
-			if(val == "0")
-				continue;
-
-			BlockData bd;
-			bd.health = 0;
-			std::vector<std::string> textures;
-			for(TMLNODE n : blockNode.nodes)
-			{
-				std::string id = "-1";
-				for(std::pair<std::string,std::string> m : n.members)
-				{
-					
-					if(m.first == "id")
-					{
-						id = m.second;
-						if(id == val)
-						{
-							int x,y;
-							x = 880 / 2 + BLOCKSIZE.x * i;
-							y = 800 / 2 + offY * BLOCKSIZE.y;
-							printf("{%i %i}",x,y);
-			
-							bd.center = glm::vec3(x,y, 0);
-						}
-					}
-					if(m.first == "texture" && id == val)
-					{
-						textures.push_back(m.second);
-					}
-				}
-			}
-			bd.health = textures.size();
-			Block::ptr b = Block::ptr(new Block);
-			b->initialize(bd,0,textures, gc);
-			blocks.push_back(b);
-			textures.clear();
-		}
-		printf("\n");
-		offY++;
-	}
-
+bool Map::loadMap(std::string _mapName, std::vector<CommonTypes::Block> _blockData, GraphicsComponent::ptr gc, InputComponent::ptr ic, PhysicsComponent::ptr pc )
+{
 	Paddle::ptr p = Paddle::ptr(new Paddle);
 	p->initialize("paddle", glm::vec3(0, 100, 0), glm::vec2(128, 32), 0, gc, ic, pc);
 	paddles.push_back(p);
@@ -203,6 +102,13 @@ bool Map::loadMap(std::string _mapName, GraphicsComponent::ptr gc, InputComponen
 	b->initialize("ball", glm::vec3(0, 0, 0), glm::vec2(32,32), 0, gc, pc);
 	balls.push_back(b);
 
+	for(CommonTypes::Block bd : _blockData)
+	{
+		BlockC::ptr block = BlockC::ptr(new BlockC);
+		block->initialize(bd, 0, gc);
+		blocks.push_back(block);
+	}
+
 	return true;
 }
 
@@ -218,6 +124,7 @@ glm::vec2 Map::getSize()
 {
 	return playAreaSize;
 }
+
 void Map::update(double _dt, IGraphics::ptr _graphics)
 {
 	glm::vec2 clipArea = glm::vec2( playAreaSize.x / 1280. * 2.f, playAreaSize.y / 1024. * 2.f);

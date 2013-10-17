@@ -3,14 +3,12 @@
 
 #include "GUIActionHandler.h"
 #include "ScreenState.h"
-#include "Block.h"
 #include "GameObject.h"
 #include "InputComponent.h"
 #include "PhysicsComponent.h"
 #include "GraphicsComponent.h"
 
 #include "InputState.h"
-
 #include "Map.h"
 
 class GameState : public ScreenState

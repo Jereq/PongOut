@@ -38,7 +38,8 @@ bool GameState::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::pt
 
 	graphics = iCoreSystem->getGraphics();
 
-	world->loadMap("hello", gc, ic, pc);
+	std::vector<CommonTypes::Block> b;
+	world->initialize(glm::vec2(800,800),20,"HELLO","HELLO");
 
 	for (int i = 0; i < server->getMsgQueueSize(); i++)
 	{
@@ -54,7 +55,8 @@ bool GameState::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::pt
 					{
 						CreateGameResponse::ptr cgrp = boost::static_pointer_cast<CreateGameResponse>(tmp.gMsg);
 
-						std::vector<CommonTypes::Block> b = cgrp->getMap();
+						b = cgrp->getMap();
+						world->loadMap("hello", b, gc, ic, pc);
 						break;
 					}
 				}
@@ -72,7 +74,7 @@ void GameState::load()
 
 	world->initialize(glm::vec2(800,800),20,"HELLO","HELLO");
 
-	res = world->loadMap("Map1", gc, ic, pc);
+	//res = world->loadMap("Map1", gc, ic, pc);
 }
 
 std::string GameState::getText(const std::string& _elemId) const
