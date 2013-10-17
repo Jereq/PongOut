@@ -15,11 +15,10 @@
 #include <thread>
 
 bool Game::serverAllow()
-{
-	
-	for (int i = 0; i < s->getMsgQueueSize(); i++)
+{	
+	for (int i = 0; i < server->getMsgQueueSize(); i++)
 	{
-		Server::message tmp = s->getNextMessage();
+		message tmp = server->getNextMessage();
 
 		switch (tmp.type)
 		{
@@ -37,7 +36,18 @@ bool Game::serverAllow()
 				}
 				
 			}
-			break;
+		/*case msgBase::MsgType::GAMEMESSAGE:
+			{
+				switch (tmp.gType)
+				{
+				case GameMessage::GameMsgType::CREATEGAMERESPONSE:
+					{
+
+						break;
+					}
+				}
+				break;
+			}*/
 		}
 	}
 	return false;
@@ -57,7 +67,7 @@ void Game::onFunction(const std::string& _func)
 		std::string username = screenManager.getText("username");
 		std::string password = screenManager.getText("password");
 
-		s->login(username,password);
+		server->login(username,password);
 
 		if(!serverAllow())
 		{
@@ -69,7 +79,7 @@ void Game::onFunction(const std::string& _func)
 		std::string username = screenManager.getText("username");
 		std::string password = screenManager.getText("password");
 
-		s->createAccount(username, password);
+		server->createAccount(username, password);
 
 		if(!serverAllow())
 		{
@@ -78,11 +88,8 @@ void Game::onFunction(const std::string& _func)
 	}
 	else if(_func == "host")
 	{
-		//s->createGame( gameSettings.getMapId(), gameSettings.getBallSpeed(), 1, gameSettings.getSuddenDeathTime(), gameSettings.getFOW(), gameSettings.getPOW());
-		//if(!serverAllow())
-		//{
-		//	onFunction("game");
-		//}
+		server->createGame( gameSettings.getMapId(), gameSettings.getBallSpeed(), 1, gameSettings.getSuddenDeathTime(), gameSettings.getFOW(), gameSettings.getPOW());
+		screenManager.openScreen("game");
 	}
 	else if(_func.substr(0, 11) == "set/sudden/")
 	{
@@ -239,8 +246,8 @@ static std::string naiveUTF32toUTF8(char32_t _character)
 
 void Game::run()
 {
-	Server::ptr server = Server::ptr(new Server("194.47.150.59", 6500));
-	//s->connect();
+	server = Server::ptr(new Server("194.47.150.59", 6500));
+	server->connect();
 
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 
@@ -281,7 +288,7 @@ void Game::run()
 		return;
 	}
 
-	if (!screenManager.openScreen("gamelobby"))
+	if (!screenManager.openScreen("login"))
 	{
 		std::cout << "Failed to open screen" << std::endl;
 		return;

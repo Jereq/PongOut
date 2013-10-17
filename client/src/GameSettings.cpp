@@ -1,7 +1,7 @@
 #include "GameSettings.h"
 
 GameSettings::GameSettings(void)	: suddenDeathTime(300), ballSpeed(1.f), fogOfWar(false), powerUps(false), 
-										mapId(-1), numOfLives(3)
+										mapId(0), numOfLives(3)
 {
 }
 

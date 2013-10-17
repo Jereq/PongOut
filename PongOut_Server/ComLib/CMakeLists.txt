@@ -24,6 +24,7 @@ add_library(ComLib
 	FriendlistResponse.cpp FriendlistResponse.h
 	msgBase.cpp msgBase.h
 	GameMessage.cpp GameMessage.h
-	CreateGame.cpp CreateGame.h
+	CreateGameRequest.cpp CreateGameRequest.h
+	CreateGameResponse.cpp CreateGameResponse.h
 	PacketHandler.cpp PacketHandler.h
 )

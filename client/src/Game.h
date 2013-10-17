@@ -19,7 +19,7 @@ private:
 	ScreenManager		screenManager;
 	GameSettings		gameSettings;
 	bool				shouldStop;
-	Server::ptr s;
+	Server::ptr			server;
 	bool		serverAllow();
 	void onFunction(const std::string& _func) override;
 

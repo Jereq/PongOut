@@ -2,6 +2,7 @@
 #include "Paddle.h"
 #include "Ball.h"
 #include "TMLReader.h"
+#include "CreateGameResponse.h"
 
 GameState::GameState(const std::string _screenName)
 	: ScreenState(_screenName), gc(0), ic(0), pc(0)
@@ -38,6 +39,29 @@ bool GameState::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::pt
 	graphics = iCoreSystem->getGraphics();
 
 	world->loadMap("hello", gc, ic, pc);
+
+	for (int i = 0; i < server->getMsgQueueSize(); i++)
+	{
+		message tmp = server->getNextMessage();
+
+		switch (tmp.type)
+		{	
+		case msgBase::MsgType::GAMEMESSAGE:
+			{
+				switch (tmp.gType)
+				{
+				case GameMessage::GameMsgType::CREATEGAMERESPONSE:
+					{
+						CreateGameResponse::ptr cgrp = boost::static_pointer_cast<CreateGameResponse>(tmp.gMsg);
+
+						std::vector<CommonTypes::Block> b = cgrp->getMap();
+						break;
+					}
+				}
+				break;
+			}
+		}
+	}
 	return true;
 }
 
