@@ -82,7 +82,7 @@ texture:text/confirm_password		textures/text_confirm_password.png
 texture:text/controls			textures/text_controls.png
 texture:text/fast			textures/text_fast.png
 texture:text/fire_ball			textures/text_fire_ball.png
-texture:text/fog_of_war			textures/text_fog_of_War.png
+texture:text/fog_of_war			textures/text_fog_of_war.png
 texture:text/lightning			textures/text_lightning.png
 texture:text/loser			textures/text_loser.png
 texture:text/move_paddle_down		textures/text_move_paddle_down.png
@@ -122,4 +122,4 @@ music:loser				sounds/loser.mp3
 sfx:ball_vs_ball			sounds/ball_on_ball_collision.mp3
 sfx:block_explodes			sounds/block_explodes.mp3
 sfx:wall_collision			sounds/wall_collision.mp3
-font:menu_text_field			fonts/PrintedCircuitBoard.ttf
+font:menu_text_field			fonts/XoloniumRegular.otf
