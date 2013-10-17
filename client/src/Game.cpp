@@ -76,6 +76,10 @@ void Game::onFunction(const std::string& _func)
 			onFunction("login");
 		}
 	}
+	else if(_func == "host")
+	{
+		onFunction("game");
+	}
 	else if(_func.substr(0, 11) == "set/sudden/")
 	{
 		if(_func.substr(11) == "unlimited")

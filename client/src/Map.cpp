@@ -128,6 +128,10 @@ bool Map::loadMap(std::string _mapName, GraphicsComponent::ptr gc, InputComponen
 		{
 			name = m.second;
 		}
+		else if(m.first == "texture")
+		{
+			bgTextureName = m.second;
+		}
 		else if(m.first == "row")
 		{
 			rows.push_back(m.second);
@@ -208,7 +212,7 @@ glm::vec2 Map::getSize()
 void Map::update(double _dt, IGraphics::ptr _graphics)
 {
 	glm::vec2 clipArea = glm::vec2( playAreaSize.x / 1280. * 2.f, playAreaSize.y / 1024. * 2.f);
-	_graphics->addRectangle(glm::vec3(0,0,0.01), clipArea, 0, level.texture);
+	_graphics->addRectangle(glm::vec3(0,0,0.01), clipArea, 0, bgTextureName);
 
 	for(GameObject::ptr paddle : paddles)
 	{

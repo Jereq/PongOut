@@ -101,6 +101,27 @@ bool GameState::onExit()
 void GameState::update(const float _dt)
 {
 	
+	// check server for new info
+	for (int i = 0; i < server->getMsgQueueSize(); i++)
+	{
+		Server::message tmp = server->getNextMessage();
+
+		switch (tmp.type)
+		{
+		case msgBase::MsgType::GAMEMESSAGE:
+			{
+
+			}
+			break;
+		case msgBase::MsgType::ACKNOWLEDGELAST:
+			{
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
 	world->update(_dt, graphics);
 }
 

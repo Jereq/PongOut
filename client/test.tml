@@ -31,7 +31,6 @@ Root
 			health 2
 			texture blocks/orange_05
 			texture blocks/dark_magenta_05
-
 		/Block
 		Block
 			id 7
