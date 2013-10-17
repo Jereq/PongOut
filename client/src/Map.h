@@ -8,11 +8,6 @@
 #ifndef MAP_H_
 #define MAP_H_
 
-#include <malloc.h>
-#include <iostream>
-#include <string>
-#include <vector>
-
 #include "Block.h"
 #include "MapResources.h"
 #include "GraphicsComponent.h"

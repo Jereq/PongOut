@@ -105,6 +105,7 @@ set(SOURCE_FILES
 	InputState.cpp InputState.h
 	PhysicsComponent.cpp PhysicsComponent.h
 	Ball.cpp Ball.h
+	TMLReader.cpp TMLReader.h
 )
 
 # Add the executable
