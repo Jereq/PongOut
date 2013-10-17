@@ -2,6 +2,7 @@
 #include "Paddle.h"
 #include "Ball.h"
 #include "TMLReader.h"
+#include "CreateGameResponse.h"
 
 GameState::GameState(const std::string _screenName)
 	: ScreenState(_screenName), gc(0), ic(0), pc(0)
@@ -19,9 +20,9 @@ void GameState::addStateAction(GUIActionHandler* _actionHandler)
 	actionHandler = _actionHandler;
 }
 
-bool GameState::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem)
+bool GameState::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::ptr _server)
 {
-	if (!ScreenState::initialize(_iCoreSystem))
+	if (!ScreenState::initialize(_iCoreSystem, _server))
 	{
 		return false;
 	}
@@ -38,6 +39,29 @@ bool GameState::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem)
 	graphics = iCoreSystem->getGraphics();
 
 	world->loadMap("hello", gc, ic, pc);
+
+	for (int i = 0; i < server->getMsgQueueSize(); i++)
+	{
+		message tmp = server->getNextMessage();
+
+		switch (tmp.type)
+		{	
+		case msgBase::MsgType::GAMEMESSAGE:
+			{
+				switch (tmp.gType)
+				{
+				case GameMessage::GameMsgType::CREATEGAMERESPONSE:
+					{
+						CreateGameResponse::ptr cgrp = boost::static_pointer_cast<CreateGameResponse>(tmp.gMsg);
+
+						std::vector<CommonTypes::Block> b = cgrp->getMap();
+						break;
+					}
+				}
+				break;
+			}
+		}
+	}
 	return true;
 }
 
@@ -100,10 +124,33 @@ bool GameState::onExit()
 
 void GameState::update(const float _dt)
 {
-	//for(GameObject::ptr g : gameObjects)
-	//{
-	//	g->update(_dt);
-	//}
+	
+	/* check server for new info 
+	for (int i = 0; i < server->getMsgQueueSize(); i++)
+	{
+		Server::message tmp = server->getNextMessage();
+
+		switch (tmp.type)
+		{
+		case msgBase::MsgType::GAMEMESSAGE:
+			{
+			}
+			break;
+		case msgBase::MsgType::ACKNOWLEDGELAST:
+			{
+				AcknowledgeLast::ptr rc = boost::static_pointer_cast<AcknowledgeLast>(tmp.msg);
+
+				switch(rc->getType())
+				{
+	
+				}
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	*/
 	world->update(_dt, graphics);
 }
 

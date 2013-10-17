@@ -3,6 +3,7 @@
 #include "FunctionHandler.h"
 #include "ScreenManager.h"
 #include <CoreSystem/ICoreSystem.h>
+#include "GameSettings.h"
 
 #include "Map.h"
 #include <Server.h>
@@ -16,8 +17,9 @@ private:
 	ICoreSystem::ptr	system;
 	Map*				map;
 	ScreenManager		screenManager;
+	GameSettings		gameSettings;
 	bool				shouldStop;
-	Server::ptr s;
+	Server::ptr			server;
 	bool		serverAllow();
 	void onFunction(const std::string& _func) override;
 

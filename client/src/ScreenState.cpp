@@ -16,11 +16,11 @@ void ScreenState::onInput(const std::vector<IInput::Event> _events)
 
 }
 
-bool ScreenState::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem)
+bool ScreenState::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::ptr _server)
 {
 	iCoreSystem = _iCoreSystem;
 	initialized = true;
-
+	server = _server;
 	return true;
 }
 

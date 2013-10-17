@@ -54,3 +54,8 @@ msgBase::ptr CreateGameResponse::interpretPacket( const std::deque<char>& _buffe
 
 	return cgp;
 }
+
+std::vector<CommonTypes::Block> CreateGameResponse::getMap()
+{
+	return map;
+}

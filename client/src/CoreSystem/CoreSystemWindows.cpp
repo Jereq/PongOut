@@ -1,6 +1,6 @@
 #include "CoreSystemWindows.h"
 #include <windowsx.h>
-
+#include <iostream>
 namespace fs = boost::filesystem;
 
 static bool	shutDown = false;

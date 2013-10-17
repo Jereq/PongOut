@@ -28,10 +28,10 @@ ScreenManager::~ScreenManager()
 {
 }
 
-bool ScreenManager::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem)
+bool ScreenManager::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::ptr _server)
 {
 	iCoreSystem = _iCoreSystem;
-
+	server = _server;
 	if (!readScreens(iCoreSystem->getRootDir() / "resources" / "screens.txt"))
 	{
 		std::cout << "Error encountered at line " << lineCount << std::endl;
@@ -647,7 +647,7 @@ bool ScreenManager::openScreen(const std::string& _stateId)
 
 	if (!state->isInitialized())
 	{
-		if (!state->initialize(iCoreSystem))
+		if (!state->initialize(iCoreSystem, server))
 		{
 			return false;
 		}

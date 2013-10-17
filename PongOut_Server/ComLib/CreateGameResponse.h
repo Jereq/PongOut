@@ -16,6 +16,8 @@ public:
 
 	void setResponse(const std::vector<CommonTypes::Block>& _map, const CommonTypes::GameInitInfo& _info);
 
+	std::vector<CommonTypes::Block> getMap();
+
 private:
 
 	std::vector<CommonTypes::Block> map;

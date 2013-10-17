@@ -7,17 +7,18 @@
 //#include <chrono>
 #include <iostream>
 #include <stdio.h>
-
+#include <stdlib.h>
+#include <time.h>
 //#include <thread>
 #include <vector>
 #include <chrono>
 #include <thread>
 
 bool Game::serverAllow()
-{
-	for (int i = 0; i < s->getMsgQueueSize(); i++)
+{	
+	for (int i = 0; i < server->getMsgQueueSize(); i++)
 	{
-		Server::message tmp = s->getNextMessage();
+		message tmp = server->getNextMessage();
 
 		switch (tmp.type)
 		{
@@ -35,7 +36,18 @@ bool Game::serverAllow()
 				}
 				
 			}
-			break;
+		/*case msgBase::MsgType::GAMEMESSAGE:
+			{
+				switch (tmp.gType)
+				{
+				case GameMessage::GameMsgType::CREATEGAMERESPONSE:
+					{
+
+						break;
+					}
+				}
+				break;
+			}*/
 		}
 	}
 	return false;
@@ -55,7 +67,7 @@ void Game::onFunction(const std::string& _func)
 		std::string username = screenManager.getText("username");
 		std::string password = screenManager.getText("password");
 
-		s->login(username,password);
+		server->login(username,password);
 
 		if(!serverAllow())
 		{
@@ -67,11 +79,85 @@ void Game::onFunction(const std::string& _func)
 		std::string username = screenManager.getText("username");
 		std::string password = screenManager.getText("password");
 
-		s->createAccount(username, password);
+		server->createAccount(username, password);
 
 		if(!serverAllow())
 		{
 			onFunction("login");
+		}
+	}
+	else if(_func == "host")
+	{
+		server->createGame( gameSettings.getMapId(), gameSettings.getBallSpeed(), 1, gameSettings.getSuddenDeathTime(), gameSettings.getFOW(), gameSettings.getPOW());
+		screenManager.openScreen("game");
+	}
+	else if(_func.substr(0, 11) == "set/sudden/")
+	{
+		if(_func.substr(11) == "unlimited")
+		{
+			gameSettings.setSuddenDeathTime(-1);
+		}
+		else if(_func.substr(11) == "random")
+		{
+			int minutes = rand() % 1 + 16;
+			gameSettings.setSuddenDeathTime(minutes * 60);
+		}
+		else
+		{
+			gameSettings.setSuddenDeathTime(stoi(_func.substr(11)));
+		}
+	}
+	else if(_func.substr(0, 14) == "set/ballspeed/")
+	{
+		if(_func.substr(14) == "random")
+		{
+			gameSettings.setBallSpeed((float)rand() / (float)RAND_MAX * 10.f);
+		}
+		else
+		{
+			gameSettings.setBallSpeed(stof(_func.substr(14)));
+		}
+	}
+	else if(_func.substr(0, 8) == "set/fow/")
+	{
+		if(_func.substr(8) == "on")
+		{
+			gameSettings.setFOW(true);
+		}
+		else if(_func.substr(8) == "off")
+		{
+			gameSettings.setFOW(false);
+		}
+		else if(_func.substr(8) == "random")
+		{
+			int randomized = rand() % 2;
+			
+			if(randomized == 1)
+			{
+				gameSettings.setFOW(true);
+			}
+			gameSettings.setFOW(false);
+		}
+	}
+	else if(_func.substr(0, 8) == "set/pow/")
+	{
+		if(_func.substr(8) == "on")
+		{
+			gameSettings.setPOW(true);
+		}
+		else if(_func.substr(8) == "off")
+		{
+			gameSettings.setPOW(false);
+		}
+		else if(_func.substr(8) == "random")
+		{
+			int randomized = rand() % 2;
+
+			if(randomized == 1)
+			{
+				gameSettings.setPOW(true);
+			}
+			gameSettings.setPOW(false);
 		}
 	}
 }
@@ -81,6 +167,8 @@ Game::Game(ICoreSystem::ptr _system)
 	screenManager(_system.lock()->getRootDir(), this),
 	shouldStop(false)
 {
+	srand((unsigned int)time((NULL)));
+	rand();
 }
 
 static std::string naiveUTF32toUTF8(char32_t _character)
@@ -158,8 +246,8 @@ static std::string naiveUTF32toUTF8(char32_t _character)
 
 void Game::run()
 {
-	//s = Server::ptr(new Server("194.47.150.59", 6500));
-	//s->connect();
+	server = Server::ptr(new Server("194.47.150.59", 6500));
+	server->connect();
 
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 
@@ -171,12 +259,9 @@ void Game::run()
 		printf("Failed to initialize renderer\n");
 		return;
 	}
-
-	
-
 	graphics->loadResources(systemPtr->getRootDir() / "resources");
 
-	SoundManager* sounds = systemPtr->getSounds();
+	SoundManager *sounds = systemPtr->getSounds();
 	if(!sounds->initialize())
 	{
 		printf("Failed to initialize sound system\n");
@@ -194,18 +279,16 @@ void Game::run()
 	double currentTime = previousTime;
 	double deltaTime = 0.f;
 
-	
-
 	std::cout << "Starting to run" << std::endl;
 	//std::cout << "Texture name: \n" << map->getTextureName() << std::endl;
 
-	if (!screenManager.initialize(systemPtr))
+	if (!screenManager.initialize(systemPtr, server))
 	{
 		std::cout << "Failed to initialize the screen manager." << std::endl;
 		return;
 	}
 
-	if (!screenManager.openScreen("game"))
+	if (!screenManager.openScreen("login"))
 	{
 		std::cout << "Failed to open screen" << std::endl;
 		return;
@@ -222,19 +305,13 @@ void Game::run()
 		
 		std::vector<IInput::Event> events = input->getEvents(true);
 
-		float dt = (float)(deltaTime * 1000.f);
-		float bspeed = 0.075f;
-		float pspeed = 0.001f;
-		
-
 		screenManager.onInput(events);
 		screenManager.update((float)deltaTime, graphics);
 
 		const static float FRAMES_PER_SECOND = 60.f;
 		const static float FRAME_TIME = 1.f / FRAMES_PER_SECOND;
 
-		graphics->drawFrame();
-		
+		graphics->drawFrame();		
 	}
 
 	sounds->shutdown();

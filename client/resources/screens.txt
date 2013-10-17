@@ -4,304 +4,633 @@ screen
 	screenSize 1920/1080
 	music bubble
 
-	inputField
-		id username
-		textureName input/box
-		position 700/600/0
-		size 440/62
-	/inputField
-
-	inputField
-		id password
-		textureName input/box
-		position 700/500/0
-		size 440/62
-	/inputField
-
-	button
-		id b1
-		textureNormal button/exit
-		position 45/64/0
-		size 60/60
-		func exit
-	/button
-
-	button
-		id b2
-		textureNormal f
-		position 1216/64/0
-		size 60/60
-		func login
-	/button
-
-	button
-		id toCreateProfile
-		textureNormal button/create_profile
-		position 700/400/0
-		size 238/59
-		func goto/createprofile
-	/button
-
 	image
 		id usernametext
 		texture text/username
-		position 450/600/0
-		size 102/40
+		position 730/650/0
+		size 163/32
 	/image
+
+	inputField
+		id username
+		textureName input/box
+		position 1050/650/0
+		size 440/62
+	/inputField
 
 	image
 		id passwordtext
 		texture text/password
-		position 450/500/0
-		size 102/54
+		position 730/550/0
+		size 165/69
 	/image
+
+	inputField
+		id password
+		textureName input/box
+		position 1050/550/0
+		size 440/62
+	/inputField
+
+	button
+		id toCreateProfile
+		textureNormal button/create_profile
+		position 1050/450/0
+		size 248/69
+		func goto/createprofile
+	/button
+
+	button
+		id exit
+		textureNormal button/exit
+		position 65/45/0
+		size 73/50
+		func exit
+	/button
+
+	button
+		id login
+		textureNormal button/login
+		position 1855/45/0
+		size 83/65
+		func login
+	/button
 /screen
 
 screen
 	id createprofile
 	background background/create_profile
-	screenSize 1280/1024
-
-	inputField
-		id username
-		textureName input/box
-		position 700/600/0
-		size 440/62
-	/inputField
-
-	inputField
-		id password
-		textureName input/box
-		position 700/500/0
-		size 440/62
-	/inputField
-
-	button
-		id confirmPassword
-		textureNormal input/box
-		position 700/400/0
-		size 440/62
-		func createuser
-	/button
-
-	button
-		id backCreateProfile
-		textureNormal button/back
-		position 45/64/0
-		size 60/60
-		func back
-	/button
+	screenSize 1920/1080
+	music bubble
 
 	image
 		id createUsernameText
 		texture text/username
-		position 450/600/0
-		size 102/40
+		position 730/650/0
+		size 163/32
 	/image
+
+	inputField
+		id createUsername
+		textureName input/box
+		position 1050/650/0
+		size 440/62
+	/inputField
 
 	image
 		id createPasswordText
-		texture text/new_password
-		position 450/500/0
-		size 188/40
+		texture text/password
+		position 730/550/0
+		size 165/69
 	/image
 
+	inputField
+		id createPassword
+		textureName input/box
+		position 1050/550/0
+		size 440/62
+	/inputField
+	
 	image
 		id confirmPasswordText
 		texture text/confirm_password
-		position 450/400/0
-		size 255/40
+		position 670/475/0
+		size 315/69
 	/image
+
+	inputField
+		id confirmPassword
+		textureName input/box
+		position 1050/475/0
+		size 440/62
+	/inputField
+	
+	button
+		id backFromCreateProfile
+		textureNormal button/cancel
+		position 65/45/0
+		size 107/40
+		func back
+	/button
+	
+	button
+		id registerProfile
+		textureNormal button/register
+		position 1845/45/0
+		size 148/65
+		func register
+	/button
 /screen
 
 screen
 	id mainmenu
 	background background/main_menu
-	screenSize 1280/1024
-	
-	button
-		id exitFromMain
-		textureNormal button/exit
-		position 45/64/0
-		size 60/60
-		func exit
-	/button
-
-	button
-		id Logout
-		textureNormal button/log_out
-		position 1200/65/0
-		size 124/65
-		func back
-	/button
+	screenSize 1920/1080
+	music bubble
 
 	button
 		id toProfileFromMain
 		textureNormal button/profile
-		position 1180/940/0
-		size 191/66
+		position 1800/1000/0
+		size 191/106
 		func goto/profilesettings
 	/button
 
 	button
 		id toGameLobby
 		textureNormal button/game_lobby
-		position 640/750/0
-		size 301/96
+		position 1000/750/0
+		size 601/196
 		func goto/gamelobby
 	/button
 
 	button
-		id toHighscores
+		id toHighscoresFromMain
 		textureNormal button/high_scores_main_menu
-		position 640/600/0
-		size 210/131
+		position 1000/525/0
+		size 420/131
 		func goto/highscores
 	/button
 
 	button
 		id toSettings
 		textureNormal button/settings
-		position 640/400/0
-		size 202/131
+		position 1000/350/0
+		size 302/131
 		func goto/settings
 	/button
+
+	button
+		id exitFromMain
+		textureNormal button/exit
+		position 65/45/0
+		size 73/50
+		func exit
+	/button
+
+	button
+		id Logout
+		textureNormal button/log_out
+		position 1845/45/0
+		size 124/65
+		func back
+	/button
+
 /screen
 
 screen
 	id gamelobby
 	background background/game_lobby
-	screenSize 1280/1024
+	screenSize 1920/1080
 	music bubble
+
 	button
 		id toProfileFromLobby
 		textureNormal button/profile
-		position 1180/940/0
-		size 191/66
-		func goto/profilesettings 
+		position 1800/1000/0
+		size 191/106
+		func goto/profilesettings
 	/button
 
 	button
 		id toHighscoresFromLobby
 		textureNormal button/high_scores_game_lobby
-		position 950/940/0
-		size 257/70
+		position 1400/1000/0
+		size 317/100
 		func goto/highscores
 	/button
 
+	image
+		id suddenDeathSettings
+		texture text/sudden_death_time
+		position 585/965/0
+		size 319/50
+	/image
+
 	button
-		id exitFromLobby
-		textureNormal button/exit
-		position 45/64/0
-		size 60/60
-		func exit
+		id suddendeathButtonNone
+		textureNormal button/game_settings_unselected
+		position 480/900/0
+		size 102/62
+		func set/sudden/unlimited
 	/button
 
-	image
-		id suddenDeathSetting
-		texture text/sudden_death_time
-		position 150/930/0
-		size 219/40
-	/image
+	button
+		id suddendeathButton5min
+		textureNormal button/game_settings_unselected
+		position 578/900/0
+		size 102/62
+		func set/sudden/300
+	/button
+
+	button
+		id suddendeathButton10min
+		textureNormal button/game_settings_unselected
+		position 676/900/0
+		size 102/62
+		func set/sudden/600
+	/button
+
+	button
+		id suddendeathButton15min
+		textureNormal button/game_settings_unselected
+		position 774/900/0
+		size 102/62
+		func set/sudden/900
+	/button
+
+	button
+		id suddendeathButtonRandom
+		textureNormal button/game_settings_unselected
+		position 872/900/0
+		size 102/62
+		func set/sudden/random
+	/button
 
 	image
 		id suddenDeathTextNone
 		texture text/none
-		position 80/730/0
-		size 65/16
+		position 455/850/0
+		size 52/15
 	/image
 
 	image
 		id suddenDeathText5min
 		texture text/5min
-		position 150/730/0
+		position 560/850/0
 		size 65/16
 	/image
 
 	image
 		id suddenDeathText10min
 		texture text/10min
-		position 250/730/0
+		position 655/850/0
 		size 65/16
 	/image
 
 	image
 		id suddenDeathText15min
 		texture text/15min
-		position 350/730/0
+		position 755/850/0
 		size 66/16
 	/image
 
 	image
 		id suddenDeathTextRandom
 		texture text/random
-		position 450/730/0
+		position 865/850/0
 		size 82/16
 	/image
 
+	image
+		id ballSpeedSettings
+		texture text/ball_speed
+		position 510/765/0
+		size 171/69
+	/image
+
 	button
-		id suddendeathButtNone
+		id ballSpeedButtonSlow
 		textureNormal button/game_settings_unselected
-		position 80/830/0
+		position 480/700/0
 		size 102/62
-		func sudden
+		func set/ballspeed/1.0f
 	/button
 
 	button
-		id suddendeathButt5min
+		id ballSpeedButtonNormal
 		textureNormal button/game_settings_unselected
-		position 180/830/0
+		position 578/700/0
 		size 102/62
-		func sudden
+		func set/ballspeed/2.0f
 	/button
 
 	button
-		id suddendeathButt10min
+		id ballSpeedButtonFast
 		textureNormal button/game_settings_unselected
-		position 280/830/0
+		position 676/700/0
 		size 102/62
-		func sudden
+		func set/ballspeed/3.0f
 	/button
 
 	button
-		id suddendeathButt15min
+		id ballSpeedButtonLightning
 		textureNormal button/game_settings_unselected
-		position 0/0/0
+		position 774/700/0
 		size 102/62
-		func sudden
+		func set/ballspeed/4.0f
 	/button
 
 	button
-		id suddendeathButtRandom
+		id ballSpeedButtonRandom
 		textureNormal button/game_settings_unselected
-		position 0/0/0
+		position 872/700/0
 		size 102/62
-		func sudden
+		func set/ballspeed/random
+	/button
+
+	image
+		id ballSpeedSlowText
+		texture text/slow
+		position 455/650/0
+		size 48/16
+	/image
+
+	image
+		id ballSpeedNormalText
+		texture text/normal
+		position 565/650/0
+		size 72/16
+	/image
+
+	image
+		id ballSpeedFastText
+		texture text/fast
+		position 650/650/0
+		size 39/15
+	/image
+
+	image
+		id ballSpeedLightningText
+		texture text/lightning
+		position 770/650/0
+		size 90/20
+	/image
+
+	image
+		id ballSpeedRandomText
+		texture text/random
+		position 865/650/0
+		size 82/16
+	/image
+
+	image
+		id fogOfWarSettings
+		texture text/fog_of_war
+		position 160/965/0
+		size 200/65
+	/image
+
+	button
+		id fogOfWarOn
+		textureNormal button/game_settings_unselected
+		position 112/900/0
+		size 102/62
+		func set/fow/on
 	/button
 
 	button
-		id startDemoGame
-		textureNormal button/host
-		position 640/512/0
+		id fogOfWarOff
+		textureNormal button/game_settings_unselected
+		position 210/900/0
+		size 102/62
+		func set/fow/off
+	/button
+
+	button
+		id fogOfWarRandom
+		textureNormal button/game_settings_unselected
+		position 308/900/0
+		size 102/62
+		func set/fow/random
+	/button
+
+	image
+		id fogOfWarTextOn
+		texture text/on
+		position 75/850/0
+		size 28/15
+	/image
+
+	image
+		id fogOfWarTextOff
+		texture text/off
+		position 175/850/0
+		size 32/16
+	/image
+
+	image
+		id fogOfWarTextRandom
+		texture text/random
+		position 300/850/0
+		size 82/16
+	/image
+
+	image
+		id powerUpSettings
+		texture text/power_ups
+		position 150/765/0
+		size 184/50
+	/image
+
+	button
+		id powerUpsOn
+		textureNormal button/game_settings_unselected
+		position 112/700/0
+		size 102/62
+		func set/pow/on
+	/button
+
+	button
+		id powerUpsOff
+		textureNormal button/game_settings_unselected
+		position 210/700/0
+		size 102/62
+		func set/pow/off
+	/button
+
+	button
+		id powerUpsRandom
+		textureNormal button/game_settings_unselected
+		position 308/700/0
+		size 102/62
+		func set/pow/random
+	/button
+
+	image
+		id powerUpsOn
+		texture text/on
+		position 75/650/0
+		size 28/15
+	/image
+
+	image
+		id powerUpsOff
+		texture text/off
+		position 175/650/0
+		size 32/16
+	/image
+
+	image
+		id powerUpsRandom
+		texture text/random
+		position 300/650/0
+		size 82/16
+	/image
+
+	image
+		id chatOut
+		texture output/chat_window
+		position 325/341/0
+		size 510/375
+	/image
+
+	inputField
+		id chatIn
+		textureName input/chat
+		position 325/184/-1
+		size 510/61
+	/inputField
+
+	image
+		id friendList
+		texture output/player_list_game_lobby
+		position 760/367/0
+		size 238/323
+	/image
+
+	inputField
+		id playerSearch
+		textureName input/player_search
+		position 760/173/0
+		size 238/39
+	/inputField
+
+	button
+		id challengeGame
+		textureNormal button/challenge_unselected
+		textureHovered button/challenge_selected
+		position 1020/200/0
+		size 224/94
+		func host
+	/button
+
+	image
+		id challengeText
+		texture button/challenge
+		position 1020/195/-1
+		size 186/77
+	/image
+
+	button
+		id findGame
+		textureNormal button/start_game_unselected
+		textureHovered button/start_game_selected
+		position 1700/200/0
+		size 170/94
+		func host
+	/button
+
+	image
+		id findGameText
+		texture button/find
+		position 1700/200/-1
+		size 83/59
+	/image
+
+	button
+		id hostGame
+		textureNormal button/start_game_unselected
+		textureHovered button/start_game_selected
+		position 1400/200/0
+		size 170/94
+		func host
+	/button
+
+	image
+		id hostGameText
+		texture button/host
+		position 1400/200/-1
 		size 96/58
-		func goto/game
+	/image
+
+	button
+		id back
+		textureNormal button/back
+		position 65/45/0
+		size 80/50
+		func back
 	/button
 /screen
 
 screen
 	id settings
 	background background/settings
-	screenSize 1280/1024
+	screenSize 1920/1080
+	music bubble
+
+	image
+		id controlsText
+		texture text/controls
+		position 185/800/0
+		size 226/75
+	/image
+
+	image
+		id resolutionText
+		texture text/resolution
+		position 208/500/0
+		size 274/75
+	/image
+
+	image
+		id soundText
+		texture text/sound
+		position 1400/500/0
+		size 151/75
+	/image
+
+	button
+		id cancel
+		textureNormal button/cancel
+		position 85/45/0
+		size 107/50
+		func back
+	/button
+
+	button
+		id confirm
+		textureNormal button/confirm
+		position 1825/45/0
+		size 140/50
+		func back
+	/button
 /screen
 
 screen
 	id profilesettings
 	background background/profile_settings
-	screensize 1280/1024
+	screenSize 1920/1080
+	music bubble
+
+	button
+		id cancel
+		textureNormal button/cancel
+		position 85/45/0
+		size 107/50
+		func back
+	/button
+
+	button
+		id confirm
+		textureNormal button/confirm
+		position 1825/45/0
+		size 140/50
+		func back
+	/button
 /screen
 
 screen
 	id highscores
 	background background/high_scores
-	screenSize 1280/1024
+	screenSize 1920/1080
+	music bubble
+
+	button
+		id back
+		textureNormal button/back
+		position 65/45/0
+		size 80/50
+		func back
+	/button
 /screen
