@@ -10,7 +10,7 @@ Sound::Sound(Sound& _other)
 _other.sound = nullptr;
 }
 
-Sound::Sound(Sound &&_other) noexcept
+Sound::Sound(Sound &&_other)
 	: volume(_other.volume),
 	resourceName(_other.resourceName),
 	type(_other.type),

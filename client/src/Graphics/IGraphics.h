@@ -4,6 +4,8 @@
  *  NOTE: File starts here!
  */
 
+#include "ErrorCodeList.h"
+
 #include <boost/filesystem.hpp>
 #include <glm/glm.hpp>
 #include <string>
@@ -14,13 +16,6 @@
 class IGraphics
 {
 public:
-	enum class ErrorCode
-	{
-		OK,
-		GLYPH_COULD_NOT_BE_LOADED,
-		INVALID_ARGUMENT,
-	};
-
 	typedef std::shared_ptr<IGraphics> ptr;
 
 	/**

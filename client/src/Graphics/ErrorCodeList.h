@@ -4,8 +4,10 @@
 enum class ErrorCode
 {
 	//0-99 - General - prefix: "G_"
-	G_OK	= 0,
-	G_FAIL	= 1,
+	G_OK						= 0,
+	G_FAIL						= 1,
+	G_GLYPH_COULD_NOT_BE_LOADED	= 2,
+	G_INVALID_ARGUMENT			= 3,
 	//100-199 - Linux General - prefix: "LG"
 
 	//200-299 - Windows General - prefix: "WG"

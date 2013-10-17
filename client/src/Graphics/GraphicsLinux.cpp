@@ -255,7 +255,7 @@ bool GraphicsLinux::loadResources(const boost::filesystem::path& _resourceDir)
 		else if (r.type == "font")
 		{
 			Font f;
-			Font::ErrorCode fErr = f.init(r.path, 64);
+			Font::ErrorCode fErr = f.init(r.path, 64, true);
 			if (fErr != Font::ErrorCode::OK)
 			{
 				return false;

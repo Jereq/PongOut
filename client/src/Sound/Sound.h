@@ -12,7 +12,7 @@ class Sound
 {
 public:
 	Sound(Sound& _other);
-	Sound(Sound &&_other) noexcept;
+	Sound(Sound &&_other);
 	Sound(string _resourceName = "undefined", string _type = "undefined",
 		float _volume = 1.0f);
 	~Sound(void);

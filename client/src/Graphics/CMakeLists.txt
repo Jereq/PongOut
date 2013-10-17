@@ -19,7 +19,6 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 		GraphicsWindows.cpp GraphicsWindows.h
 		D3D.cpp D3D.h
 		TestShader.cpp TestShader.h
-		ErrorCodeList.h ErrorCodeList.h
 		DXAssetInstancing.h
 	)
 
@@ -69,6 +68,8 @@ endif()
 
 list(APPEND GRAPHICS_SOURCES
 	Font.cpp Font.h
+	IGraphics.h
+	ErrorCodeList.h
 )
 
 add_library(Graphics

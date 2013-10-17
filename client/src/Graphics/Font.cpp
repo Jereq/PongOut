@@ -17,7 +17,8 @@ Font::ErrorCode Font::initLibrary()
 }
 
 Font::Font()
-	: face(nullptr)
+	: face(nullptr),
+	  flipOrigin(false)
 {
 }
 
@@ -25,12 +26,13 @@ Font::~Font()
 {
 }
 
-Font::ErrorCode Font::init(const boost::filesystem::path& _fontPath, unsigned int _size)
+Font::ErrorCode Font::init(const boost::filesystem::path& _fontPath, unsigned int _size, bool _flipOrigin)
 {
 	ErrorCode err;
 
 	fontPath = _fontPath;
 	size = _size;
+	flipOrigin = _flipOrigin;
 
 	if (!library)
 	{
@@ -69,21 +71,42 @@ Font::ErrorCode Font::getGlyph(Glyph& _glyphOut, char32_t _character)
 	const unsigned int buffSize = glyph->bitmap.width * glyph->bitmap.rows;
 
 	_glyphOut.bitBuffer.resize(buffSize);
-	auto it(_glyphOut.bitBuffer.end());
 
-	unsigned char* bitBuff = glyph->bitmap.buffer;
-
-	for (unsigned int i = 0; i < glyph->bitmap.rows; i++)
+	if (flipOrigin)
 	{
-		it -= glyph->bitmap.width;
-		for (unsigned int j = 0; j < glyph->bitmap.width; j++)
-		{
-			*it = bitBuff[j];
-			++it;
-		}
-		it -= glyph->bitmap.width;
+		auto it(_glyphOut.bitBuffer.end());
 
-		bitBuff += glyph->bitmap.pitch;
+		unsigned char* bitBuff = glyph->bitmap.buffer;
+
+		for (int i = 0; i < glyph->bitmap.rows; i++)
+		{
+			it -= glyph->bitmap.width;
+			for (int j = 0; j < glyph->bitmap.width; j++)
+			{
+				*it = bitBuff[j];
+				++it;
+			}
+			it -= glyph->bitmap.width;
+
+			bitBuff += glyph->bitmap.pitch;
+		}
+	}
+	else
+	{
+		auto it(_glyphOut.bitBuffer.begin());
+
+		unsigned char* bitBuff = glyph->bitmap.buffer;
+
+		for (int i = 0; i < glyph->bitmap.rows; i++)
+		{
+			for (int j = 0; j < glyph->bitmap.width; j++)
+			{
+				*it = bitBuff[j];
+				++it;
+			}
+
+			bitBuff += glyph->bitmap.pitch;
+		}
 	}
 
 	_glyphOut.width = glyph->bitmap.width;
