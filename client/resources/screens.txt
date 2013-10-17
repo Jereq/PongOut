@@ -508,7 +508,7 @@ screen
 	image
 		id challengeText
 		texture button/challenge
-		position 1020/200/-1
+		position 1020/195/-1
 		size 186/77
 	/image
 
