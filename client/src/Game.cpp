@@ -145,6 +145,10 @@ void Game::onFunction(const std::string& _func)
 			gameSettings.setPOW(false);
 		}
 	}
+	else if(_func.substr(0, 10) == "set/level/")
+	{
+		gameSettings.setMapId(stoi(_func.substr(12)));
+	}
 }
 
 Game::Game(ICoreSystem::ptr _system)

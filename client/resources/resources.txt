@@ -46,6 +46,15 @@ texture:button/game_settings_unselected	textures/button_game_settings_unselected
 texture:button/high_scores_game_lobby	textures/button_high_scores_game_lobby.png
 texture:button/high_scores_main_menu	textures/button_high_scores_main_menu.png
 texture:button/host			textures/button_host.png
+texture:button/level01			textures/level_01.png
+texture:button/level02			textures/level_02.png
+texture:button/level03			textures/level_03.png
+texture:button/level04			textures/level_04.png
+texture:button/level05			textures/level_05.png
+texture:button/level06			textures/level_06.png
+texture:button/level07			textures/level_07.png
+texture:button/level08			textures/level_08.png
+texture:button/level09			textures/level_09.png
 texture:button/login			textures/button_login.png
 texture:button/log_out			textures/button_log_out.png
 texture:button/profile			textures/button_profile.png
