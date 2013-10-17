@@ -8,7 +8,8 @@
 #include "LogoutRequest.h"
 #include "AcknowledgeLast.h"
 #include "GameMessage.h"
-#include "CreateGame.h"
+#include "CreateGameRequest.h"
+#include "CreateGameResponse.h"
 
 PacketHandler& PacketHandler::getInstance()
 {
@@ -46,7 +47,8 @@ void PacketHandler::initRegister()
 	
 	GameMessage::ptr gameMsg(new GameMessage());
 
-	gameMsg->registerChild(GameMessage::ptr(new CreateGame()));
+	gameMsg->registerChild(GameMessage::ptr(new CreateGameRequest()));
+	gameMsg->registerChild(GameMessage::ptr(new CreateGameResponse()));
 
 	registerPacket(gameMsg);
 }

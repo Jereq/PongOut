@@ -169,9 +169,19 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 
 	case msgBase::MsgType::GAMEMESSAGE:
 		{
-			GameMessage::ptr gmp = boost::static_pointer_cast<GameMessage>(p);
-			GameMaster::getInstance().handleGameMessage(gmp);
-			break;
+			if (_user->getUserStatus() != User::UserStatus::UNVERIFIED)
+			{
+				GameMessage::ptr gmp = boost::static_pointer_cast<GameMessage>(p);
+				GameMaster::getInstance().handleGameMessage(gmp, _user);
+				break;
+			} 
+			else
+			{
+				Log::addLog(Log::LogType::LOG_INFO, 4, "UserID: " + std::to_string(_user->getUserID()) + " has tried to execute unauthorized command, user disconnected!");
+				_user->disconnect();
+				users.erase(_user);
+				break;
+			}			
 		}
 	default:
 		Log::addLog(Log::LogType::LOG_ERROR, 0,"Received packet that are not yet implemented: " + p->getType());

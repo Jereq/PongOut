@@ -6,6 +6,8 @@
 #include <iterator>
 #include <map>
 
+#include "CommonTypes.h"
+
 class msgBase
 {	
 public:	
@@ -97,6 +99,22 @@ template<typename inIter, typename vecType>
 		}
 	};
 
+template<typename inIter>
+	class implPack<CommonTypes::Block, inIter>
+	{
+	public:
+		static void _pack(const CommonTypes::Block& _block, inIter _dest)
+		{
+			pack(_block.health, _dest);
+			pack(_block.id, _dest);
+			pack(_block.type, _dest);
+			pack(_block.x, _dest);
+			pack(_block.y, _dest);
+			pack(_block.z, _dest);
+			pack(_block.textures, _dest);
+		}
+	};
+
 public:
 
 template<typename T, typename inIter>
@@ -168,7 +186,25 @@ template<typename outIter, typename vecType>
 			{
 				_source = unpack(_vector[i], _source);
 			}
-			
+
+			return _source;
+		}
+	};
+
+template<typename outIter>
+	class implUnpack<CommonTypes::Block, outIter>
+	{
+	public:
+		static outIter _unpack(CommonTypes::Block& _block, outIter _source)
+		{
+			_source = unpack(_block.health, _source);
+			_source = unpack(_block.id, _source);
+			_source = unpack(_block.type, _source);
+			_source = unpack(_block.x, _source);
+			_source = unpack(_block.y, _source);
+			_source = unpack(_block.z, _source);
+			_source = unpack(_block.textures, _source);
+
 			return _source;
 		}
 	};
