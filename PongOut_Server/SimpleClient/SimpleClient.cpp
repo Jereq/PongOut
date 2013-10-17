@@ -63,6 +63,8 @@ void waitForMsg(Server::ptr _s, int _timeToWait)
 				{
 				case GameMessage::GameMsgType::CREATEGAMERESPONSE:
 					{
+						CreateGameResponse::ptr cgrp = boost::static_pointer_cast<CreateGameResponse>(tmp.gMsg);
+
 						cout << "created game successfully!" << endl; 
 						break;
 					}
