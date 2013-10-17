@@ -294,13 +294,13 @@ GraphicsLinux::LoadedImage GraphicsLinux::loadImage(const fs::path& _imagePath)
 	return res;
 }
 
-GraphicsLinux::ErrorCode GraphicsLinux::loadChar(LoadedChar& _charOut, Font& _font, char32_t _character)
+ErrorCode GraphicsLinux::loadChar(LoadedChar& _charOut, Font& _font, char32_t _character)
 {
 	Font::Glyph glyph;
 	Font::ErrorCode err = _font.getGlyph(glyph, _character);
 	if (err != Font::ErrorCode::OK)
 	{
-		return ErrorCode::GLYPH_COULD_NOT_BE_LOADED;
+		return ErrorCode::G_GLYPH_COULD_NOT_BE_LOADED;
 	}
 
 	GLint prevAlignment;
@@ -321,18 +321,18 @@ GraphicsLinux::ErrorCode GraphicsLinux::loadChar(LoadedChar& _charOut, Font& _fo
 	_charOut.advance = glyph.advance;
 	_charOut.size = glm::vec2(glyph.width, glyph.height);
 
-	return ErrorCode::OK;
+	return ErrorCode::G_OK;
 }
 
-GraphicsLinux::ErrorCode GraphicsLinux::getChar(LoadedChar& _charOut, Font& _font, char32_t _character)
+ErrorCode GraphicsLinux::getChar(LoadedChar& _charOut, Font& _font, char32_t _character)
 {
 	auto it = loadedChars.find(_character);
 	if (it == loadedChars.end())
 	{
 		LoadedChar c;
-		if (loadChar(c, _font, _character) != ErrorCode::OK)
+		if (loadChar(c, _font, _character) != ErrorCode::G_OK)
 		{
-			return ErrorCode::GLYPH_COULD_NOT_BE_LOADED;
+			return ErrorCode::G_GLYPH_COULD_NOT_BE_LOADED;
 		}
 
 		auto resPair = loadedChars.insert(std::make_pair(_character, c));
@@ -341,7 +341,7 @@ GraphicsLinux::ErrorCode GraphicsLinux::getChar(LoadedChar& _charOut, Font& _fon
 
 	_charOut = it->second;
 
-	return ErrorCode::OK;
+	return ErrorCode::G_OK;
 }
 
 void GraphicsLinux::addRectangle(glm::vec3 _center, glm::vec2 _size, float _rotation, std::string _id)
@@ -360,11 +360,11 @@ void GraphicsLinux::addRectangle(glm::vec3 _center, glm::vec2 _size, float _rota
 	registeredRectangles[_id].push_back(rect);
 }
 
-IGraphics::ErrorCode GraphicsLinux::addText(const std::string& _fontId, glm::vec3 _startPos, glm::vec2 _letterSize, const std::string& _text)
+ErrorCode GraphicsLinux::addText(const std::string& _fontId, glm::vec3 _startPos, glm::vec2 _letterSize, const std::string& _text)
 {
 	if (loadedFonts.count(_fontId) == 0)
 	{
-		return ErrorCode::INVALID_ARGUMENT;
+		return ErrorCode::G_INVALID_ARGUMENT;
 	}
 
 	Font& font = loadedFonts.at(_fontId);
@@ -374,7 +374,7 @@ IGraphics::ErrorCode GraphicsLinux::addText(const std::string& _fontId, glm::vec
 
 	if (!utf8::is_valid(utf8It, itEnd))
 	{
-		return ErrorCode::INVALID_ARGUMENT;
+		return ErrorCode::G_INVALID_ARGUMENT;
 	}
 
 	glm::vec3 penPos = _startPos;
@@ -385,7 +385,7 @@ IGraphics::ErrorCode GraphicsLinux::addText(const std::string& _fontId, glm::vec
 
 		LoadedChar c;
 		ErrorCode err = getChar(c, font, character32);
-		if (err != ErrorCode::OK)
+		if (err != ErrorCode::G_OK)
 		{
 			return err;
 		}
@@ -405,7 +405,7 @@ IGraphics::ErrorCode GraphicsLinux::addText(const std::string& _fontId, glm::vec
 		penPos += glm::vec3(c.advance.x, c.advance.y, 0.f) * posScale;
 	}
 
-	return ErrorCode::OK;
+	return ErrorCode::G_OK;
 }
 
 void GraphicsLinux::drawFrame()
