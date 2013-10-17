@@ -46,7 +46,7 @@ private:
 	};
 
 	std::map<char32_t, LoadedChar> loadedChars;
-	Font menuFont;
+	std::map<std::string, Font> loadedFonts;
 
 	struct Rectangle
 	{
@@ -67,8 +67,8 @@ private:
 
 	LoadedImage loadImage(const boost::filesystem::path& _imagePath);
 
-	ErrorCode loadChar(LoadedChar& _charOut, char32_t _character);
-	ErrorCode getChar(LoadedChar& _charOut, char32_t _character);
+	ErrorCode loadChar(LoadedChar& _charOut, Font& _font, char32_t _character);
+	ErrorCode getChar(LoadedChar& _charOut, Font& _font, char32_t _character);
 
 	void bufferData(const recs_t& _rects);
 
@@ -85,7 +85,7 @@ public:
 
 	virtual bool loadResources(const boost::filesystem::path& _resourceDir) override;
 	virtual void addRectangle(glm::vec3 _center, glm::vec2 _size, float _rotation, std::string _id) override;
-	virtual ErrorCode addText(glm::vec3 _startPos, glm::vec2 _letterSize, const std::string& _text) override;
+	virtual ErrorCode addText(const std::string& _fontId, glm::vec3 _startPos, glm::vec2 _letterSize, const std::string& _text) override;
 
 	virtual void drawFrame() override;
 

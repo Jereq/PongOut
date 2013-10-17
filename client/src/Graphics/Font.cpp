@@ -47,7 +47,7 @@ Font::ErrorCode Font::init(const boost::filesystem::path& _fontPath, unsigned in
 		return ErrorCode::FONT_LOAD_FAILED;
 	}
 
-	error = FT_Set_Pixel_Sizes(face, 0, 24);
+	error = FT_Set_Pixel_Sizes(face, 0, _size);
 	if (error)
 	{
 		return ErrorCode::SIZE_FAILED;
@@ -92,4 +92,9 @@ Font::ErrorCode Font::getGlyph(Glyph& _glyphOut, char32_t _character)
 	_glyphOut.advance = glm::vec2(glyph->advance.x / 64.f, glyph->advance.y / 64.f);
 
 	return ErrorCode::OK;
+}
+
+unsigned int Font::getSize() const
+{
+	return size;
 }

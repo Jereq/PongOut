@@ -194,12 +194,6 @@ bool GraphicsLinux::init()
 
 	glClearColor(1.f, 0.f, 1.f, 1.f);
 
-	Font::ErrorCode fErr = menuFont.init("/usr/share/fonts/truetype/freefont/FreeSans.ttf", 24);
-	if (fErr != Font::ErrorCode::OK)
-	{
-		return false;
-	}
-
 	return true;
 }
 
@@ -236,8 +230,8 @@ void GraphicsLinux::destroy()
 
 bool GraphicsLinux::loadResources(const boost::filesystem::path& _resourceDir)
 {
-	std::vector<ResourceLoader::Resource> textureResources;
-	ResourceLoader::ErrorCode err = ResourceLoader::getResources(textureResources, _resourceDir, "texture");
+	std::vector<ResourceLoader::Resource> resources;
+	ResourceLoader::ErrorCode err = ResourceLoader::getResources(resources, _resourceDir);
 	if (err == ResourceLoader::ErrorCode::INVALID_FORMAT)
 	{
 		std::cout << "Warning: " << _resourceDir / "resources.txt" << " contains invalid formatting." << std::endl;
@@ -248,12 +242,26 @@ bool GraphicsLinux::loadResources(const boost::filesystem::path& _resourceDir)
 		return false;
 	}
 
-	for (auto tex : textureResources)
+	for (auto r : resources)
 	{
-		LoadedImage image = loadImage(tex.path);
-		if (image.textureID)
+		if (r.type == "texture")
 		{
-			loadedTextures.insert(std::pair<std::string, LoadedImage>(tex.name, image));
+			LoadedImage image = loadImage(r.path);
+			if (image.textureID)
+			{
+				loadedTextures.insert(std::pair<std::string, LoadedImage>(r.name, image));
+			}
+		}
+		else if (r.type == "font")
+		{
+			Font f;
+			Font::ErrorCode fErr = f.init(r.path, 64);
+			if (fErr != Font::ErrorCode::OK)
+			{
+				return false;
+			}
+
+			loadedFonts.insert(std::pair<std::string, Font>(r.name, f));
 		}
 	}
 
@@ -279,15 +287,17 @@ GraphicsLinux::LoadedImage GraphicsLinux::loadImage(const fs::path& _imagePath)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_TYPE), ilGetData());
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	res.textureID = tId;
 	return res;
 }
 
-GraphicsLinux::ErrorCode GraphicsLinux::loadChar(LoadedChar& _charOut, char32_t _character)
+GraphicsLinux::ErrorCode GraphicsLinux::loadChar(LoadedChar& _charOut, Font& _font, char32_t _character)
 {
 	Font::Glyph glyph;
-	Font::ErrorCode err = menuFont.getGlyph(glyph, _character);
+	Font::ErrorCode err = _font.getGlyph(glyph, _character);
 	if (err != Font::ErrorCode::OK)
 	{
 		return ErrorCode::GLYPH_COULD_NOT_BE_LOADED;
@@ -314,13 +324,13 @@ GraphicsLinux::ErrorCode GraphicsLinux::loadChar(LoadedChar& _charOut, char32_t 
 	return ErrorCode::OK;
 }
 
-GraphicsLinux::ErrorCode GraphicsLinux::getChar(LoadedChar& _charOut, char32_t _character)
+GraphicsLinux::ErrorCode GraphicsLinux::getChar(LoadedChar& _charOut, Font& _font, char32_t _character)
 {
 	auto it = loadedChars.find(_character);
 	if (it == loadedChars.end())
 	{
 		LoadedChar c;
-		if (loadChar(c, _character) != ErrorCode::OK)
+		if (loadChar(c, _font, _character) != ErrorCode::OK)
 		{
 			return ErrorCode::GLYPH_COULD_NOT_BE_LOADED;
 		}
@@ -350,8 +360,15 @@ void GraphicsLinux::addRectangle(glm::vec3 _center, glm::vec2 _size, float _rota
 	registeredRectangles[_id].push_back(rect);
 }
 
-IGraphics::ErrorCode GraphicsLinux::addText(glm::vec3 _startPos, glm::vec2 _letterSize, const std::string& _text)
+IGraphics::ErrorCode GraphicsLinux::addText(const std::string& _fontId, glm::vec3 _startPos, glm::vec2 _letterSize, const std::string& _text)
 {
+	if (loadedFonts.count(_fontId) == 0)
+	{
+		return ErrorCode::INVALID_ARGUMENT;
+	}
+
+	Font& font = loadedFonts.at(_fontId);
+
 	auto utf8It = _text.begin();
 	auto itEnd = _text.end();
 
@@ -367,13 +384,13 @@ IGraphics::ErrorCode GraphicsLinux::addText(glm::vec3 _startPos, glm::vec2 _lett
 		char32_t character32 = utf8::next(utf8It, itEnd);
 
 		LoadedChar c;
-		ErrorCode err = getChar(c, character32);
+		ErrorCode err = getChar(c, font, character32);
 		if (err != ErrorCode::OK)
 		{
 			return err;
 		}
 
-		float scale = 1.f / 24.f;
+		float scale = 1.f / font.getSize();
 		glm::vec3 posScale(_letterSize.x * scale, _letterSize.y * scale, 1.f);
 		glm::vec2 size = _letterSize * c.size * scale;
 

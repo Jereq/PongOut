@@ -19,8 +19,8 @@ bool CoreSystemLinux::openWindow()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	const static size_t WIDTH = 800;
-	const static size_t HEIGHT = 480;
+	const static size_t WIDTH = 1280;
+	const static size_t HEIGHT = 720;
 
 	window = glfwCreateWindow(WIDTH, HEIGHT, "PongOut", nullptr, nullptr);
 	if (!window)

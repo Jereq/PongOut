@@ -82,13 +82,14 @@ public:
 	 *  after which the added texts will be removed. Therefore, to get a persistent text,
 	 *  adddText must be called every frame for each text.
 	 *
+	 *  @param _fontId the resource name of the desired font.
 	 *  @param _startPos the starting position to draw text at, with (-1,-1, d) in the lower left corner of the screen
 	 *  	and (1, 1, d) in the upper right corner. d is depth, where -1.0 is all the way at the front and 1.0 all
 	 *  	the way at the back.
 	 *  @param _letterSize the base size of a character. Result depends on font.
 	 *  @param _text the text to be added.
 	 */
-	virtual ErrorCode addText(glm::vec3 _startPos, glm::vec2 _letterSize, const std::string& _text) =0;
+	virtual ErrorCode addText(const std::string& _fontId, glm::vec3 _startPos, glm::vec2 _letterSize, const std::string& _text) =0;
 
 	/**
 	 *  Draw the current frame, using any queued objects.

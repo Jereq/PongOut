@@ -43,8 +43,5 @@ public:
 	ErrorCode init(const boost::filesystem::path& _fontPath, unsigned int _size);
 
 	ErrorCode getGlyph(Glyph& _glyphOut, char32_t _character);
-
-private: // Delete copy functions
-	Font(Font&);
-	Font& operator=(Font&);
+	unsigned int getSize() const;
 };
