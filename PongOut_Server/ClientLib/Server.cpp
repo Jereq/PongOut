@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Server.h"
 
+#include <iostream>
+
 Server::Server(const std::string _ipAdress, std::uint16_t _port)
 	: addr(_ipAdress),
 	port(_port),

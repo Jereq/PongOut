@@ -1,5 +1,5 @@
 #pragma once
-#include "msgbase.h"
+#include "msgBase.h"
 
 class Chat : public msgBase
 {

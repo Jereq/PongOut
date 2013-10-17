@@ -1,6 +1,6 @@
 #pragma once
 
-#include "msgbase.h"
+#include "msgBase.h"
 
 class LogoutRequest : public msgBase
 {

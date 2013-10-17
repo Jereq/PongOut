@@ -1,5 +1,5 @@
 #pragma once
-#include "msgbase.h"
+#include "msgBase.h"
 #include <utility>
 
 class FriendlistResponse : public msgBase
