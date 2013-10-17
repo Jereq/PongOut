@@ -100,10 +100,7 @@ bool GameState::onExit()
 
 void GameState::update(const float _dt)
 {
-	//for(GameObject::ptr g : gameObjects)
-	//{
-	//	g->update(_dt);
-	//}
+	
 	world->update(_dt, graphics);
 }
 
