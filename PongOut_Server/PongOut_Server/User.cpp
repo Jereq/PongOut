@@ -40,6 +40,11 @@ void User::handleWrite( const boost::system::error_code& _err, size_t _byte )
 void User::sendMsg()
 {
 	msgWriteBuffer = msgWriteBufferQueue.front()->getData();
+	if (msgWriteBuffer.size() != msgWriteBufferQueue.front()->getHeader().length + sizeof(msgBase::header))
+	{
+		Log::addLog(Log::LogType::LOG_ERROR, 1, "Packet has incorrect size");
+		return;
+	}
 	boost::asio::async_write(*socket, boost::asio::buffer(msgWriteBuffer), boost::bind(&User::handleWrite, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 }
 
@@ -147,4 +152,9 @@ void User::setUserStatus( UserStatus _status )
 void User::setUserID( unsigned int _id )
 {
 	id = _id;
+}
+
+User::UserStatus User::getUserStatus()
+{
+	return status;
 }

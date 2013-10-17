@@ -180,8 +180,8 @@ void Server::messageActionSwitch( const msgBase::header& _header, const std::deq
 
 	case msgBase::MsgType::GAMEMESSAGE:
 		{
-			GameMessage::ptr gmp = GameMessage::ptr(new GameMessage());			
-			GameHandler::getInstance().handleGameMessage(gmp);
+			GameMessage::ptr gmp = boost::static_pointer_cast<GameMessage>(p);		
+			GameHandler::getInstance().handleGameMessage(gmp, messages);
 			break;
 		}
 

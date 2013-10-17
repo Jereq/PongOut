@@ -107,6 +107,7 @@ template<typename inIter>
 		{
 			pack(_block.health, _dest);
 			pack(_block.id, _dest);
+			pack(_block.type, _dest);
 			pack(_block.x, _dest);
 			pack(_block.y, _dest);
 			pack(_block.z, _dest);
@@ -198,6 +199,7 @@ template<typename outIter>
 		{
 			_source = unpack(_block.health, _source);
 			_source = unpack(_block.id, _source);
+			_source = unpack(_block.type, _source);
 			_source = unpack(_block.x, _source);
 			_source = unpack(_block.y, _source);
 			_source = unpack(_block.z, _source);
