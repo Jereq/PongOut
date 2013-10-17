@@ -16,11 +16,6 @@
 class GraphicsLinux : public IGraphics
 {
 public:
-	enum class ErrorCode
-	{
-		OK,
-		GLYPH_COULD_NOT_BE_LOADED,
-	};
 
 private:
 	GLFWwindow* window;
@@ -47,6 +42,7 @@ private:
 		GLuint textureID;
 		glm::vec2 origin;
 		glm::vec2 advance;
+		glm::vec2 size;
 	};
 
 	std::map<char32_t, LoadedChar> loadedChars;
@@ -60,6 +56,7 @@ private:
 	};
 	typedef std::vector<Rectangle> recs_t;
 	std::map<std::string, recs_t> registeredRectangles;
+	std::map<GLuint, recs_t> registeredCharacters;
 
 	bool checkGLVersion(int _majorRequiredVersion, int _minorRequiredVersion);
 	void initDevIL();
@@ -88,6 +85,7 @@ public:
 
 	virtual bool loadResources(const boost::filesystem::path& _resourceDir) override;
 	virtual void addRectangle(glm::vec3 _center, glm::vec2 _size, float _rotation, std::string _id) override;
+	virtual ErrorCode addText(glm::vec3 _startPos, glm::vec2 _letterSize, const std::string& _text) override;
 
 	virtual void drawFrame() override;
 

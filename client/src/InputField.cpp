@@ -106,6 +106,7 @@ void InputField::onInput(IInput::Event _event)
 void InputField::draw(IGraphics::ptr _graphics)
 {
 	_graphics->addRectangle(center, size, 0, textureName);
+	_graphics->addText(center - glm::vec3(size.x * 0.45f, size.y * 0.35f, 0.01f), glm::vec2(size.y) * 0.8f, text);
 }
 
 std::string InputField::getId() const

@@ -67,22 +67,28 @@ Font::ErrorCode Font::getGlyph(Glyph& _glyphOut, char32_t _character)
 	FT_GlyphSlot glyph = face->glyph;
 
 	const unsigned int buffSize = glyph->bitmap.width * glyph->bitmap.rows;
+
 	_glyphOut.bitBuffer.resize(buffSize);
-	auto it(_glyphOut.bitBuffer.begin());
+	auto it(_glyphOut.bitBuffer.end());
+
 	unsigned char* bitBuff = glyph->bitmap.buffer;
 
-	for (unsigned int i = 0; i < glyph->bitmap.rows; i++) {
-		for (unsigned int j = 0; j < glyph->bitmap.width; j++) {
+	for (unsigned int i = 0; i < glyph->bitmap.rows; i++)
+	{
+		it -= glyph->bitmap.width;
+		for (unsigned int j = 0; j < glyph->bitmap.width; j++)
+		{
 			*it = bitBuff[j];
 			++it;
 		}
+		it -= glyph->bitmap.width;
 
 		bitBuff += glyph->bitmap.pitch;
 	}
 
 	_glyphOut.width = glyph->bitmap.width;
 	_glyphOut.height = glyph->bitmap.rows;
-	_glyphOut.origin = glm::vec2(glyph->bitmap_left / 64.f, glyph->bitmap_top / 64.f);
+	_glyphOut.origin = glm::vec2(glyph->bitmap_left, glyph->bitmap_top);
 	_glyphOut.advance = glm::vec2(glyph->advance.x / 64.f, glyph->advance.y / 64.f);
 
 	return ErrorCode::OK;
