@@ -88,7 +88,13 @@ void Game::onFunction(const std::string& _func)
 	}
 	else if(_func == "host")
 	{
-		server->createGame( gameSettings.getMapId(), gameSettings.getBallSpeed(), 1, gameSettings.getSuddenDeathTime(), gameSettings.getFOW(), gameSettings.getPOW());
+		int mapId = gameSettings.getMapId();
+		float ballSpeed = gameSettings.getBallSpeed();
+		int timeLimit = gameSettings.getSuddenDeathTime();
+		bool fow = gameSettings.getFOW();
+		bool pow = gameSettings.getPOW();
+		server->createGame( mapId, ballSpeed, 1, timeLimit, fow, pow);
+
 		screenManager.openScreen("game");
 	}
 	else if(_func.substr(0, 11) == "set/sudden/")
@@ -252,6 +258,8 @@ void Game::run()
 {
 	server = Server::ptr(new Server("194.47.150.59", 6500));
 	server->connect();
+	if(serverAllow())
+		return;
 
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 

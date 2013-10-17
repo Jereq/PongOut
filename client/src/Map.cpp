@@ -31,13 +31,6 @@ void Map::initialize(	glm::vec2 _playAreaSize, float _frameThickness,
 	frameTextureName		= _frameTextureName;
 
 	setPlayAreaBounds(_playAreaSize);
-
-	if(blocks.size() != 0)
-		blocks.clear();
-	if(balls.size() != 0)
-		balls.clear();
-	if(paddles.size() != 0)
-		paddles.clear();
 }
 
 bool Map::addObject(Paddle::ptr _paddle)
@@ -86,6 +79,13 @@ inline glm::vec3 screenPositionToClip( const glm::vec2 _screenDimension, const g
 
 bool Map::loadMap(std::string _mapName, std::vector<CommonTypes::Block> _blockData, GraphicsComponent::ptr gc, InputComponent::ptr ic, PhysicsComponent::ptr pc )
 {
+	if(blocks.size() != 0)
+		blocks.clear();
+	if(balls.size() != 0)
+		balls.clear();
+	if(paddles.size() != 0)
+		paddles.clear();
+
 	Paddle::ptr p = Paddle::ptr(new Paddle);
 	p->initialize("paddle", glm::vec3(0, 100, 0), glm::vec2(128, 32), 0, gc, ic, pc);
 	paddles.push_back(p);
