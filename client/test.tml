@@ -1,54 +1,47 @@
 Root
 	Blocks
 		Block
+			id 0
+			texture blocks/dark_magenta_01
+		/Block
+		Block
 			id 1
 			texture blocks/dark_magenta_01
+			texture blocks/orange_01
 		/Block
 		Block
 			id 2
-			texture blocks/dark_magenta_01
-			texture blocks/orange_01
-		/Block
-		Block
-			id 3
-			health 1
 			texture blocks/dark_magenta_02
 		/Block
 		Block
-			id 4
-			health 2
+			id 3
 			texture blocks/orange_01
 			texture blocks/dark_magenta_01
 		/Block
 		Block
-			id 5
-			health 2
+			id 4
 			texture blocks/orange_03
 			texture blocks/dark_magenta_03
 		/Block
 		Block
-			id 6
-			health 2
+			id 5
 			texture blocks/orange_05
 			texture blocks/dark_magenta_05
 		/Block
 		Block
-			id 7
-			health 3
+			id 6
 			texture blocks/light_magenta_02
 			texture blocks/orange_04
 			texture blocks/dark_magenta_02
 		/Block
 		Block
-			id 8
-			health 3
+			id 7
 			texture blocks/light_magenta_04
 			texture blocks/orange_02
 			texture blocks/dark_magenta_02
 		/Block
 		Block
-			id 9
-			health 4
+			id 8
 			texture blocks/pink_04
 			texture blocks/light_magenta_01
 			texture blocks/orange_05
