@@ -158,8 +158,8 @@ static std::string naiveUTF32toUTF8(char32_t _character)
 
 void Game::run()
 {
-	s = Server::ptr(new Server("194.47.150.59", 6500));
-	s->connect();
+	//s = Server::ptr(new Server("194.47.150.59", 6500));
+	//s->connect();
 
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 
@@ -205,7 +205,7 @@ void Game::run()
 		return;
 	}
 
-	if (!screenManager.openScreen("login"))
+	if (!screenManager.openScreen("game"))
 	{
 		std::cout << "Failed to open screen" << std::endl;
 		return;

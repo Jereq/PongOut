@@ -36,8 +36,6 @@ bool GameState::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem)
 
 	graphics = iCoreSystem->getGraphics();
 
-
-
 	return true;
 }
 

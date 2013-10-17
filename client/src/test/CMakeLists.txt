@@ -18,6 +18,7 @@ add_executable(PongOut-test
 	../GameObject.cpp
 	../GraphicsComponent.cpp
 	../InputState.cpp
+	../TMLReader.cpp
 )
 
 target_link_libraries(PongOut-test
