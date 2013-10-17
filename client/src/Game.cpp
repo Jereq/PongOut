@@ -158,7 +158,7 @@ static std::string naiveUTF32toUTF8(char32_t _character)
 
 void Game::run()
 {
-	//s = Server::ptr(new Server("194.47.150.59", 6500));
+	Server::ptr server = Server::ptr(new Server("194.47.150.59", 6500));
 	//s->connect();
 
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
@@ -199,7 +199,7 @@ void Game::run()
 	std::cout << "Starting to run" << std::endl;
 	//std::cout << "Texture name: \n" << map->getTextureName() << std::endl;
 
-	if (!screenManager.initialize(systemPtr))
+	if (!screenManager.initialize(systemPtr, server))
 	{
 		std::cout << "Failed to initialize the screen manager." << std::endl;
 		return;

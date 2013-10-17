@@ -19,9 +19,9 @@ void GameState::addStateAction(GUIActionHandler* _actionHandler)
 	actionHandler = _actionHandler;
 }
 
-bool GameState::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem)
+bool GameState::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::ptr _server)
 {
-	if (!ScreenState::initialize(_iCoreSystem))
+	if (!ScreenState::initialize(_iCoreSystem, _server))
 	{
 		return false;
 	}

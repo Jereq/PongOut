@@ -25,7 +25,7 @@ bool Block::initialize(const BlockData& _blockData, float _rotation, const std::
 		textures.push_back(_textures[i]);
 	}
 
-	health = textures.size();
+	health = _blockData.health;
 	return true;
 }
 

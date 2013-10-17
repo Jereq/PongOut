@@ -24,7 +24,7 @@ public:
 	virtual std::string getText(const std::string& _elemId) const;
 	void addStateAction(GUIActionHandler* _actionHandler);
 private:
-	virtual bool initialize(std::shared_ptr<ICoreSystem> _iCoreSystem);
+	virtual bool initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::ptr _server);
 	virtual void onInput(const std::vector<IInput::Event> _events);
 	virtual bool onEntry() override;
 	virtual bool onExit() override;

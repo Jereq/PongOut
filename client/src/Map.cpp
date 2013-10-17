@@ -150,11 +150,13 @@ bool Map::loadMap(std::string _mapName, GraphicsComponent::ptr gc, InputComponen
 			std::vector<std::string> textures;
 			for(TMLNODE n : blockNode.nodes)
 			{
+				std::string id = "-1";
 				for(std::pair<std::string,std::string> m : n.members)
 				{
+					
 					if(m.first == "id")
 					{
-						std::string id = m.second;
+						id = m.second;
 						if(id == val)
 						{
 							int x,y;
@@ -165,7 +167,7 @@ bool Map::loadMap(std::string _mapName, GraphicsComponent::ptr gc, InputComponen
 							bd.center = glm::vec3(x,y, 0);
 						}
 					}
-					if(m.first == "texture")
+					if(m.first == "texture" && id == val)
 					{
 						textures.push_back(m.second);
 					}
@@ -175,11 +177,19 @@ bool Map::loadMap(std::string _mapName, GraphicsComponent::ptr gc, InputComponen
 			Block::ptr b = Block::ptr(new Block);
 			b->initialize(bd,0,textures, gc);
 			blocks.push_back(b);
+			textures.clear();
 		}
 		printf("\n");
 		offY++;
 	}
 
+	Paddle::ptr p = Paddle::ptr(new Paddle);
+	p->initialize("paddle", glm::vec3(0, 200, 0), glm::vec2(128, 43), 0, gc, ic, pc);
+	paddles.push_back(p);
+
+	Ball::ptr b = Ball::ptr(new Ball);
+	b->initialize("ball", glm::vec3(0, 800, 0), glm::vec2(32,32), 0, gc, pc);
+	balls.push_back(b);
 	return true;
 }
 

@@ -5,6 +5,7 @@
 #include <CoreSystem/ICoreSystem.h>
 #include <Input/IInput.h>
 #include <string>
+#include <Server.h>
 
 class ScreenState
 {
@@ -17,7 +18,7 @@ public:
 	virtual void onInput(const std::vector<IInput::Event> _events);
 	virtual void update(const float _dt);
 	virtual void draw(std::shared_ptr<IGraphics> _graphics);
-	virtual bool initialize(std::shared_ptr<ICoreSystem> _iCoreSystem);
+	virtual bool initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::ptr _server);
 	virtual bool onExit();
 	virtual bool onEntry();
 
@@ -38,6 +39,7 @@ protected:
 	std::string screenName;
 	std::string backgroundName;
 	std::shared_ptr<ICoreSystem>	iCoreSystem;
+	Server::ptr server;
 };
 
 #endif
