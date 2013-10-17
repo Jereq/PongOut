@@ -574,7 +574,7 @@ screen
 		textureHovered button/challenge_selected
 		position 1020/200/0
 		size 224/94
-		func goto/game
+		func host
 	/button
 
 	image
@@ -590,7 +590,7 @@ screen
 		textureHovered button/start_game_selected
 		position 1700/200/0
 		size 170/94
-		func goto/game
+		func host
 	/button
 
 	image
@@ -606,7 +606,7 @@ screen
 		textureHovered button/start_game_selected
 		position 1400/200/0
 		size 170/94
-		func goto/game
+		func host
 	/button
 
 	image

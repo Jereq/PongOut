@@ -2,6 +2,7 @@
 #include "Paddle.h"
 #include "Ball.h"
 #include "TMLReader.h"
+#include "CreateGameResponse.h"
 
 GameState::GameState(const std::string _screenName)
 	: ScreenState(_screenName), gc(0), ic(0), pc(0)
@@ -37,18 +38,39 @@ bool GameState::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::pt
 
 	graphics = iCoreSystem->getGraphics();
 
-	world->loadMap("hello", gc, ic, pc);
+	world->initialize(glm::vec2(800,800),20,"HELLO","HELLO");
+
 	return true;
 }
 
 void GameState::load()
 {
 	bool res;
-	
+	std::vector<CommonTypes::Block> b;
+	for (int i = 0; i < server->getMsgQueueSize(); i++)
+	{
+		message tmp = server->getNextMessage();
 
-	world->initialize(glm::vec2(800,800),20,"HELLO","HELLO");
+		switch (tmp.type)
+		{	
+		case msgBase::MsgType::GAMEMESSAGE:
+			{
+				switch (tmp.gType)
+				{
+				case GameMessage::GameMsgType::CREATEGAMERESPONSE:
+					{
+						CreateGameResponse::ptr cgrp = boost::static_pointer_cast<CreateGameResponse>(tmp.gMsg);
 
-	res = world->loadMap("Map1", gc, ic, pc);
+						b = cgrp->getMap();
+						world->loadMap("hello", b, gc, ic, pc);
+						
+						break;
+					}
+				}
+				break;
+			}
+		}
+	}
 }
 
 std::string GameState::getText(const std::string& _elemId) const
@@ -101,6 +123,32 @@ bool GameState::onExit()
 void GameState::update(const float _dt)
 {
 	
+	/* check server for new info 
+	for (int i = 0; i < server->getMsgQueueSize(); i++)
+	{
+		Server::message tmp = server->getNextMessage();
+
+		switch (tmp.type)
+		{
+		case msgBase::MsgType::GAMEMESSAGE:
+			{
+			}
+			break;
+		case msgBase::MsgType::ACKNOWLEDGELAST:
+			{
+				AcknowledgeLast::ptr rc = boost::static_pointer_cast<AcknowledgeLast>(tmp.msg);
+
+				switch(rc->getType())
+				{
+	
+				}
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	*/
 	world->update(_dt, graphics);
 }
 

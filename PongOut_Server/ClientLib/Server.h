@@ -16,10 +16,12 @@
 #include "CreateUserRequest.h"
 #include "LogoutRequest.h"
 #include "AcknowledgeLast.h"
-#include "CreateGame.h"
+#include "CreateGameRequest.h"
+#include "GameMessage.h"
 
 #include "SafeQueue.h"
-
+#include "GameHandler.h"
+#include "message.h"
 
 using boost::asio::ip::tcp;
 
@@ -29,27 +31,7 @@ public:
 
 	typedef boost::shared_ptr<Server> ptr;
 
-	struct message
-	{
-		msgBase::MsgType type;
-		msgBase::ptr msg;
-		std::string strMsg;
 
-		message(msgBase::MsgType _type, msgBase::ptr _msg)
-		{
-			type = _type;
-			msg = _msg;
-			strMsg = "";
-		}
-
-		message(msgBase::MsgType _type, std::string _msg)
-		{
-			type = _type;
-			msg = msgBase::ptr();
-			strMsg = _msg;
-		}
-
-	};
 
 	Server(const std::string _ipAdress, std::uint16_t _port);
 	~Server(void);

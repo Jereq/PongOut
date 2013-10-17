@@ -39,6 +39,7 @@ public:
 	void listen();
 	unsigned int getUserID();
 	void setUserStatus(UserStatus _status);
+	UserStatus getUserStatus();
 	void setUserID(unsigned int _id);
 	void disconnect();
 

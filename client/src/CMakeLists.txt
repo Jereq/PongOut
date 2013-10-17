@@ -89,7 +89,7 @@ set(SOURCE_FILES
 	main.cpp
 	Game.cpp Game.h
 	Map.cpp Map.h
-	Block.cpp Block.h
+	BlockC.cpp BlockC.h
 	ScreenManager.cpp ScreenManager.h
 	ScreenState.cpp ScreenState.h
 	Button.cpp Button.h

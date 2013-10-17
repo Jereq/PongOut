@@ -15,10 +15,10 @@
 #include <thread>
 
 bool Game::serverAllow()
-{
-	for (int i = 0; i < s->getMsgQueueSize(); i++)
+{	
+	for (int i = 0; i < server->getMsgQueueSize(); i++)
 	{
-		Server::message tmp = s->getNextMessage();
+		message tmp = server->getNextMessage();
 
 		switch (tmp.type)
 		{
@@ -36,7 +36,18 @@ bool Game::serverAllow()
 				}
 				
 			}
-			break;
+		/*case msgBase::MsgType::GAMEMESSAGE:
+			{
+				switch (tmp.gType)
+				{
+				case GameMessage::GameMsgType::CREATEGAMERESPONSE:
+					{
+
+						break;
+					}
+				}
+				break;
+			}*/
 		}
 	}
 	return false;
@@ -45,7 +56,6 @@ bool Game::serverAllow()
 void Game::onFunction(const std::string& _func)
 
 {
-	
 	std::cout << "Performing: " << _func << std::endl;
 
 	if (_func == "exit")
@@ -57,7 +67,7 @@ void Game::onFunction(const std::string& _func)
 		std::string username = screenManager.getText("username");
 		std::string password = screenManager.getText("password");
 
-		s->login(username,password);
+		server->login(username,password);
 
 		if(!serverAllow())
 		{
@@ -69,12 +79,23 @@ void Game::onFunction(const std::string& _func)
 		std::string username = screenManager.getText("username");
 		std::string password = screenManager.getText("password");
 
-		s->createAccount(username, password);
+		server->createAccount(username, password);
 
 		if(!serverAllow())
 		{
 			onFunction("login");
 		}
+	}
+	else if(_func == "host")
+	{
+		int mapId = gameSettings.getMapId();
+		float ballSpeed = gameSettings.getBallSpeed();
+		int timeLimit = gameSettings.getSuddenDeathTime();
+		bool fow = gameSettings.getFOW();
+		bool pow = gameSettings.getPOW();
+		server->createGame( mapId, ballSpeed, 1, timeLimit, fow, pow);
+
+		screenManager.openScreen("game");
 	}
 	else if(_func.substr(0, 11) == "set/sudden/")
 	{
@@ -162,8 +183,10 @@ Game::Game(ICoreSystem::ptr _system)
 
 void Game::run()
 {
-	Server::ptr server = Server::ptr(new Server("194.47.150.59", 6500));
-	//s->connect();
+	server = Server::ptr(new Server("194.47.150.59", 6500));
+	server->connect();
+	if(serverAllow())
+		return;
 
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 
@@ -175,9 +198,6 @@ void Game::run()
 		printf("Failed to initialize renderer\n");
 		return;
 	}
-
-	
-
 	graphics->loadResources(systemPtr->getRootDir() / "resources");
 
 	SoundManager *sounds = systemPtr->getSounds();
@@ -198,8 +218,6 @@ void Game::run()
 	double currentTime = previousTime;
 	double deltaTime = 0.f;
 
-	
-
 	std::cout << "Starting to run" << std::endl;
 	//std::cout << "Texture name: \n" << map->getTextureName() << std::endl;
 
@@ -209,7 +227,7 @@ void Game::run()
 		return;
 	}
 
-	if (!screenManager.openScreen("gamelobby"))
+	if (!screenManager.openScreen("login"))
 	{
 		std::cout << "Failed to open screen" << std::endl;
 		return;
@@ -226,19 +244,13 @@ void Game::run()
 		
 		std::vector<IInput::Event> events = input->getEvents(true);
 
-		float dt = (float)(deltaTime * 1000.f);
-		float bspeed = 0.075f;
-		float pspeed = 0.001f;
-		
-
 		screenManager.onInput(events);
 		screenManager.update((float)deltaTime, graphics);
 
 		const static float FRAMES_PER_SECOND = 60.f;
 		const static float FRAME_TIME = 1.f / FRAMES_PER_SECOND;
 
-		graphics->drawFrame();
-		
+		graphics->drawFrame();		
 	}
 
 	sounds->shutdown();

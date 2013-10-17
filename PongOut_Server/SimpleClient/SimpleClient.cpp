@@ -27,7 +27,7 @@ void waitForMsg(Server::ptr _s, int _timeToWait)
 
 	for (int i = 0; i < _s->getMsgQueueSize(); i++)
 	{
-		Server::message tmp = _s->getNextMessage();
+		message tmp = _s->getNextMessage();
 
 		switch (tmp.type)
 		{
@@ -57,6 +57,17 @@ void waitForMsg(Server::ptr _s, int _timeToWait)
 				cout << tmp.strMsg << endl;
 				break;
 			}
+		case msgBase::MsgType::GAMEMESSAGE:
+			{
+				switch (tmp.gType)
+				{
+				case GameMessage::GameMsgType::CREATEGAMERESPONSE:
+					{
+						cout << "created game successfully!" << endl; 
+						break;
+					}
+				}
+			}
 		}
 	}
 }
@@ -70,6 +81,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	string command, userName, password;
 	bool firstRun = true;
 
+	s->connect();
+
 	for (ever)
 	{
 		system("CLS");
@@ -82,18 +95,18 @@ int _tmain(int argc, _TCHAR* argv[])
 		firstRun = false;
 		
 		cout << "======== Commands list ========" << endl 
-			 << "# Connect \t : \t Provide login information and connect to server" << endl  
+			 //<< "# Connect \t : \t Provide login information and connect to server" << endl  
 			 << "# Create \t\t : \t Create account" << endl
 			 << "# Login \t\t : \t Login to existing account" << endl
 			 << "# Logout \t\t : \t Logout from account" << endl
 			 << "# Game \t\t : \t Create new game" << endl;
 		cin >> command;
 
-		if (command == "Connect" || command == "connect")
-		{
-			s->connect();			
-		}
-		else if (command == "Login" || command == "login")
+		//if (command == "Connect" || command == "connect")
+		//{
+		//	s->connect();			
+		//}
+		if (command == "Login" || command == "login")
 		{
 			system("CLS");
 			cout << "Provide username: ";

@@ -1,0 +1,25 @@
+Root
+	Blocks
+		Block
+			id 1
+			texture blocks/dark_magenta_01
+		/Block
+		Block
+			id 2
+			texture blocks/dark_magenta_01
+			texture blocks/orange_01
+		/Block
+	/Blocks
+	Map
+		id 0
+		name Map1
+		row 00110011
+		row 00220022
+		row 11001100
+	/Map
+	Map
+		id 1
+		name Map2
+		row 3333333
+	/Map
+/Root
