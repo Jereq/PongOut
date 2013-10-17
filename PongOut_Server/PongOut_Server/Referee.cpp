@@ -13,18 +13,20 @@ Referee::~Referee(void)
 {
 }
 
-void Referee::init( User::ptr _u0, User::ptr _u1, CommonTypes::GameInitInfo _info)
+void Referee::init( User::ptr _u0, User::ptr _u1, CommonTypes::GameInitInfo _info, int _refID)
 {
 	u0 = _u0;
 	u1 = _u1;
 	info = _info;
+
+	u0->setReffereeID(_refID);
+	u1->setReffereeID(_refID);
 
 	std::vector<CommonTypes::Block> mapData;
 
 	TMLReader tml;
 	tml.readFile("../test.tml");
 
-	// Fetch the nodes of interest
 	TMLNODE r = tml.getRoot();
 	TMLNODE mapNode, blockNode;
 	for( TMLNODE n : tml.getRoot().nodes )
@@ -74,7 +76,7 @@ void Referee::init( User::ptr _u0, User::ptr _u1, CommonTypes::GameInitInfo _inf
 
 	for(std::string row : rows )
 	{
-		for(int i = 0; i < row.size(); i++)
+		for(unsigned int i = 0; i < row.size(); i++)
 		{
 			std::string val = row.substr(i,1);
 			if(val == "0")
@@ -92,9 +94,9 @@ void Referee::init( User::ptr _u0, User::ptr _u1, CommonTypes::GameInitInfo _inf
 						std::string id = m.second;
 						if(id == val)
 						{
-							int x,y;
-							x = 880 / 2 + 64 * i;
-							y = 800 / 2 + offY * 32;
+							float x,y;
+							x = 880.0f / 2.0f + 64.0f * i;
+							y = 800.0f / 2.0f + offY * 32.0f;
 
 							bd.x = x;
 							bd.y = y;

@@ -12,6 +12,7 @@ GameMaster& GameMaster::getInstance()
 
 GameMaster::GameMaster(void)
 {
+	refIDCounter = 0;
 }
 
 
@@ -41,7 +42,10 @@ void GameMaster::handleGameMessage( GameMessage::ptr _message, User::ptr _initUs
 				}
 			}
 			
-			r.init(_initUser, opponentUser, cgp->getInitInfo());
+			r.init(_initUser, opponentUser, cgp->getInitInfo(), refIDCounter);
+			refIDCounter++;
+
+			referees.push_back(r);
 
 			break;
 		}

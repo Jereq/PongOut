@@ -19,5 +19,6 @@ private:
 	~GameMaster(void);
 	
 	std::vector<Referee> referees;
+	int refIDCounter;
 };
 

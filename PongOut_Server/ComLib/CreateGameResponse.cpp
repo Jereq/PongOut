@@ -26,7 +26,7 @@ void CreateGameResponse::setResponse( const std::vector<CommonTypes::Block>& _ma
 
 	mapSize += sizeof(uint16_t);
 
-	msgHeader.length = mapSize + sizeof(CommonTypes::GameInitInfo) + sizeof(GameMsgType);
+	msgHeader.length = mapSize + sizeof(CommonTypes::GameInitInfo) + sizeof(GameMsgType) + sizeof(int);
 }
 
 std::vector<char> CreateGameResponse::getData()

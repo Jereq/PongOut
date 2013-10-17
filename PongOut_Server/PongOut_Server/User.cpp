@@ -158,3 +158,13 @@ User::UserStatus User::getUserStatus()
 {
 	return status;
 }
+
+int User::getRefereeID()
+{
+	return refID;
+}
+
+void User::setReffereeID( int _refID )
+{
+	refID = _refID;
+}

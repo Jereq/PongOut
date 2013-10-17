@@ -44,9 +44,9 @@ void UserManager::listenForNewClientConnections()
 void UserManager::handleIncomingClient( boost::shared_ptr<tcp::socket> _soc, const boost::system::error_code& _errorCode )
 {
 	User::ptr u = User::ptr(new User(_soc));
-	AcknowledgeLast::ptr ack = AcknowledgeLast::ptr(new AcknowledgeLast());
-	ack->setAck(msgBase::MsgType::CONNECTSUCCESS, false);
-	u->addMsgToMsgQueue(ack);
+	//AcknowledgeLast::ptr ack = AcknowledgeLast::ptr(new AcknowledgeLast());
+	//ack->setAck(msgBase::MsgType::CONNECTSUCCESS, false);
+	//u->addMsgToMsgQueue(ack);
 	users.insert(u);
 	u->listen();
 	Log::addLog(Log::LogType::LOG_INFO, 4, "New connection established");
@@ -98,7 +98,7 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 
 			long res = sqlManager.verifyUser(lp->getUsername(), lp->getPassword());
 
-			if (res != -1)
+			if (res != -1 && !userAllredyLogedin(res))
 			{
 				_user->setUserID(res);
 				_user->setUserStatus(User::UserStatus::USER);
@@ -224,4 +224,17 @@ void UserManager::destroy()
 	//	
 	//users.baseSet.clear();
 	ioThread.join();
+}
+
+bool UserManager::userAllredyLogedin( long _uid )
+{
+	for (User::ptr u : users.baseSet)
+	{
+		if (_uid == u->getUserID())
+		{
+			return true;
+		}
+	}
+
+	return false;
 }

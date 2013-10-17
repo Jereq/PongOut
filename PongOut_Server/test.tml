@@ -1,25 +1,122 @@
 Root
 	Blocks
 		Block
-			id 1
+			id 0
 			texture blocks/dark_magenta_01
 		/Block
 		Block
-			id 2
+			id 1
 			texture blocks/dark_magenta_01
 			texture blocks/orange_01
+		/Block
+		Block
+			id 2
+			texture blocks/dark_magenta_02
+		/Block
+		Block
+			id 3
+			texture blocks/orange_01
+			texture blocks/dark_magenta_01
+		/Block
+		Block
+			id 4
+			texture blocks/orange_03
+			texture blocks/dark_magenta_03
+		/Block
+		Block
+			id 5
+			texture blocks/orange_05
+			texture blocks/dark_magenta_05
+		/Block
+		Block
+			id 6
+			texture blocks/light_magenta_02
+			texture blocks/orange_04
+			texture blocks/dark_magenta_02
+		/Block
+		Block
+			id 7
+			texture blocks/light_magenta_04
+			texture blocks/orange_02
+			texture blocks/dark_magenta_02
+		/Block
+		Block
+			id 8
+			texture blocks/pink_04
+			texture blocks/light_magenta_01
+			texture blocks/orange_05
+			texture blocks/dark_magenta_04
 		/Block
 	/Blocks
 	Map
 		id 0
 		name Map1
-		row 00110011
-		row 00220022
-		row 11001100
+		row 0022002200
+		row 1100110011
+		row 0066006600
 	/Map
 	Map
 		id 1
 		name Map2
-		row 3333333
+		row 0022222200
+		row 1120880211
+		row 5556666555
+	/Map
+	Map
+		id 2
+		name Map3
+		row 1290660921
+		row 5566996655
+		row 2211111122
+	/Map
+	Map
+		id 3
+		name Map4
+		row 6666666666
+		row 1757227571
+		row 2862552682
+		row 1256886521
+	/Map
+	Map
+		id 4
+		name Map5
+		row 6666666666
+		row 0011111100
+		row 9986776899
+	/Map
+	Map
+		id 5
+		name Map6
+		row 0000000000
+		row 3302222033
+		row 5555665555
+		row 0000000000
+		row 2223443222
+		row 1111111111
+	/Map
+	Map
+		id 6
+		name Map7
+		row 8808888088
+		row 0096556900
+		row 2233443322
+		row 6551111556
+	/Map
+	Map
+		id 7
+		name Map8
+		row 8888998888
+		row 0000770000
+		row 0006666000
+		row 0555445550
+	/Map
+	Map
+		id 8
+		name Map9
+		row 9999999999
+		row 0888888880
+		row 0077777700
+		row 0006666000
+		row 0000550000
 	/Map
 /Root

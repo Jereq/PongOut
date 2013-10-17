@@ -33,6 +33,8 @@ private:
 	UserManager(void);	
 
 	void startIOPrivate();
+	bool userAllredyLogedin(long _uid);
+
 	static boost::shared_ptr<UserManager> ptr;
 	boost::shared_ptr<boost::asio::io_service> ioService;
 	boost::shared_ptr<tcp::acceptor> acceptor;

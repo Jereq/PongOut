@@ -45,11 +45,19 @@ void waitForMsg(Server::ptr _s, int _timeToWait)
 			}
 		case msgBase::MsgType::ACKNOWLEDGELAST:
 			{
-				AcknowledgeLast::ptr rc = boost::static_pointer_cast<AcknowledgeLast>(tmp.msg);
+				AcknowledgeLast::ptr ack = boost::static_pointer_cast<AcknowledgeLast>(tmp.msg);
 
 				//TODO: fix AcknowledgeLast on client side
 
-				cout << "Connected successfully!" << endl;
+				if (!ack->getBool())
+				{
+					cout << "Connected successfully!" << endl;
+				} 
+				else
+				{
+					cout << "failed to connect!" << endl;
+				}
+				
 				break;
 			}
 		case  msgBase::MsgType::INTERNALMESSAGE:
@@ -65,7 +73,7 @@ void waitForMsg(Server::ptr _s, int _timeToWait)
 					{
 						CreateGameResponse::ptr cgrp = boost::static_pointer_cast<CreateGameResponse>(tmp.gMsg);
 
-						cout << "created game successfully!" << endl; 
+						cout << "Map size: " << cgrp->getMap().size() << endl; 
 						break;
 					}
 				}

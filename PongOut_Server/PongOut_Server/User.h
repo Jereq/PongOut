@@ -41,6 +41,9 @@ public:
 	void setUserStatus(UserStatus _status);
 	UserStatus getUserStatus();
 	void setUserID(unsigned int _id);
+	int getRefereeID();
+	void setReffereeID(int _refID);
+
 	void disconnect();
 
 private:
@@ -56,6 +59,7 @@ private:
 	std::deque<char> fullMsgBuffer;
 	std::mutex msgBufferLock;
 	unsigned int id;
+	int refID;
 	msgBase::header head;
 	UserStatus status;
 };

@@ -27,16 +27,8 @@ void Server::connect()
 	ss << port;
 	tcp::resolver::query q(addr, ss.str());
 	tcp::resolver::iterator resIt = res.resolve(q);
-	try
-	{
-		
-		boost::asio::connect(soc, resIt);
-	}
-	catch (boost::system::system_error&)
-	{
-		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "Failed to connect to server!"));
-		return;
-	}
+
+	boost::asio::async_connect(soc, resIt, boost::bind(&Server::connectResponse, shared_from_this(), boost::asio::placeholders::error));
 
 	listen();
 
@@ -252,4 +244,12 @@ void Server::createGame( int _mapID, int _ballSpeed, int _paddleSpeed, int _sudd
 
 	cgp->setGameParam(info);
 	write(cgp);
+}
+
+void Server::connectResponse(const boost::system::error_code& _err)
+{
+	if (_err)
+	{
+		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, _err.message()));
+	}
 }

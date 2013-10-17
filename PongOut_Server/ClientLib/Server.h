@@ -32,8 +32,6 @@ public:
 
 	typedef boost::shared_ptr<Server> ptr;
 
-
-
 	Server(const std::string _ipAdress, std::uint16_t _port);
 	~Server(void);
 
@@ -55,6 +53,7 @@ private:
 	void listen();
 	void write(msgBase::ptr _msg);
 	void handleWrite(const boost::system::error_code& _err, size_t _byte);
+	void connectResponse(const boost::system::error_code& _err);
 
 	std::thread ioThread;
 	const std::string addr;

@@ -22,6 +22,5 @@ private:
 
 	std::vector<CommonTypes::Block> map;
 	CommonTypes::GameInitInfo info;
-
 };
 
