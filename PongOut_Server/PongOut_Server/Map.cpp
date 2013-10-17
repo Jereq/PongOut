@@ -11,7 +11,7 @@ Map::~Map(void)
 {
 }
 
-void Map::setMapData( const GameMessage::Block& _block )
+void Map::setMapData( const CommonTypes::Block& _block )
 {
 	blockList.push_back(_block);
 }

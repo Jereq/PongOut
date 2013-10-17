@@ -14,12 +14,12 @@ public:
 	virtual std::vector<char> getData() override;
 	virtual msgBase::ptr interpretPacket(const std::deque<char>& _buffer) override;
 
-	void setResponse(const std::vector<GameMessage::Block>& _map, const GameMessage::GameInitInfo& _info);
+	void setResponse(const std::vector<CommonTypes::Block>& _map, const CommonTypes::GameInitInfo& _info);
 
 private:
 
-	std::vector<GameMessage::Block> map;
-	GameMessage::GameInitInfo info;
+	std::vector<CommonTypes::Block> map;
+	CommonTypes::GameInitInfo info;
 
 };
 

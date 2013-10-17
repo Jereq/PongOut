@@ -14,14 +14,14 @@ public:
 	virtual std::vector<char> getData() override;
 	virtual msgBase::ptr interpretPacket(const std::deque<char>& _buffer) override;
 
-	void setGameParam(GameInitInfo _info);
+	void setGameParam(CommonTypes::GameInitInfo _info);
 
-	GameInitInfo getInitInfo();
+	CommonTypes::GameInitInfo getInitInfo();
 
 
 private:
 
-	GameInitInfo info;
+	CommonTypes::GameInitInfo info;
 
 };
 

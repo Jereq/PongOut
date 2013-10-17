@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Chat.h" />
+    <ClInclude Include="CommonTypes.h" />
     <ClInclude Include="CreateGameRequest.h" />
     <ClInclude Include="CreateGameResponse.h" />
     <ClInclude Include="CreateUserRequest.h" />

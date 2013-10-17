@@ -12,15 +12,15 @@ CreateGameRequest::~CreateGameRequest(void)
 {
 }
 
-CreateGameRequest::GameInitInfo CreateGameRequest::getInitInfo()
+CommonTypes::GameInitInfo CreateGameRequest::getInitInfo()
 {
 	return info;
 }
 
-void CreateGameRequest::setGameParam( GameInitInfo _info )
+void CreateGameRequest::setGameParam( CommonTypes::GameInitInfo _info )
 {
 	info = _info;
-	msgHeader.length = sizeof(GameInitInfo) + sizeof(GameMsgType);
+	msgHeader.length = sizeof(CommonTypes::GameInitInfo) + sizeof(GameMsgType);
 }
 
 std::vector<char> CreateGameRequest::getData()

@@ -11,12 +11,12 @@ public:
 	Map(void);
 	~Map(void);
 
-	void setMapData(const GameMessage::Block& _block);
+	void setMapData(const CommonTypes::Block& _block);
 	void setMapName(std::string _name);
 	
 private:
 
-	std::vector<GameMessage::Block> blockList;
+	std::vector<CommonTypes::Block> blockList;
 	
 };
 

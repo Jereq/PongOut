@@ -12,7 +12,7 @@ CreateGameResponse::~CreateGameResponse(void)
 {
 }
 
-void CreateGameResponse::setResponse( const std::vector<GameMessage::Block>& _map, const GameMessage::GameInitInfo& _info )
+void CreateGameResponse::setResponse( const std::vector<CommonTypes::Block>& _map, const CommonTypes::GameInitInfo& _info )
 {
 	map = _map;
 	info = _info;

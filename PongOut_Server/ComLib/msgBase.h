@@ -6,6 +6,8 @@
 #include <iterator>
 #include <map>
 
+#include "CommonTypes.h"
+
 class msgBase
 {	
 public:	
@@ -98,10 +100,10 @@ template<typename inIter, typename vecType>
 	};
 
 template<typename inIter>
-	class implPack<GameMessage::Block, inIter>
+	class implPack<CommonTypes::Block, inIter>
 	{
 	public:
-		static void _pack(const GameMessage::Block& _block, inIter _dest)
+		static void _pack(const CommonTypes::Block& _block, inIter _dest)
 		{
 			pack(_block.health, _dest);
 			pack(_block.id, _dest);
@@ -169,7 +171,7 @@ template<typename outIter, typename fm, typename sm>
 		}
 	};
 
-template<typename outIter>
+template<typename outIter, typename vecType>
 	class implUnpack<std::vector<vecType>, outIter>
 	{
 	public:
@@ -188,20 +190,20 @@ template<typename outIter>
 		}
 	};
 
-template<typename outIter, typename vecType>
-	class implUnpack<GameMessage::Block, outIter>
+template<typename outIter>
+	class implUnpack<CommonTypes::Block, outIter>
 	{
 	public:
-		static outIter _unpack(GameMessage::Block& _block, outIter _source)
+		static outIter _unpack(CommonTypes::Block& _block, outIter _source)
 		{
-			unpack(_block.health, _dest);
-			unpack(_block.id, _dest);
-			unpack(_block.x, _dest);
-			unpack(_block.y, _dest);
-			unpack(_block.z, _dest);
-			unpack(_block.textures, _dest);
+			_source = unpack(_block.health, _source);
+			_source = unpack(_block.id, _source);
+			_source = unpack(_block.x, _source);
+			_source = unpack(_block.y, _source);
+			_source = unpack(_block.z, _source);
+			_source = unpack(_block.textures, _source);
 
-			return _block;
+			return _source;
 		}
 	};
 

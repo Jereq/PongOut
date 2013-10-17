@@ -17,9 +17,10 @@
 #include "LogoutRequest.h"
 #include "AcknowledgeLast.h"
 #include "CreateGameRequest.h"
+#include "GameMessage.h"
 
 #include "SafeQueue.h"
-
+#include "GameHandler.h"
 
 using boost::asio::ip::tcp;
 

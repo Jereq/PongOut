@@ -32,7 +32,7 @@ void Server::connect()
 		
 		boost::asio::connect(soc, resIt);
 	}
-	catch (boost::system::system_error& e)
+	catch (boost::system::system_error&)
 	{
 		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "Failed to connect to server!"));
 		return;
@@ -178,6 +178,13 @@ void Server::messageActionSwitch( const msgBase::header& _header, const std::deq
 			break;
 		}
 
+	case msgBase::MsgType::GAMEMESSAGE:
+		{
+			GameMessage::ptr gmp = GameMessage::ptr(new GameMessage());			
+			GameHandler::getInstance().handleGameMessage(gmp);
+			break;
+		}
+
 	default:
 		messages.push(message(p->getHeader().type, p));
 		break;
@@ -234,7 +241,7 @@ int Server::getMsgQueueSize()
 void Server::createGame( int _mapID, int _ballSpeed, int _paddleSpeed, int _suddenDeathTime, char _fogOfWar, char _powerUps )
 {
 	CreateGameRequest::ptr cgp = CreateGameRequest::ptr(new CreateGameRequest());
-	CreateGameRequest::GameInitInfo info;
+	CommonTypes::GameInitInfo info;
 
 	info.ballSpeed = _ballSpeed;
 	info.mapID = _mapID;

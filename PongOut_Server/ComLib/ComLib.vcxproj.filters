@@ -72,6 +72,9 @@
     <ClInclude Include="CreateGameRequest.h">
       <Filter>Header Files\Msg sub clases\Game messages</Filter>
     </ClInclude>
+    <ClInclude Include="CommonTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
