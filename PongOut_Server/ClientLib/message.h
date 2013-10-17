@@ -15,6 +15,7 @@ struct message
 		type = _type;
 		msg = _msg;
 		strMsg = "";
+		gMsg = GameMessage::ptr();
 	}
 
 	message(msgBase::MsgType _type, std::string _msg)
@@ -22,12 +23,14 @@ struct message
 		type = _type;
 		msg = msgBase::ptr();
 		strMsg = _msg;
+		gMsg = GameMessage::ptr();
 	}
 
 	message(GameMessage::GameMsgType _type, GameMessage::ptr _msg)
 	{
 		gType = _type;
 		gMsg = _msg;
+		type = msgBase::MsgType::GAMEMESSAGE;
 		msg = msgBase::ptr();
 		strMsg = "";
 	}

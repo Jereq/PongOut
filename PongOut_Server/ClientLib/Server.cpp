@@ -228,7 +228,7 @@ void Server::startIO()
 //	std::cout << "Friend \"" << _name << "\" does not exist." << std::endl;
 //}
 
-Server::message Server::getNextMessage()
+message Server::getNextMessage()
 {
 	return messages.pop();
 }

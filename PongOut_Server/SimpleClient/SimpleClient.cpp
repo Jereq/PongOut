@@ -27,7 +27,7 @@ void waitForMsg(Server::ptr _s, int _timeToWait)
 
 	for (int i = 0; i < _s->getMsgQueueSize(); i++)
 	{
-		Server::message tmp = _s->getNextMessage();
+		message tmp = _s->getNextMessage();
 
 		switch (tmp.type)
 		{
@@ -56,6 +56,17 @@ void waitForMsg(Server::ptr _s, int _timeToWait)
 			{
 				cout << tmp.strMsg << endl;
 				break;
+			}
+		case msgBase::MsgType::GAMEMESSAGE:
+			{
+				switch (tmp.gType)
+				{
+				case GameMessage::GameMsgType::CREATEGAMERESPONSE:
+					{
+						cout << "created game successfully!" << endl; 
+						break;
+					}
+				}
 			}
 		}
 	}
