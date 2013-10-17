@@ -1,27 +1,25 @@
 Root
 	Blocks
-		type1
+		Block
 			id 1
 			texture blocks/dark_magenta_01
-		/type1
-		type2
-			id 0
+		/Block
+		Block
+			id 2
 			texture blocks/dark_magenta_01
 			texture blocks/orange_01
-		/type2
+		/Block
 	/Blocks
-	Maps
-		MapType1
-			id 1
-			name Map1
-			row 00110011
-			row 00220022
-			row 00000000
-		/MapType1
-		MapType2
-			id 2
-			name Map2
-			row 3333333
-		/MapType2
-	/Maps
+	Map
+		id 1
+		name Map1
+		row 00110011
+		row 00220022
+		row 11001100
+	/Map
+	Map
+		id 2
+		name Map2
+		row 3333333
+	/Map
 /Root

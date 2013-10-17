@@ -1,6 +1,7 @@
 #include "GameState.h"
 #include "Paddle.h"
 #include "Ball.h"
+#include "TMLReader.h"
 
 GameState::GameState(const std::string _screenName)
 	: ScreenState(_screenName), gc(0), ic(0), pc(0)
@@ -36,6 +37,7 @@ bool GameState::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem)
 
 	graphics = iCoreSystem->getGraphics();
 
+	world->loadMap("hello", gc, ic, pc);
 	return true;
 }
 
