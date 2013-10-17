@@ -16,15 +16,15 @@ public:
 	~GameSettings(void);
 
 	void setSuddenDeathTime(int _time);
-	int getSuddenDeathTime(void);
+	int getSuddenDeathTime(void) const;
 	void setBallSpeed(float _speed);
-	float getBallSpeed(void);
+	float getBallSpeed(void) const;
 	void setFOW(bool _fow);
-	bool getFOW(void);
+	bool getFOW(void) const;
 	void setPOW(bool _fow);
-	bool getPOW(void);
+	bool getPOW(void) const;
 	void setMapId(int _id);
-	int getMapId(void);
+	int getMapId(void) const;
 	void setNumOfLives(int _lives);
-	int getNumOfLives(void);
+	int getNumOfLives(void) const;
 };
