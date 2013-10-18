@@ -10,6 +10,9 @@
 #include <glm/glm.hpp>
 #include <string>
 
+static const int screenWidth = 1280;
+static const int screenHeight = 720;
+
 /**
  *  Interface to provide platform independent access to platform dependent 2D graphics.
  */

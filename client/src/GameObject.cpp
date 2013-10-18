@@ -10,7 +10,8 @@ inline glm::vec3 screenPositionToClip( const glm::vec2 _screenDimension, const g
 	return glm::vec3(_screenPosition.x / _screenDimension.x * 2.f - 1.f, _screenPosition.y / _screenDimension.y * 2.f - 1.f, _screenPosition.z);
 }
 
-GameObject::GameObject(const std::string _objectId)
+GameObject::GameObject(const int _objectId)
+	: objectId(_objectId)
 {
 
 }
@@ -20,20 +21,44 @@ GameObject::~GameObject()
 
 }
 
-std::string GameObject::getId()const
+int GameObject::getId()const
 {
 	return objectId;
 }
 
-bool GameObject::initialize(const std::string& _id, glm::vec3 _center, glm::vec2 _size, float _rotation, GraphicsComponent::ptr _graphicsComponent)
+
+glm::vec3 GameObject::getCenter()const
+{
+	return center;
+}
+
+void GameObject::setPosition(glm::vec3 _position, glm::vec2 _velocity)
+{
+	center	= _position;
+	velocity= _velocity;
+}
+
+glm::vec2 GameObject::getVelocity()const
+{
+	return velocity;
+}
+
+bool GameObject::initialize(const int _id, glm::vec3 _center, glm::vec2 _size, float _rotation, GraphicsComponent::ptr _graphicsComponent)
 {
 	objectId			= _id;
-	center				= screenPositionToClip(glm::vec2(1280,1024), _center);
-	size				= screenSizeToClip(glm::vec2(1280,1024), _size);
+	center				= screenPositionToClip(glm::vec2(screenWidth,screenHeight), _center);
+	size				= screenSizeToClip(glm::vec2(screenWidth,screenHeight), _size);
 	rotation			= _rotation;
 	graphicsComponent	= _graphicsComponent;
 	velocity			= glm::vec2(0,0);
+	inPlay				= false;
+
 	return true;
+}
+
+void GameObject::setInPlay(bool _inPlayState)
+{
+	inPlay = _inPlayState;
 }
 
 void GameObject::update(double _dt)

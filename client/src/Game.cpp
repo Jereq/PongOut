@@ -4,12 +4,10 @@
 
 #include <Server.h>
 
-//#include <chrono>
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-//#include <thread>
 #include <vector>
 #include <chrono>
 #include <thread>
@@ -33,21 +31,8 @@ bool Game::serverAllow()
 					bool allowed = rc->getBool();
 					return allowed;
 					break;		
-				}
-				
+				}			
 			}
-		/*case msgBase::MsgType::GAMEMESSAGE:
-			{
-				switch (tmp.gType)
-				{
-				case GameMessage::GameMsgType::CREATEGAMERESPONSE:
-					{
-
-						break;
-					}
-				}
-				break;
-			}*/
 		}
 	}
 	return false;
@@ -184,9 +169,9 @@ Game::Game(ICoreSystem::ptr _system)
 void Game::run()
 {
 	server = Server::ptr(new Server("194.47.150.59", 6500));
-	server->connect();
-	if(serverAllow())
-		return;
+	//server->connect();
+	//if(serverAllow())
+	//	return;
 
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 
@@ -219,7 +204,6 @@ void Game::run()
 	double deltaTime = 0.f;
 
 	std::cout << "Starting to run" << std::endl;
-	//std::cout << "Texture name: \n" << map->getTextureName() << std::endl;
 
 	if (!screenManager.initialize(systemPtr, server))
 	{
@@ -227,7 +211,7 @@ void Game::run()
 		return;
 	}
 
-	if (!screenManager.openScreen("login"))
+	if (!screenManager.openScreen("gamelobby"))
 	{
 		std::cout << "Failed to open screen" << std::endl;
 		return;
@@ -253,6 +237,7 @@ void Game::run()
 		graphics->drawFrame();		
 	}
 
+	//server->logout();
 	sounds->shutdown();
 	graphics->destroy();
 }

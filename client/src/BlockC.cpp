@@ -6,29 +6,48 @@
  */
 
 #include "BlockC.h"
+#include <CoreSystem/ICoreSystem.h>
 
 BlockC::BlockC() : GameObject()
 {
-	canCollide = true;
+	
 }
 
-BlockC::~BlockC() {}
+BlockC::~BlockC()
+{
+}
+
+void BlockC::setCollided(const int _health)
+{
+	health = _health;
+	if(health <= 0)
+	{
+		inPlay = false;
+		health = 0;	
+	}
+	ICoreSystem::getInstance().lock()->getSounds()->playSfx("block_explodes");
+}
+
+void BlockC::setInPlay(bool _inPlayState)
+{
+	GameObject::setInPlay(_inPlayState);
+}
 
 bool BlockC::initialize(const CommonTypes::Block& _blockData, float _rotation, GraphicsComponent::ptr _graphicsComponent)
 {
 	glm::vec3 center(_blockData.x, _blockData.y, _blockData.z);
 
-	if(!GameObject::initialize("block", center, BLOCKSIZE, _rotation, _graphicsComponent))
+	if(!GameObject::initialize(_blockData.id, center, BLOCKSIZE, _rotation, _graphicsComponent))
 		return false;
 
 	textures = _blockData.textures;
-	health = _blockData.health;
-
+	health = _blockData.health - 1;
+	inPlay = true;
 	return true;
 }
 
 void BlockC::update(double _dt)
 {
-	if(canCollide)
-		graphicsComponent->addSpriteToFrame(textures[health-1], center, size, rotation);
+	if(inPlay)
+		graphicsComponent->addSpriteToFrame(textures[health], center, size, rotation);
 }

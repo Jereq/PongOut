@@ -116,12 +116,25 @@ bool PhysicsComponent::ballRectCollide(glm::vec2& _reflectDir, Ball* _ball, Game
 	return false;
 }
 
+void PhysicsComponent::bindInPlayState(GameObject* _gameObject)
+{
+	_gameObject->setInPlay(false);
+
+	for(Paddle::ptr p : map->paddles)
+	{
+		if(p->getId() == _gameObject->getId())
+		{
+			p->setInPlay(false);
+		}
+	}
+}
+
 void PhysicsComponent::bounceOnPlayArea(GameObject* _gameObject, double _dt)
 {
 	//return glm::vec2( _screenSize.x / _screenDimension.x * 2.f, _screenSize.y / _screenDimension.y * 2.f);
 
 	glm::vec2 playArea = map->getSize();
-	glm::vec2 clipArea = glm::vec2( playArea.x / 1280. * 2.f, playArea.y / 1024. * 2.f);
+	glm::vec2 clipArea = glm::vec2( playArea.x / screenWidth * 2.f, playArea.y / screenHeight * 2.f);
 
 	glm::vec2 min = glm::vec2(-clipArea.x / 2,-clipArea.y / 2);
 	glm::vec2 max = glm::vec2(clipArea.x / 2,clipArea.y / 2);
@@ -143,19 +156,24 @@ void PhysicsComponent::bounceOnPlayArea(GameObject* _gameObject, double _dt)
 		_gameObject->center.y = min.y + _gameObject->size.y / 2.0f;
 		_gameObject->velocity.y *= -1;
 		ICoreSystem::getInstance().lock()->getSounds()->playSfx("wall_collision");
+		bindInPlayState(_gameObject);
+		
 	}
 	else if(_gameObject->center.y + _gameObject->size.y / 2 > max.y)
 	{
 		_gameObject->center.y = max.y - _gameObject->size.y / 2.0f;
 		_gameObject->velocity.y *= -1;
 		ICoreSystem::getInstance().lock()->getSounds()->playSfx("wall_collision");
+		bindInPlayState(_gameObject);
 	}
 }
 
+
+
 void PhysicsComponent::restrictToPlayArea(GameObject* _gameObject, double _dt)
 {
-		glm::vec2 playArea = map->getSize();
-	glm::vec2 clipArea = glm::vec2( playArea.x / 1280. * 2.f, playArea.y / 1024. * 2.f);
+	glm::vec2 playArea = map->getSize();
+	glm::vec2 clipArea = glm::vec2( playArea.x / screenWidth * 2.f, playArea.y / screenHeight * 2.f);
 
 	glm::vec2 min = glm::vec2(-clipArea.x / 2,-clipArea.y / 2);
 	glm::vec2 max = glm::vec2(clipArea.x / 2,clipArea.y / 2);
@@ -176,13 +194,11 @@ void PhysicsComponent::restrictToPlayArea(GameObject* _gameObject, double _dt)
 	{
 		_gameObject->center.y = min.y + _gameObject->size.y / 2.0f;
 		_gameObject->velocity = glm::vec2(0.f);
-
 	}
 	else if(_gameObject->center.y + _gameObject->size.y / 2 > max.y)
 	{
 		_gameObject->center.y = max.y - _gameObject->size.y / 2.0f;
 		_gameObject->velocity = glm::vec2(0.f);
-
 	}
 }
 
@@ -192,7 +208,7 @@ void PhysicsComponent::bounceOnBlock(Ball* _ball, double _dt)
 
 	for (const BlockC::ptr& b : map->blocks)
 	{
-		if (!b->canCollide)
+		if (!b->inPlay)
 			continue;
 
 		glm::vec2 reflectDir;
@@ -201,27 +217,69 @@ void PhysicsComponent::bounceOnBlock(Ball* _ball, double _dt)
 		{
 			_ball->velocity = glm::reflect(_ball->velocity, reflectDir);
 			
-			b->health--;
+			//b->health--;
 
-			if(b->health <= 0)
-			{
-				b->canCollide = false;
-			}
-			ICoreSystem::getInstance().lock()->getSounds()->playSfx("block_explodes");
+			//if(b->health <= 0)
+			//{
+			//	b->canCollide = false;
+			//}
+			//ICoreSystem::getInstance().lock()->getSounds()->playSfx("block_explodes");
 		}
 	}
 }
 
+bool matchId(GameObject* _gameObject1,GameObject::ptr _gameObject2)
+{
+	if(_gameObject1->getId() == _gameObject2->getId())
+		return true;
+
+	return false;
+}
+
+
 void PhysicsComponent::bounceOnPaddle(Ball* _ball, double _dt)
 {
-	for(Paddle::ptr paddle : map->paddles)
+	for(GameObject::ptr paddle : map->paddles)
 	{
-		glm::vec2 reflectDir;
-		if (ballRectCollide(reflectDir, _ball, paddle.get()))
+		if(!_ball->inPlay && matchId(_ball, paddle))
 		{
-			_ball->velocity = glm::normalize(glm::vec2(_ball->center - paddle->center)) * glm::length(_ball->velocity);
-			
-			ICoreSystem::getInstance().lock()->getSounds()->playSfx("wall_collision");
+			_ball->center.x = paddle->center.x;
+
+			if(paddle->center.y > _ball->center.y)
+			{
+				_ball->center.y = paddle->center.y - _ball->size.y;
+			}
+			else
+			{
+				_ball->center.y = paddle->center.y + _ball->size.y;
+			}
+		}
+		
+		if(paddle->inPlay && !_ball->inPlay && matchId(_ball, paddle))
+		{
+			_ball->setInPlay(true);
+
+			if(paddle->center.y > _ball->center.y)
+			{
+				_ball->velocity.y = -1.f;
+			}
+			else
+			{
+				_ball->velocity.y = 1.f;
+			}
+
+			_ball->velocity.x = paddle->velocity.x;
+		}
+		
+		if(_ball->inPlay)
+		{
+			glm::vec2 reflectDir;
+			if (ballRectCollide(reflectDir, _ball, paddle.get()))
+			{
+				_ball->velocity = glm::normalize(glm::vec2(_ball->center - paddle->center)) * glm::length(_ball->velocity);
+
+				ICoreSystem::getInstance().lock()->getSounds()->playSfx("wall_collision");
+			}
 		}
 	}
 }

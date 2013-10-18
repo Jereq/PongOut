@@ -25,8 +25,9 @@ public:
 	~BlockC();
 
 	bool initialize(const CommonTypes::Block& _blockData, float _rotation, GraphicsComponent::ptr _graphicsComponent);
-	bool canCollide;
+	void setCollided(const int _health);
 	virtual void	update(double _dt);
+	void			setInPlay(bool _inPlayState)override;
 	typedef std::shared_ptr<BlockC> ptr;
 private:
 	int health;

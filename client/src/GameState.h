@@ -21,6 +21,7 @@ public:
 
 	virtual std::string getText(const std::string& _elemId) const;
 	void addStateAction(GUIActionHandler* _actionHandler);
+
 private:
 	virtual bool initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::ptr _server);
 	virtual void onInput(const std::vector<IInput::Event> _events);
@@ -39,6 +40,10 @@ private:
 	GraphicsComponent::ptr gc;
 	InputComponent::ptr ic;
 	PhysicsComponent::ptr pc;
+
+	int myMatchScore;
+	int opponentMatchScore;
+	int time;
 };
 
 #endif
