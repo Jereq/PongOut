@@ -166,6 +166,7 @@ void GameState::update(const float _dt)
 		}
 	}
 
+	time = sfd.time;
 	world->update(_dt, graphics);
 
 	/*

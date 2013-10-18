@@ -211,7 +211,7 @@ void Game::run()
 		return;
 	}
 
-	if (!screenManager.openScreen("gamelobby"))
+	if (!screenManager.openScreen("login"))
 	{
 		std::cout << "Failed to open screen" << std::endl;
 		return;

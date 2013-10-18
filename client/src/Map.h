@@ -61,7 +61,6 @@ public:
 	bool addObject(Ball::ptr _ball);
 
 public:
-
 	void resetBall(const int _id);
 	void setBallPosition(const int, glm::vec3 _position);
 	glm::vec3 getPaddlePosition(const int _paddleId);
