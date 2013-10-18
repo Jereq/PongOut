@@ -6,7 +6,8 @@ namespace CommonTypes
 	struct Block
 	{
 		int id, type, health;
-		float x, y, z;
+		glm::vec2 pos;
+		char inPlay;
 		std::vector<std::string> textures;
 
 		int getSize()
@@ -37,12 +38,15 @@ namespace CommonTypes
 	{
 		glm::vec2 pos, vel;
 		uint32_t id;
+		char inPlay;
 	};
 
 	struct Ball
 	{
 		glm::vec2 pos, vel;
 		uint32_t id;
+		float radius;
+		char inPlay;
 	};
 
 	struct PlayerMatchInfo
