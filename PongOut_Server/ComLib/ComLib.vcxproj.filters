@@ -75,6 +75,15 @@
     <ClInclude Include="CommonTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SafeQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PaddleUpdateRequest.h">
+      <Filter>Header Files\Msg sub clases\Game messages</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTickUpdate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -115,6 +124,12 @@
     </ClCompile>
     <ClCompile Include="CreateGameRequest.cpp">
       <Filter>Source Files\Msg sub clases\Game messages</Filter>
+    </ClCompile>
+    <ClCompile Include="PaddleUpdateRequest.cpp">
+      <Filter>Source Files\Msg sub clases\Game messages</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTickUpdate.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

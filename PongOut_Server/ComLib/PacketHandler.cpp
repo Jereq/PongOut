@@ -10,6 +10,8 @@
 #include "GameMessage.h"
 #include "CreateGameRequest.h"
 #include "CreateGameResponse.h"
+#include "PaddleUpdateRequest.h"
+#include "GameTickUpdate.h"
 
 PacketHandler& PacketHandler::getInstance()
 {
@@ -49,6 +51,8 @@ void PacketHandler::initRegister()
 
 	gameMsg->registerChild(GameMessage::ptr(new CreateGameRequest()));
 	gameMsg->registerChild(GameMessage::ptr(new CreateGameResponse()));
+	gameMsg->registerChild(GameMessage::ptr(new PaddleUpdateRequest()));
+	gameMsg->registerChild(GameMessage::ptr(new GameTickUpdate()));
 
 	registerPacket(gameMsg);
 }

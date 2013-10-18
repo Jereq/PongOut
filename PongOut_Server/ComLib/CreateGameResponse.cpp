@@ -12,10 +12,12 @@ CreateGameResponse::~CreateGameResponse(void)
 {
 }
 
-void CreateGameResponse::setResponse( const std::vector<CommonTypes::Block>& _map, const CommonTypes::GameInitInfo& _info )
+void CreateGameResponse::setResponse( const std::vector<CommonTypes::Block>& _map, const CommonTypes::GameInitInfo& _info, const CommonTypes::PlayerMatchInfo& _pmiME, const CommonTypes::PlayerMatchInfo& _pmiOP )
 {
 	map = _map;
 	info = _info;
+	pmiME = _pmiME;
+	pmiOP = _pmiOP;
 
 	int mapSize = 0;
 
@@ -26,7 +28,7 @@ void CreateGameResponse::setResponse( const std::vector<CommonTypes::Block>& _ma
 
 	mapSize += sizeof(uint16_t);
 
-	msgHeader.length = mapSize + sizeof(CommonTypes::GameInitInfo) + sizeof(GameMsgType) + sizeof(int);
+	msgHeader.length = mapSize + sizeof(CommonTypes::GameInitInfo) + sizeof(GameMsgType) + sizeof(CommonTypes::PlayerMatchInfo) * 2;
 }
 
 std::vector<char> CreateGameResponse::getData()
@@ -37,6 +39,8 @@ std::vector<char> CreateGameResponse::getData()
 	pack(msgHeader, it);
 	pack(gType, it);
 	pack(info, it);
+	pack(pmiME, it);
+	pack(pmiOP, it);
 	pack(map, it);
 
 	return res;
@@ -50,6 +54,8 @@ msgBase::ptr CreateGameResponse::interpretPacket( const std::deque<char>& _buffe
 	it = unpack(cgp->msgHeader, it);
 	it = unpack(cgp->gType, it);
 	it = unpack(cgp->info, it);
+	it = unpack(cgp->pmiME, it);
+	it = unpack(cgp->pmiOP, it);
 	it = unpack(cgp->map, it);
 
 	return cgp;

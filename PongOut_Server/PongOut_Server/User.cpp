@@ -4,7 +4,7 @@
 #include "UserManager.h"
 
 User::User(boost::shared_ptr<tcp::socket> _socket)
-	: socket(_socket), status(UserStatus::UNVERIFIED)
+	: socket(_socket), userType(UserType::UNVERIFIED), userState(UserState::UNKNOWN)
 {
 }
 
@@ -24,12 +24,10 @@ void User::handleWrite( const boost::system::error_code& _err, size_t _byte )
 	std::lock_guard<std::mutex> lock(msgBufferLock);
 	msgWriteBufferQueue.pop();
 
-	if (!_err)
+	if (_err)
 	{
 		Log::addLog(Log::LogType::LOG_ERROR, 4, _err.message());
-	} 
-
-	//TODO: handle whats happens case off error
+	}
 
 	if (!msgWriteBufferQueue.empty())
 	{
@@ -39,10 +37,11 @@ void User::handleWrite( const boost::system::error_code& _err, size_t _byte )
 
 void User::sendMsg()
 {
-	msgWriteBuffer = msgWriteBufferQueue.front()->getData();
-	if (msgWriteBuffer.size() != msgWriteBufferQueue.front()->getHeader().length + sizeof(msgBase::header))
+	auto& packet = msgWriteBufferQueue.front();
+	msgWriteBuffer = packet->getData();
+	if (msgWriteBuffer.size() != packet->getHeader().length + sizeof(msgBase::header))
 	{
-		Log::addLog(Log::LogType::LOG_ERROR, 1, "Packet has incorrect size");
+		Log::addLog(Log::LogType::LOG_ERROR, 1, "Packet (" + packet->getType() + ") has incorrect size: " + std::to_string(msgWriteBuffer.size()) + " is not " + std::to_string(packet->getHeader().length + sizeof(msgBase::header)));
 		return;
 	}
 	boost::asio::async_write(*socket, boost::asio::buffer(msgWriteBuffer), boost::bind(&User::handleWrite, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
@@ -144,9 +143,9 @@ void User::disconnect()
 	socket->close();
 }
 
-void User::setUserStatus( UserStatus _status )
+void User::setUserType( UserType _type )
 {
-	status = _status;
+	userType = _type;
 }
 
 void User::setUserID( unsigned int _id )
@@ -154,9 +153,9 @@ void User::setUserID( unsigned int _id )
 	id = _id;
 }
 
-User::UserStatus User::getUserStatus()
+User::UserType User::getUserType()
 {
-	return status;
+	return userType;
 }
 
 int User::getRefereeID()
@@ -167,4 +166,14 @@ int User::getRefereeID()
 void User::setReffereeID( int _refID )
 {
 	refID = _refID;
+}
+
+User::UserState User::getUserState()
+{
+	return userState;
+}
+
+void User::setUserState( UserState _state )
+{
+	userState = _state;
 }

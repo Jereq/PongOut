@@ -3,6 +3,7 @@
 #include "TMLReader.h"
 #include "CreateGameResponse.h"
 
+#include <chrono>
 
 Referee::Referee(void)
 {
@@ -15,12 +16,12 @@ Referee::~Referee(void)
 
 void Referee::init( User::ptr _u0, User::ptr _u1, CommonTypes::GameInitInfo _info, int _refID)
 {
-	u0 = _u0;
-	u1 = _u1;
+	user0 = _u0;
+	user1 = _u1;
 	info = _info;
 
-	u0->setReffereeID(_refID);
-	u1->setReffereeID(_refID);
+	user0->setReffereeID(_refID);
+	user1->setReffereeID(_refID);
 
 	std::vector<CommonTypes::Block> mapData;
 
@@ -120,12 +121,105 @@ void Referee::init( User::ptr _u0, User::ptr _u1, CommonTypes::GameInitInfo _inf
 		offY++;
 	}	
 
-	CreateGameResponse::ptr cgrp = CreateGameResponse::ptr(new CreateGameResponse());
+	user0Info.ball.id = 0;
+	user0Info.ball.pos = glm::vec2(0.0f, 0.0f);
+	user0Info.ball.vel = glm::vec2(0.0f, 0.0f);
 
-	cgrp->setResponse(mapData, _info);
+	user0Info.paddle.id = 0;
+	user0Info.paddle.pos = glm::vec2(0.0f, 0.0f);
+	user0Info.paddle.vel = glm::vec2(0.0f, 0.0f);
 
-	u0->addMsgToMsgQueue(cgrp);
-	u1->addMsgToMsgQueue(cgrp);
+	user0Info.score = 0;
+	user0Info.userID = user0->getUserID();
 
-	int i = 0;
+	user1Info.ball.id = 1;
+	user1Info.ball.pos = glm::vec2(0.0f, 0.0f);
+	user1Info.ball.vel = glm::vec2(0.0f, 0.0f);
+
+	user1Info.paddle.id = 1;
+	user1Info.paddle.pos = glm::vec2(0.0f, 0.0f);
+	user1Info.paddle.vel = glm::vec2(0.0f, 0.0f);
+
+	user1Info.score = 0;
+	user1Info.userID = user1->getUserID();
+
+	CreateGameResponse::ptr cgrp0 = CreateGameResponse::ptr(new CreateGameResponse());
+	CreateGameResponse::ptr cgrp1 = CreateGameResponse::ptr(new CreateGameResponse());
+
+	cgrp0->setResponse(mapData, _info, user0Info, user1Info);
+	cgrp1->setResponse(mapData, _info, user1Info, user0Info);
+
+	user0->addMsgToMsgQueue(cgrp0);
+	user1->addMsgToMsgQueue(cgrp1);
+
+	user0->setUserState(User::UserState::INGAME);
+	user1->setUserState(User::UserState::INGAME);
+
+	startGame();
+}
+
+void Referee::startGame()
+{
+	gameThread = std::thread(boost::bind(&Referee::gameThreadFunc, shared_from_this()));
+}
+
+void Referee::gameThreadFunc()
+{
+	try
+	{
+		for (ever) //Tick loop
+		{
+			while (!refMsgQ.baseQueue.empty())
+			{
+				auto msg = refMsgQ.pop();
+
+				if (msg.first->getGameType() == GameMessage::GameMsgType::PADDLEUPDATEREQUEST)
+				{
+					PaddleUpdateRequest::ptr pur = boost::static_pointer_cast<PaddleUpdateRequest>(msg.first);
+
+					if (msg.second == user0->getUserID())
+					{
+						user0Info.paddle = pur->getPaddle();
+					} 
+					else if (msg.second == user1->getUserID())
+					{
+						user1Info.paddle = pur->getPaddle();
+					}
+					else
+					{
+						Log::addLog(Log::LogType::LOG_ERROR, 1, "Error in code at:" + std::to_string(__LINE__));
+					}
+				}
+				else
+				{
+					Log::addLog(Log::LogType::LOG_ERROR, 1, "Error in code at:" + std::to_string(__LINE__));
+				}
+			}
+
+			//TODO: add ball and block logic!
+
+
+
+
+
+
+			GameTickUpdate::ptr gtup0 = GameTickUpdate::ptr(new GameTickUpdate());
+			GameTickUpdate::ptr gtup1 = GameTickUpdate::ptr(new GameTickUpdate());
+
+			gtup0->setTickUpdate(user0Info, user1Info, std::vector<CommonTypes::Block>());
+			gtup1->setTickUpdate(user1Info, user0Info, std::vector<CommonTypes::Block>());
+
+			user0->addMsgToMsgQueue(gtup0);
+			user1->addMsgToMsgQueue(gtup1);
+		}
+	}
+	catch (...)
+	{
+		Log::addLog(Log::LogType::LOG_ERROR, 1, "Referee rage quit!");
+	}
+}
+
+void Referee::addMsgToQ( std::pair<GameMessage::ptr, int> _msg )
+{
+	refMsgQ.push(_msg);
 }

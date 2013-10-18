@@ -19,10 +19,13 @@
 #include "CreateGameRequest.h"
 #include "GameMessage.h"
 #include "CreateGameResponse.h"
+#include "PaddleUpdateRequest.h"
 
 #include "SafeQueue.h"
 #include "GameHandler.h"
 #include "message.h"
+
+#include <glm/glm.hpp>
 
 using boost::asio::ip::tcp;
 
@@ -42,6 +45,7 @@ public:
 	void sendChatMsg(std::string _name, std::string _msg);
 	void createAccount(std::string _userName, std::string _userPassword);
 	void createGame(int _mapID, int _ballSpeed, int _paddleSpeed, int _suddenDeathTime, char _fogOfWar, char _powerUps);
+	void sendPaddlePos(CommonTypes::Paddle _p);
 	message getNextMessage();
 	int getMsgQueueSize();
 
@@ -60,7 +64,7 @@ private:
 	std::string userName;
 	std::uint16_t port;
 	boost::asio::io_service io;
-	tcp::socket soc;
+	boost::shared_ptr<tcp::socket> soc;
 	boost::array<char, 256> msgListenBuffer;
 	std::vector<char> msgWriteBufffer;
 	std::deque<char> fullMsgBuffer;

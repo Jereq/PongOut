@@ -1,4 +1,6 @@
+#pragma once
 
+#include <glm/glm.hpp>
 
 namespace CommonTypes
 {
@@ -30,5 +32,24 @@ namespace CommonTypes
 	{
 		int mapID, ballSpeed, paddleSpeed, suddenDeathTime;
 		char fogOfWar, powerUps;
+	};
+
+	struct Paddle
+	{
+		glm::vec2 pos, vel;
+		uint32_t id;
+	};
+
+	struct Ball
+	{
+		glm::vec2 pos, vel;
+		uint32_t id;
+	};
+
+	struct PlayerMatchInfo
+	{
+		uint32_t userID, score;
+		Paddle paddle;
+		Ball ball;
 	};
 }
