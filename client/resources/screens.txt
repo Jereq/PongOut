@@ -468,6 +468,78 @@ screen
 		size 82/16
 	/image
 
+	button
+		id l1
+		textureNormal button/level01
+		position 1350/500/0
+		size 128/72
+		func set/level/id1
+	/button
+
+	button
+		id l2
+		textureNormal button/level02
+		position 1482/500/0
+		size 128/72
+		func set/level/id2
+	/button
+
+	button
+		id l3
+		textureNormal button/level03
+		position 1614/500/0
+		size 128/72
+		func set/level/id3
+	/button
+
+	button
+		id l4
+		textureNormal button/level04
+		position 1746/500/0
+		size 128/72
+		func set/level/id4
+	/button
+
+	button
+		id l5
+		textureNormal button/level05
+		position 1350/424/0
+		size 128/72
+		func set/level/id5
+	/button
+
+	button
+		id l6
+		textureNormal button/level06
+		position 1482/424/0
+		size 128/72
+		func set/level/id6
+	/button
+
+	button
+		id l7
+		textureNormal button/level07
+		position 1614/424/0
+		size 128/72
+		func set/level/id7
+	/button
+
+	button
+		id l8
+		textureNormal button/level08
+		position 1746/424/0
+		size 128/72
+		func set/level/id8
+	/button
+
+	button
+		id l9
+		textureNormal button/level09
+		position 1548/348/0
+		size 128/72
+		func set/level/id9
+	/button
+
 	image
 		id chatOut
 		texture output/chat_window

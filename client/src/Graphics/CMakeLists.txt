@@ -1,5 +1,11 @@
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/")
 
+find_package(Freetype REQUIRED)
+
+include_directories(	
+	${FREETYPE_INCLUDE_DIRS}
+)
+
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	find_package(Directx11 REQUIRED)
 
@@ -13,7 +19,6 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 		GraphicsWindows.cpp GraphicsWindows.h
 		D3D.cpp D3D.h
 		TestShader.cpp TestShader.h
-		ErrorCodeList.h ErrorCodeList.h
 		DXAssetInstancing.h
 	)
 
@@ -61,12 +66,19 @@ elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	)
 endif()
 
+list(APPEND GRAPHICS_SOURCES
+	Font.cpp Font.h
+	IGraphics.h
+	ErrorCodeList.h
+)
+
 add_library(Graphics
 	${GRAPHICS_SOURCES}
 )
 
 target_link_libraries(Graphics
 	${GRAPHICS_LIBS}
+	${FREETYPE_LIBRARIES}
 	ResourceLoader
 )
 

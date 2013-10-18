@@ -26,6 +26,7 @@ public:
 
 private:
 	Map* map;
+	void bindInPlayState(GameObject* _gameObject);
 };
 
 #endif

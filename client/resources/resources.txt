@@ -21,7 +21,7 @@ texture:blocks/pink_02			textures/box_pink_02.png
 texture:blocks/pink_03			textures/box_pink_03.png
 texture:blocks/pink_04			textures/box_pink_04.png
 texture:blocks/pink_05			textures/box_pink_05.png
-texture:background/ingame_01		textures/background_prototype.png
+texture:background/ingame_01		textures/background_ingame_01.png
 texture:background/create_profile	textures/background_create_profile.png
 texture:background/game_lobby		textures/background_game_lobby.png
 texture:background/high_scores		textures/background_high_scores.png
@@ -46,6 +46,15 @@ texture:button/game_settings_unselected	textures/button_game_settings_unselected
 texture:button/high_scores_game_lobby	textures/button_high_scores_game_lobby.png
 texture:button/high_scores_main_menu	textures/button_high_scores_main_menu.png
 texture:button/host			textures/button_host.png
+texture:button/level01			textures/level_01.png
+texture:button/level02			textures/level_02.png
+texture:button/level03			textures/level_03.png
+texture:button/level04			textures/level_04.png
+texture:button/level05			textures/level_05.png
+texture:button/level06			textures/level_06.png
+texture:button/level07			textures/level_07.png
+texture:button/level08			textures/level_08.png
+texture:button/level09			textures/level_09.png
 texture:button/login			textures/button_login.png
 texture:button/log_out			textures/button_log_out.png
 texture:button/profile			textures/button_profile.png
@@ -106,10 +115,11 @@ texture:text/username			textures/text_username.png
 texture:text/winner			textures/text_winner.png
 texture:regulator/bar			textures/regulator_bar.png
 texture:regulator/regulator		textures/regulator_regulator.png
-music:bubble				sounds/Bubble3.mp3
+music:bubble				sounds/bubble3.mp3
 music:techno				sounds/techno.mp3
 music:winner				sounds/winner.mp3
 music:loser				sounds/loser.mp3
 sfx:ball_vs_ball			sounds/ball_on_ball_collision.mp3
 sfx:block_explodes			sounds/block_explodes.mp3
 sfx:wall_collision			sounds/wall_collision.mp3
+font:menu_text_field			fonts/PrintedCircuitBoard.ttf

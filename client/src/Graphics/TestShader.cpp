@@ -199,7 +199,7 @@ ErrorCode TestShader::setShaderParamaters(ID3D11DeviceContext* _deviceContext, I
 	_deviceContext->IASetVertexBuffers(0, 1, &_vbuffer, &stride, &offset);
 
 	// Set the index buffer to active in the input assembler so it can be rendered.
-	_deviceContext->IASetIndexBuffer(_ibuffer, DXGI_FORMAT_R32_UINT, 0);
+	//_deviceContext->IASetIndexBuffer(_ibuffer, DXGI_FORMAT_R32_UINT, 0);
 	
 	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
 	_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
@@ -227,5 +227,6 @@ ErrorCode TestShader::setShaderParamaters(ID3D11DeviceContext* _deviceContext, I
 
 void TestShader::drawShader(ID3D11DeviceContext* _deviceContext, int indexCount)
 {
-	_deviceContext->DrawIndexed(indexCount,0,0);
+	//_deviceContext->DrawIndexed(indexCount,0,0);
+	_deviceContext->Draw(indexCount, 0);
 }

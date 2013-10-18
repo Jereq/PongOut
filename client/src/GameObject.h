@@ -8,10 +8,10 @@
 
 class GameObject
 {
-public://private:
-	std::string		objectId;
-	friend class InputComponent;
-	friend class PhysicsComponent;
+private:
+	int				objectId;
+	friend class	InputComponent;
+	friend class	PhysicsComponent;
 protected:
 	GraphicsComponent::ptr graphicsComponent;
 
@@ -19,17 +19,22 @@ protected:
 	glm::vec2	size;
 	glm::vec2	velocity;
 	float		rotation;
+	bool		inPlay;
 
-	GameObject(const std::string _objectId = "UNDEFINED");
+	GameObject(const int _objectId = -1);
 	virtual ~GameObject();
-	bool initialize(const std::string& _id, glm::vec3 _center, glm::vec2 _size, float _rotation, GraphicsComponent::ptr _graphicsComponent);
+	bool initialize(const int _id, glm::vec3 _center, glm::vec2 _size, float _rotation, GraphicsComponent::ptr _graphicsComponent);
 
 public:
 	typedef std::shared_ptr<GameObject> ptr;
 
-	std::string		getId()const;
-	
+	int				getId()const;
+	glm::vec3		getCenter()const;
+	glm::vec2		getVelocity()const;
+
 	virtual void	update(double _dt);
+	void			setPosition(glm::vec3 _position, glm::vec2 _velocity);
+	virtual void	setInPlay(bool _inPlayState);
 };
 
 #endif

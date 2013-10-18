@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include "Font.h"
 #include "GLSLProgram.h"
 #include "GraphicsLinux.h"
 #include "IGraphics.h"
@@ -15,9 +15,12 @@
 
 class GraphicsLinux : public IGraphics
 {
+public:
+
 private:
 	GLFWwindow* window;
 	GLSLProgram rectangleProgram;
+	GLSLProgram textProgram;
 	GLuint rectVaoHandle;
 	GLuint rectVboHandle;
 
@@ -31,7 +34,19 @@ private:
 		boost::filesystem::path path;
 		GLuint textureID;
 	};
+
 	std::map<std::string, LoadedImage> loadedTextures;
+
+	struct LoadedChar
+	{
+		GLuint textureID;
+		glm::vec2 origin;
+		glm::vec2 advance;
+		glm::vec2 size;
+	};
+
+	std::map<char32_t, LoadedChar> loadedChars;
+	std::map<std::string, Font> loadedFonts;
 
 	struct Rectangle
 	{
@@ -41,14 +56,19 @@ private:
 	};
 	typedef std::vector<Rectangle> recs_t;
 	std::map<std::string, recs_t> registeredRectangles;
+	std::map<GLuint, recs_t> registeredCharacters;
 
 	bool checkGLVersion(int _majorRequiredVersion, int _minorRequiredVersion);
 	void initDevIL();
 	void printReport();
 	bool loadRectangleShader();
+	bool loadTextShader();
 	void initRectBuffer();
 
 	LoadedImage loadImage(const boost::filesystem::path& _imagePath);
+
+	ErrorCode loadChar(LoadedChar& _charOut, Font& _font, char32_t _character);
+	ErrorCode getChar(LoadedChar& _charOut, Font& _font, char32_t _character);
 
 	void bufferData(const recs_t& _rects);
 
@@ -65,6 +85,7 @@ public:
 
 	virtual bool loadResources(const boost::filesystem::path& _resourceDir) override;
 	virtual void addRectangle(glm::vec3 _center, glm::vec2 _size, float _rotation, std::string _id) override;
+	virtual ErrorCode addText(const std::string& _fontId, glm::vec3 _startPos, glm::vec2 _letterSize, const std::string& _text) override;
 
 	virtual void drawFrame() override;
 

@@ -1,77 +1,6 @@
 #include "InputField.h"
 
-static std::string naiveUTF32toUTF8(char32_t _character)
-{
-	char buffer[6];
-
-	if (_character <= 0x7F)
-	{
-		return std::string(1, (char)_character);
-	}
-	else if (_character <= 0x07FF)
-	{
-		buffer[1] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[0] = _character | 0xC0;
-
-		return std::string(buffer, buffer + 2);
-	}
-	else if (_character <= 0xFFFF)
-	{
-		buffer[2] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[1] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[0] = _character | 0xE0;
-
-		return std::string(buffer, buffer + 3);
-	}
-	else if (_character <= 0x1FFFFF)
-	{
-		buffer[3] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[2] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[1] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[0] = _character | 0xF0;
-
-		return std::string(buffer, buffer + 4);
-	}
-	else if (_character <= 0x3FFFFFF)
-	{
-		buffer[4] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[3] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[2] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[1] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[0] = _character | 0xF8;
-
-		return std::string(buffer, buffer + 5);
-	}
-	else if (_character <= 0x7FFFFFFF)
-	{
-		buffer[5] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[4] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[3] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[2] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[1] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[0] = _character | 0xFC;
-
-		return std::string(buffer, buffer + 6);
-	}
-
-	// Invalid
-	return std::string();
-}
+#include <utf8.h>
 
 InputField::InputField()
 	: marked(false), state(State::Normal)
@@ -102,12 +31,14 @@ void InputField::onInput(IInput::Event _event)
 			{
 				if (!text.empty())
 				{
-					text = text.substr(0, text.size() - 1);
+					auto newEnd = text.end();
+					utf8::prior(newEnd, text.begin());
+					text = std::string(text.begin(), newEnd);
 				}
 			}
 			else
 			{
-				text += naiveUTF32toUTF8(_event.charEvent.character);
+				utf8::append(_event.charEvent.character, std::back_inserter(text));
 			}
 		}
 		break;
@@ -175,6 +106,7 @@ void InputField::onInput(IInput::Event _event)
 void InputField::draw(IGraphics::ptr _graphics)
 {
 	_graphics->addRectangle(center, size, 0, textureName);
+	_graphics->addText("menu_text_field", center - glm::vec3(size.x * 0.45f, size.y * 0.35f, 0.01f), glm::vec2(size.y) * 0.8f, text);
 }
 
 std::string InputField::getId() const

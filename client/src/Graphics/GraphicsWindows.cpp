@@ -1,7 +1,10 @@
 #include "GraphicsWindows.h"
+
 #include "DXAssetInstancing.h"
-#include <iostream>
 #include <ResourceLoader/ResourceLoader.h>
+
+#include <iostream>
+#include <utf8.h>
 
 struct sprite
 {
@@ -34,7 +37,7 @@ void GraphicsWindows::destroy()
 bool GraphicsWindows::loadResources(const boost::filesystem::path& _resourceDir)
 {
 	std::vector<ResourceLoader::Resource> textureResources;
-	ResourceLoader::ErrorCode err = ResourceLoader::getResources(textureResources, _resourceDir, "texture");
+	ResourceLoader::ErrorCode err = ResourceLoader::getResources(textureResources, _resourceDir);
 	if (err == ResourceLoader::ErrorCode::INVALID_FORMAT)
 	{
 		std::cout << "Warning: " << _resourceDir / "resources.txt" << " contains invalid formatting." << std::endl;
@@ -45,18 +48,32 @@ bool GraphicsWindows::loadResources(const boost::filesystem::path& _resourceDir)
 		return false;
 	}
 
-	for (auto texRes : textureResources)
+	for (auto res : textureResources)
 	{
-		SRV tex = NULL;
-		ErrorCode result;
-		result = DXCREATE::createTexture(texRes.path.string(), tex, d3d->device);
-
-		if (result != ErrorCode::G_OK)
+		if (res.type == "texture")
 		{
-			return false;
-		}
+			SRV tex = NULL;
+			ErrorCode result;
+			result = DXCREATE::createTexture(res.path.string(), tex, d3d->device);
 
-		textures.insert(std::make_pair(texRes.name, tex));
+			if (result != ErrorCode::G_OK)
+			{
+				return false;
+			}
+
+			textures.insert(std::make_pair(res.name, tex));
+		}
+		else if (res.type == "font")
+		{
+			Font f;
+			Font::ErrorCode fErr = f.init(res.path, 64, false);
+			if (fErr != Font::ErrorCode::OK)
+			{
+				return false;
+			}
+
+			loadedFonts.insert(std::make_pair(res.name, f));
+		}
 	}
 
 	return true;
@@ -155,19 +172,64 @@ void GraphicsWindows::addRectangle(glm::vec3 _center, glm::vec2 _size, float _ro
 	return;
 }
 
-ErrorCode GraphicsWindows::createBuffers(ID3D11Buffer*& _vBuffer, ID3D11Buffer*& _iBuffer, ID3D11Device* _device, int _index)
+ErrorCode GraphicsWindows::addText(const std::string& _fontId, glm::vec3 _startPos, glm::vec2 _letterSize, const std::string& _text)
 {
-	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
+	if (loadedFonts.count(_fontId) == 0)
+	{
+		return ErrorCode::G_INVALID_ARGUMENT;
+	}
+
+	Font& font = loadedFonts.at(_fontId);
+
+	auto utf8It = _text.begin();
+	auto itEnd = _text.end();
+
+	if (!utf8::is_valid(utf8It, itEnd))
+	{
+		return ErrorCode::G_INVALID_ARGUMENT;
+	}
+
+	glm::vec3 penPos = _startPos;
+
+	while (utf8It != itEnd)
+	{
+		char32_t character32 = utf8::next(utf8It, itEnd);
+
+		LoadedChar c;
+		ErrorCode err = getChar(c, font, character32);
+		if (err != ErrorCode::G_OK)
+		{
+			return err;
+		}
+
+		float scale = 1.f / font.getSize();
+		glm::vec3 posScale(_letterSize.x * scale, _letterSize.y * scale, 1.f);
+		glm::vec2 size = _letterSize * c.size * scale;
+
+		glm::vec3 pos = penPos + glm::vec3(c.origin.x, -c.size.y + c.origin.y, 0.f) * posScale + glm::vec3(size, 0.f) * 0.5f;
+
+		SpriteVertex sv = {
+			pos.x, pos.y, pos.z,
+			size.x, size.y
+		};
+
+		frameChars[c.texture].push_back(sv);
+
+		penPos += glm::vec3(c.advance.x, c.advance.y, 0.f) * posScale;
+	}
+
+	return ErrorCode::G_OK;
+}
+
+ErrorCode GraphicsWindows::createBuffers(ID3D11Buffer*& _vBuffer, ID3D11Device* _device, std::vector<SpriteVertex>& _sv)
+{
+	D3D11_BUFFER_DESC vertexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
 		
-	vertexCount				= frameSprites[_index].vertices.size();
+	vertexCount				= _sv.size();
 	indexCount				= vertexCount;
 	unsigned long* indices	= new unsigned long[indexCount];
-	SpriteVertex*sv			= new SpriteVertex[vertexCount];
-
-	//memset(sv, 0, sizeof(SpriteVertex) * vertexCount);
-	//memmove(sv, &frameSprites[_index].vertices[0], sizeof(SpriteVertex) * vertexCount);//we need to do a conversion from vector to * because of pSysMem
 
 	unsigned int i;
 	for(i=0; i<indexCount; i++)
@@ -182,7 +244,7 @@ ErrorCode GraphicsWindows::createBuffers(ID3D11Buffer*& _vBuffer, ID3D11Buffer*&
 	vertexBufferDesc.StructureByteStride= 0;
 
 	// Give the subresource structure a pointer to the vertex data.
-	vertexData.pSysMem			= &frameSprites[_index].vertices[0];//sv;
+	vertexData.pSysMem			= &_sv[0];//sv;
 	vertexData.SysMemPitch		= 0;
 	vertexData.SysMemSlicePitch	= 0;
 
@@ -191,32 +253,9 @@ ErrorCode GraphicsWindows::createBuffers(ID3D11Buffer*& _vBuffer, ID3D11Buffer*&
 	if(FAILED(result))
 		return ErrorCode::WGFX_BUFFER_INIT_FAIL;
 
-	// Set up the description of the static index buffer.
-	indexBufferDesc.Usage				= D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth			= sizeof(unsigned long) * indexCount;
-	indexBufferDesc.BindFlags			= D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags		= 0;
-	indexBufferDesc.MiscFlags			= 0;
-	indexBufferDesc.StructureByteStride	= 0;
-
-	// Give the subresource structure a pointer to the index data.
-	indexData.pSysMem			= indices;
-	indexData.SysMemPitch		= 0;
-	indexData.SysMemSlicePitch	= 0;
-
-	// Create the index buffer.
-	result = _device->CreateBuffer(&indexBufferDesc, &indexData, &_iBuffer);
-	if(FAILED(result))
-		return ErrorCode::WGFX_BUFFER_INIT_FAIL;
-
-	delete [] indices;
-	indices = 0;
-
-	delete [] sv;
-	sv = 0;
-
 	return ErrorCode::WGFX_BUFFER_INIT_OK;
 }
+
 
 void GraphicsWindows::drawFrame()
 {
@@ -228,10 +267,10 @@ void GraphicsWindows::drawFrame()
 	{
 		indexCount = s.vertices.size();
 		SRV tex = s.bufferTexture;
-		ErrorCode result = createBuffers(vBuf, iBuf, d3d->device, index);
+		ErrorCode result = createBuffers(vBuf, d3d->device, s.vertices);
 
 		if(result == ErrorCode::WGFX_OK)
-			testShader->draw(d3d->deviceContext, vBuf, iBuf, tex, indexCount);
+			testShader->draw(d3d->deviceContext, vBuf, NULL, tex, indexCount);
 
 		index++;
 		
@@ -240,11 +279,7 @@ void GraphicsWindows::drawFrame()
 			vBuf->Release();
 			vBuf = NULL;
 		}
-		if( iBuf != NULL )
-		{
-			iBuf->Release();
-			iBuf = NULL;
-		}
+
 	}
 
 	for (sprite s : frameSprites)
@@ -253,5 +288,99 @@ void GraphicsWindows::drawFrame()
 	frameSprites.clear();
 
 
+	if (!frameChars.empty())
+	{
+
+
+		for (auto& c : frameChars)
+		{
+			if (c.second.empty())
+			{
+				continue;
+			}
+
+			auto& spriteVs = c.second;
+
+			int icount = spriteVs.size();
+			SRV tex = c.first;	
+			ErrorCode result = createBuffers(vBuf, d3d->device, spriteVs);
+
+			if(result == ErrorCode::WGFX_OK)
+				testShader->draw(d3d->deviceContext, vBuf, NULL, tex, indexCount);
+
+			spriteVs.clear();
+			if( vBuf != NULL )
+			{
+				vBuf->Release();
+				vBuf = NULL;
+			}
+		}
+	}
+
 	d3d->endScene();
+}
+
+ErrorCode GraphicsWindows::loadChar(LoadedChar& _charOut, Font& _font, char32_t _character)
+{
+	Font::Glyph glyph;
+	Font::ErrorCode err = _font.getGlyph(glyph, _character);
+	if (err != Font::ErrorCode::OK)
+	{
+		return ErrorCode::G_GLYPH_COULD_NOT_BE_LOADED;
+	}
+
+	//_charOut.texture
+
+	HRESULT hr;
+	ID3D11ShaderResourceView* rsv = NULL;
+	D3D11_TEXTURE2D_DESC desc;
+	desc.Width	= glyph.width;
+	desc.Height	= glyph.height;
+	desc.MipLevels	= 1;
+	desc.ArraySize	= 1;
+	desc.Format		= DXGI_FORMAT_A8_UNORM;
+	desc.SampleDesc.Count	= 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage			= D3D11_USAGE_DEFAULT;
+	desc.BindFlags		= D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags		= 0;
+
+	D3D11_SUBRESOURCE_DATA sub;
+	sub.pSysMem = glyph.bitBuffer.data();
+	sub.SysMemPitch = glyph.width;
+	sub.SysMemSlicePitch = 0;
+	ID3D11Texture2D* tex = NULL;
+	
+	hr = d3d->device->CreateTexture2D(&desc, &sub, &tex);
+
+	ID3D11ShaderResourceView* srv = NULL;
+	hr = d3d->device->CreateShaderResourceView(tex,NULL, &srv);
+	
+	_charOut.origin = glyph.origin;
+	_charOut.advance = glyph.advance;
+	_charOut.size = glm::vec2(glyph.width, glyph.height);
+	_charOut.texture = srv;
+	return ErrorCode::G_OK;
+}
+
+ErrorCode GraphicsWindows::getChar(LoadedChar& _charOut, Font& _font, char32_t _character)
+{
+	auto it = loadedChars.find(_character);
+	if (it == loadedChars.end())
+	{
+		LoadedChar c;
+		ErrorCode err = loadChar(c, _font, _character);
+		if (err != ErrorCode::G_OK)
+		{
+			return err;
+		}
+
+		auto resPair = loadedChars.insert(std::make_pair(_character, c));
+		it = resPair.first;
+	}
+
+	_charOut = it->second;
+
+	return ErrorCode::G_OK;
 }

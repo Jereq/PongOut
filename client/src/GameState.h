@@ -3,14 +3,12 @@
 
 #include "GUIActionHandler.h"
 #include "ScreenState.h"
-#include "Block.h"
 #include "GameObject.h"
 #include "InputComponent.h"
 #include "PhysicsComponent.h"
 #include "GraphicsComponent.h"
 
 #include "InputState.h"
-
 #include "Map.h"
 
 class GameState : public ScreenState
@@ -23,6 +21,7 @@ public:
 
 	virtual std::string getText(const std::string& _elemId) const;
 	void addStateAction(GUIActionHandler* _actionHandler);
+
 private:
 	virtual bool initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::ptr _server);
 	virtual void onInput(const std::vector<IInput::Event> _events);
@@ -41,6 +40,10 @@ private:
 	GraphicsComponent::ptr gc;
 	InputComponent::ptr ic;
 	PhysicsComponent::ptr pc;
+
+	int myMatchScore;
+	int opponentMatchScore;
+	int time;
 };
 
 #endif

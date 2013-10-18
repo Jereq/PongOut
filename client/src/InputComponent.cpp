@@ -48,8 +48,17 @@ void InputComponent::update(GameObject* _gameObject, double _dt)
 			break;
 
 		case IInput::Event::Type::KEY:
-			{int a = 42;}
+			{
+				bool pressed = e.keyEvent.pressed;
+
+				switch (e.keyEvent.key)
+				{
+				case IInput::KeyCode::SPACE:
+					_gameObject->inPlay = true;
+					break;
+				}
 			break;
+			}
 		}
 	}
 
@@ -94,6 +103,9 @@ void InputComponent::moveToTarget(Paddle& _paddle, double _dt)
 				case IInput::KeyCode::RIGHT_ARROW:
 					_paddle.currentInput = Paddle::InputType::KEYBOARD;
 					keyRight = pressed;
+					break;
+				case IInput::KeyCode::SPACE:
+					_paddle.inPlay = true;
 					break;
 				}
 

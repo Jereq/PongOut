@@ -58,8 +58,9 @@ configure_file(
 
 # Add the binary tree to the search path for include files so that we will find PongOutConfig.h
 include_directories("${PROJECT_BINARY_DIR}")
-
 include_directories("${PROJECT_SOURCE_DIR}")
+
+include_directories("../../includes")
 
 add_subdirectory(CoreSystem)
 add_subdirectory(Sound)
@@ -88,7 +89,7 @@ set(SOURCE_FILES
 	main.cpp
 	Game.cpp Game.h
 	Map.cpp Map.h
-	Block.cpp Block.h
+	BlockC.cpp BlockC.h
 	ScreenManager.cpp ScreenManager.h
 	ScreenState.cpp ScreenState.h
 	Button.cpp Button.h

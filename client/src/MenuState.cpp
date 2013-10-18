@@ -13,7 +13,7 @@ MenuState::~MenuState()
 
 bool MenuState::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::ptr _server)
 {
-	if (!ScreenState::initialize(_iCoreSystem, NULL))
+	if (!ScreenState::initialize(_iCoreSystem, Server::ptr()))
 	{
 		return false;
 	}

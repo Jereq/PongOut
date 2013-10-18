@@ -4,12 +4,10 @@
 
 #include <Server.h>
 
-//#include <chrono>
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-//#include <thread>
 #include <vector>
 #include <chrono>
 #include <thread>
@@ -33,21 +31,8 @@ bool Game::serverAllow()
 					bool allowed = rc->getBool();
 					return allowed;
 					break;		
-				}
-				
+				}			
 			}
-		/*case msgBase::MsgType::GAMEMESSAGE:
-			{
-				switch (tmp.gType)
-				{
-				case GameMessage::GameMsgType::CREATEGAMERESPONSE:
-					{
-
-						break;
-					}
-				}
-				break;
-			}*/
 		}
 	}
 	return false;
@@ -88,7 +73,13 @@ void Game::onFunction(const std::string& _func)
 	}
 	else if(_func == "host")
 	{
-		server->createGame( gameSettings.getMapId(), gameSettings.getBallSpeed(), 1, gameSettings.getSuddenDeathTime(), gameSettings.getFOW(), gameSettings.getPOW());
+		int mapId = gameSettings.getMapId();
+		float ballSpeed = gameSettings.getBallSpeed();
+		int timeLimit = gameSettings.getSuddenDeathTime();
+		bool fow = gameSettings.getFOW();
+		bool pow = gameSettings.getPOW();
+		server->createGame( mapId, ballSpeed, 1, timeLimit, fow, pow);
+
 		screenManager.openScreen("game");
 	}
 	else if(_func.substr(0, 11) == "set/sudden/")
@@ -160,6 +151,10 @@ void Game::onFunction(const std::string& _func)
 			gameSettings.setPOW(false);
 		}
 	}
+	else if(_func.substr(0, 10) == "set/level/")
+	{
+		gameSettings.setMapId(stoi(_func.substr(12)));
+	}
 }
 
 Game::Game(ICoreSystem::ptr _system)
@@ -171,83 +166,12 @@ Game::Game(ICoreSystem::ptr _system)
 	rand();
 }
 
-static std::string naiveUTF32toUTF8(char32_t _character)
-{
-	char buffer[6];
-
-	if (_character <= 0x7F)
-	{
-		return std::string(1, (char)_character);
-	}
-	else if (_character <= 0x07FF)
-	{
-		buffer[1] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[0] = _character | 0xC0;
-
-		return std::string(buffer, buffer + 2);
-	}
-	else if (_character <= 0xFFFF)
-	{
-		buffer[2] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[1] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[0] = _character | 0xE0;
-
-		return std::string(buffer, buffer + 3);
-	}
-	else if (_character <= 0x1FFFFF)
-	{
-		buffer[3] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[2] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[1] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[0] = _character | 0xF0;
-
-		return std::string(buffer, buffer + 4);
-	}
-	else if (_character <= 0x3FFFFFF)
-	{
-		buffer[4] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[3] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[2] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[1] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[0] = _character | 0xF8;
-
-		return std::string(buffer, buffer + 5);
-	}
-	else if (_character <= 0x7FFFFFFF)
-	{
-		buffer[5] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[4] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[3] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[2] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[1] = (_character & 0x3F) | 0x80;
-		_character >>= 6;
-		buffer[0] = _character | 0xFC;
-
-		return std::string(buffer, buffer + 6);
-	}
-
-	// Invalid
-	return std::string();
-}
-
 void Game::run()
 {
 	server = Server::ptr(new Server("194.47.150.59", 6500));
-	server->connect();
+	//server->connect();
+	//if(serverAllow())
+	//	return;
 
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 
@@ -280,7 +204,6 @@ void Game::run()
 	double deltaTime = 0.f;
 
 	std::cout << "Starting to run" << std::endl;
-	//std::cout << "Texture name: \n" << map->getTextureName() << std::endl;
 
 	if (!screenManager.initialize(systemPtr, server))
 	{
@@ -288,7 +211,7 @@ void Game::run()
 		return;
 	}
 
-	if (!screenManager.openScreen("login"))
+	if (!screenManager.openScreen("gamelobby"))
 	{
 		std::cout << "Failed to open screen" << std::endl;
 		return;
@@ -314,6 +237,7 @@ void Game::run()
 		graphics->drawFrame();		
 	}
 
+	//server->logout();
 	sounds->shutdown();
 	graphics->destroy();
 }

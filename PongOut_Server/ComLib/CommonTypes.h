@@ -1,7 +1,6 @@
 #pragma once
 
 #include <glm/glm.hpp>
-
 namespace CommonTypes
 {
 	struct Block

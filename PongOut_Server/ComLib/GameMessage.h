@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include "msgbase.h"
+#include "msgBase.h"
 
 class GameMessage :	public msgBase
 {

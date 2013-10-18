@@ -12,8 +12,9 @@ add_executable(PongOut-test
 	CollisionTest.cpp
 	GameSettingsTest.cpp
 	../PhysicsComponent.cpp
+	../InputComponent.cpp
 	../Map.cpp
-	../Block.cpp
+	../BlockC.cpp
 	../Paddle.cpp
 	../Ball.cpp
 	../GameObject.cpp
