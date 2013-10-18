@@ -13,7 +13,6 @@ include_directories(
 
 add_library(ClientLib
 	Server.cpp Server.h
-	SafeQueue.h
 	stdafx.h
 	GameHandler.cpp GameHandler.h
 )

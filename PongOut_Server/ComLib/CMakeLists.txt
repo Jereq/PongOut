@@ -27,4 +27,7 @@ add_library(ComLib
 	CreateGameRequest.cpp CreateGameRequest.h
 	CreateGameResponse.cpp CreateGameResponse.h
 	PacketHandler.cpp PacketHandler.h
+	SafeQueue.h
+	GameTickUpdate.cpp GameTickUpdate.h
+	PaddleUpdateRequest.cpp PaddleUpdateRequest.h
 )

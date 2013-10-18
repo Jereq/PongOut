@@ -35,7 +35,7 @@ void BlockC::setInPlay(bool _inPlayState)
 
 bool BlockC::initialize(const CommonTypes::Block& _blockData, float _rotation, GraphicsComponent::ptr _graphicsComponent)
 {
-	glm::vec3 center(_blockData.x, _blockData.y, _blockData.z);
+	glm::vec3 center(_blockData.pos.x, _blockData.pos.y, 0.0);
 
 	if(!GameObject::initialize(_blockData.id, center, BLOCKSIZE, _rotation, _graphicsComponent))
 		return false;

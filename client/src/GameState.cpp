@@ -3,6 +3,7 @@
 #include "Ball.h"
 #include "TMLReader.h"
 #include "CreateGameResponse.h"
+#include "GameTickUpdate.h"
 #include <boost/smart_ptr.hpp>
 
 GameState::GameState(const std::string _screenName)
@@ -49,6 +50,7 @@ void GameState::load()
 	bool res;
 	std::vector<CommonTypes::Block> b;
 	std::string mapTexture = "background/ingame_01";
+	bool gameInitSuccess = false;
 
 	for (int i = 0; i < server->getMsgQueueSize(); i++)
 	{
@@ -63,9 +65,9 @@ void GameState::load()
 				case GameMessage::GameMsgType::CREATEGAMERESPONSE:
 					{
 						CreateGameResponse::ptr cgrp = boost::static_pointer_cast<CreateGameResponse>(tmp.gMsg);
-
 						b = cgrp->getMap();
-						//mapTexture = cgrp->getLOLOLOL();
+						world->loadMap(mapTexture, b, gc, ic, pc);
+						gameInitSuccess = true;
 						break;
 					}
 				}
@@ -73,7 +75,12 @@ void GameState::load()
 			}
 		}
 	}
-	world->loadMap(mapTexture, b, gc, ic, pc);
+	
+	if(!gameInitSuccess)
+	{
+		actionHandler->buttonPressed("back");
+	}
+
 	myMatchScore		= 0;
 	opponentMatchScore	= 0;
 	time				= -1;
@@ -140,27 +147,33 @@ void GameState::update(const float _dt)
 			{
 				switch (tmp.gType)
 				{
-				/*case GameMessage::GameMsgType::DATA
+				case GameMessage::GameMsgType::GAME_TICK_UPDATE:
 					{
-						sfd = ...
-						if(sfd.paddleData.id == OPPONENTID)
-						{
-							world->setPaddleData(sfd.paddleData);
-						}
-						if(sfd.ballData.size() > 0)
-						{
-							world->setBallData(sfd.ballData);
-						}
-						if(sfd.blockData.size() > 0)
-						{
-							world->setBlockData(sfd.blockData);
-						}
-						if(sfd.time > -1)
-						{
-							time = sfd.time;
-						}
+						CommonTypes::PlayerMatchInfo pmi;
+
+						GameTickUpdate::ptr cgrp = boost::static_pointer_cast<GameTickUpdate>(tmp.gMsg);
+
+						pmi = cgrp->getMyInfo();
+
+						
+						//if(sfd.paddleData.id == OPPONENTID)
+						//{
+						//	world->setPaddleData(sfd.paddleData);
+						//}
+						//if(sfd.ballData.size() > 0)
+						//{
+						//	world->setBallData(sfd.ballData);
+						//}
+						//if(sfd.blockData.size() > 0)
+						//{
+						//	world->setBlockData(sfd.blockData);
+						//}
+						//if(sfd.time > -1)
+						//{
+						//	time = sfd.time;
+						//}
 					}
-					break;*/
+					break;
 				}
 			}
 		}

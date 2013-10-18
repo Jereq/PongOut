@@ -169,9 +169,9 @@ Game::Game(ICoreSystem::ptr _system)
 void Game::run()
 {
 	server = Server::ptr(new Server("194.47.150.59", 6500));
-	//server->connect();
-	//if(serverAllow())
-	//	return;
+	server->connect();
+	if(serverAllow())
+		return;
 
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 
