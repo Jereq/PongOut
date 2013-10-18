@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <map>
 
 #include "GameMessage.h"
 #include "Referee.h"
@@ -18,6 +18,8 @@ private:
 	GameMaster(void);
 	~GameMaster(void);
 	
-	std::vector<Referee> referees;
+	std::map<int, Referee::ptr> referees;
+
+	int refIDCounter;
 };
 

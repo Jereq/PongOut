@@ -1,11 +1,13 @@
 #pragma once
 
+#include <glm/glm.hpp>
 namespace CommonTypes
 {
 	struct Block
 	{
 		int id, type, health;
-		float x, y, z;
+		glm::vec2 pos;
+		char inPlay;
 		std::vector<std::string> textures;
 
 		int getSize()
@@ -30,5 +32,27 @@ namespace CommonTypes
 	{
 		int mapID, ballSpeed, paddleSpeed, suddenDeathTime;
 		char fogOfWar, powerUps;
+	};
+
+	struct Paddle
+	{
+		glm::vec2 pos, vel;
+		uint32_t id;
+		char inPlay;
+	};
+
+	struct Ball
+	{
+		glm::vec2 pos, vel;
+		uint32_t id;
+		float radius;
+		char inPlay;
+	};
+
+	struct PlayerMatchInfo
+	{
+		uint32_t userID, score;
+		Paddle paddle;
+		Ball ball;
 	};
 }

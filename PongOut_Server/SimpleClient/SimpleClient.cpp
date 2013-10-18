@@ -21,11 +21,11 @@ void waitForMsg(Server::ptr _s, int _timeToWait)
 		if (chrono::duration_cast<chrono::seconds>(current - start).count() > _timeToWait)
 		{
 			cerr << "Server not responding!" << endl;
-			return;
+			break;
 		}
 	}
 
-	for (int i = 0; i < _s->getMsgQueueSize(); i++)
+	while(_s->getMsgQueueSize() != 0)
 	{
 		message tmp = _s->getNextMessage();
 
@@ -45,11 +45,19 @@ void waitForMsg(Server::ptr _s, int _timeToWait)
 			}
 		case msgBase::MsgType::ACKNOWLEDGELAST:
 			{
-				AcknowledgeLast::ptr rc = boost::static_pointer_cast<AcknowledgeLast>(tmp.msg);
+				AcknowledgeLast::ptr ack = boost::static_pointer_cast<AcknowledgeLast>(tmp.msg);
 
 				//TODO: fix AcknowledgeLast on client side
 
-				cout << "Connected successfully!" << endl;
+				if (!ack->getBool())
+				{
+					cout << "Connected successfully!" << endl;
+				} 
+				else
+				{
+					cout << "failed to connect!" << endl;
+				}
+				
 				break;
 			}
 		case  msgBase::MsgType::INTERNALMESSAGE:
@@ -63,7 +71,9 @@ void waitForMsg(Server::ptr _s, int _timeToWait)
 				{
 				case GameMessage::GameMsgType::CREATEGAMERESPONSE:
 					{
-						cout << "created game successfully!" << endl; 
+						CreateGameResponse::ptr cgrp = boost::static_pointer_cast<CreateGameResponse>(tmp.gMsg);
+
+						cout << "Map size: " << cgrp->getMap().size() << endl; 
 						break;
 					}
 				}
@@ -79,9 +89,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	Server::ptr s(new Server("127.0.0.1", 6500));
 
 	string command, userName, password;
-	bool firstRun = true;
-
-	s->connect();
+	bool firstRun = true;	
 
 	for (ever)
 	{
@@ -89,23 +97,23 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		if (!firstRun)
 		{
-			waitForMsg(s, 5);
+			waitForMsg(s, 1);
 		}
 
 		firstRun = false;
 		
 		cout << "======== Commands list ========" << endl 
-			 //<< "# Connect \t : \t Provide login information and connect to server" << endl  
+			 << "# Check \t : \t Check for new messages in msgQ" << endl  
 			 << "# Create \t\t : \t Create account" << endl
 			 << "# Login \t\t : \t Login to existing account" << endl
 			 << "# Logout \t\t : \t Logout from account" << endl
 			 << "# Game \t\t : \t Create new game" << endl;
 		cin >> command;
 
-		//if (command == "Connect" || command == "connect")
-		//{
-		//	s->connect();			
-		//}
+		if (command == "Check" || command == "check")
+		{
+			continue;			
+		}
 		if (command == "Login" || command == "login")
 		{
 			system("CLS");
@@ -113,7 +121,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			cin >> userName;
 			cout << "Provide password: ";
 			cin >> password;
-
+			s->connect();
 			s->login(userName, password);
 		}
 		else if (command == "Logout" || command == "logout")

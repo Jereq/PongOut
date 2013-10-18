@@ -22,7 +22,7 @@ public:
 	T pop()
 	{
 		std::lock_guard<std::mutex> guard(mutex);
-		T tmp = baseQueue.back();
+		T tmp = baseQueue.front();
 		baseQueue.pop();
 		return tmp;
 	}

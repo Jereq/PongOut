@@ -168,8 +168,6 @@ void PhysicsComponent::bounceOnPlayArea(GameObject* _gameObject, double _dt)
 	}
 }
 
-
-
 void PhysicsComponent::restrictToPlayArea(GameObject* _gameObject, double _dt)
 {
 	glm::vec2 playArea = map->getSize();

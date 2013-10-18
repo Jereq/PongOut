@@ -3,6 +3,7 @@
 
 #include <boost/bind.hpp>
 #include <chrono>
+#include <sstream>
 
 using namespace boost::gregorian;
 using namespace boost::posix_time;
@@ -66,13 +67,11 @@ void Log::printFromQueue()
 			{
 				if (prio > msgQueue.front().prio)
 				{
-					int h = (int)ct.time_of_day().hours();
-					int m = (int)ct.time_of_day().minutes();
-					int s = (int)ct.time_of_day().seconds();
+					ostringstream outStr;
+					outStr << ct.time_of_day() <<  " ## " << enumMap.at(msgQueue.front().type) <<  " : " << msgQueue.front().msg << endl;
 
-					string strToPrint = to_string(h) + ":" + to_string(m) + ":" + to_string(s) + " ## " +  enumMap.at(msgQueue.front().type) + " : " + msgQueue.front().msg;
-					cout << strToPrint << endl;
-					writeToLogFile(strToPrint);
+					cout << outStr.str();
+					writeToLogFile(outStr.str());
 				}				
 				lock_guard<std::mutex> lock(queueLock);
 				msgQueue.pop();

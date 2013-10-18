@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GameHandler.h"
 #include "CreateGameResponse.h"
+#include "GameTickUpdate.h"
 
 GameHandler& GameHandler::getInstance()
 {
@@ -25,6 +26,13 @@ void GameHandler::handleGameMessage( GameMessage::ptr _gmp, SafeQueue<message>& 
 			CreateGameResponse::ptr cgrp = boost::static_pointer_cast<CreateGameResponse>(_gmp);
 			
 			_msgQueue.push(message(GameMessage::GameMsgType::CREATEGAMERESPONSE, cgrp));
+			break;
+		}
+	case GameMessage::GameMsgType::GAME_TICK_UPDATE:
+		{
+			GameTickUpdate::ptr gtup = boost::static_pointer_cast<GameTickUpdate>(_gmp);
+
+			_msgQueue.push(message(GameMessage::GameMsgType::GAME_TICK_UPDATE, gtup));
 			break;
 		}
 	}

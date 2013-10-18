@@ -5,8 +5,7 @@
 
 Server::Server(const std::string _ipAdress, std::uint16_t _port)
 	: addr(_ipAdress),
-	port(_port),
-	soc(io)
+	port(_port)
 {
 	 PacketHandler::getInstance().initRegister();
 }
@@ -18,35 +17,31 @@ Server::~Server(void)
 
 void Server::connect()
 {
-	if (soc.is_open())
+	if (soc && soc->is_open())
 	{
-		soc.shutdown(boost::asio::socket_base::shutdown_both);
-		soc.close();
+		soc->shutdown(boost::asio::socket_base::shutdown_both);
+		soc->close();
 	}
+
+	soc.reset();
+	soc.reset(new tcp::socket(io));
 
 	tcp::resolver res(io);
 	std::stringstream ss;
 	ss << port;
 	tcp::resolver::query q(addr, ss.str());
-	tcp::resolver::iterator resIt = res.resolve(q);
-	try
-	{
-		
-		boost::asio::connect(soc, resIt);
-	}
-	catch (boost::system::system_error&)
-	{
-		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "Failed to connect to server!"));
-		return;
-	}
+	tcp::resolver::iterator resIt = res.resolve(q);	
 
-	listen();
+	soc->async_connect(resIt->endpoint(), boost::bind(&Server::connectResponse, shared_from_this(), boost::asio::placeholders::error));
+	//boost::asio::async_connect(*soc, resIt, boost::bind(&Server::connectResponse, shared_from_this(), boost::asio::placeholders::error));
 
 	if (ioThread.joinable())
 	{
-		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "Waiting for previous connection to end..."));
+		//messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "Waiting for previous connection to end..."));
 		ioThread.join();
 	}
+
+	listen();
 
 	ioThread = std::thread(boost::bind(&Server::startIO, shared_from_this()));
 }
@@ -62,16 +57,18 @@ void Server::logout()
 {
 	LogoutRequest::ptr p = LogoutRequest::ptr(new LogoutRequest());
 	write(p);
-	soc.close();
+	soc->shutdown(boost::asio::socket_base::shutdown_both);
+	soc->close();
+	soc.reset();
 	ioThread.join();
 }
 
 void Server::write( msgBase::ptr _msg )
 {
-	if (soc.is_open())
+	if (soc && soc->is_open())
 	{
 		msgWriteBufffer = _msg->getData();
-		boost::asio::async_write(soc, boost::asio::buffer(msgWriteBufffer), boost::bind(&Server::handleWrite, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+		boost::asio::async_write(*soc, boost::asio::buffer(msgWriteBufffer), boost::bind(&Server::handleWrite, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 	}
 }
 
@@ -80,14 +77,18 @@ void Server::handleWrite( const boost::system::error_code& _err, size_t _byte )
 	if (_err)
 	{
 		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, _err.message()));
-	}	
+	}
+	else
+	{
+		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "Write successful"));
+	}
 }
 
 void Server::listen()
 {
-	if (soc.is_open())
+	if (soc && soc->is_open())
 	{
-		soc.async_read_some(boost::asio::buffer(msgListenBuffer), boost::bind(&Server::handleIncomingMessage, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+		soc->async_read_some(boost::asio::buffer(msgListenBuffer), boost::bind(&Server::handleIncomingMessage, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 	}
 }
 
@@ -97,7 +98,12 @@ void Server::handleIncomingMessage(const boost::system::error_code& _error, size
 	{
 		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "disconnected by server"));
 		return;
-	} 
+	}
+	else if (_error == boost::asio::error::operation_aborted)
+	{
+		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "disconnected by myself"));
+		return;
+	}
 	else if (_error)
 	{
 		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, _error.message()));
@@ -210,6 +216,8 @@ void Server::startIO()
 {
 	io.run();
 	std::cout << "IO thread done." << std::endl;
+
+	io.reset();
 }
 
 //void Server::sendChatMsg( std::string _name, std::string _msg )
@@ -254,4 +262,23 @@ void Server::createGame( int _mapID, int _ballSpeed, int _paddleSpeed, int _sudd
 
 	cgp->setGameParam(info);
 	write(cgp);
+}
+
+void Server::connectResponse(const boost::system::error_code& _err)
+{
+	if (_err)
+	{
+		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, _err.message()));
+	}
+	else
+	{
+		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "Connection established"));
+	}
+}
+
+void Server::sendPaddlePos( CommonTypes::Paddle _p )
+{
+	PaddleUpdateRequest::ptr pur = PaddleUpdateRequest::ptr(new PaddleUpdateRequest());
+	pur->setPaddle(_p);
+	write(pur);
 }

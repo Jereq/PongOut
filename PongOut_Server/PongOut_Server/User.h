@@ -21,13 +21,20 @@ class User : public boost::enable_shared_from_this<User>
 {
 public:
 
-	enum class UserStatus
+	enum class UserType
 	{
 		UNVERIFIED,
 		USER,
 		ADMIN
 	};
 
+	enum class UserState
+	{
+		UNKNOWN,
+		AVAILABLE,
+		INGAME,
+		WATING_FOR_OPPONENT,
+	};
 
 	typedef boost::shared_ptr<User> ptr;
 
@@ -38,9 +45,14 @@ public:
 	void addMsgToMsgQueue(const msgBase::ptr& _msgPtr);
 	void listen();
 	unsigned int getUserID();
-	void setUserStatus(UserStatus _status);
-	UserStatus getUserStatus();
+	void setUserType(UserType _type);	
+	UserType getUserType();
+	void setUserState(UserState _state);
+	UserState getUserState();
 	void setUserID(unsigned int _id);
+	int getRefereeID();
+	void setReffereeID(int _refID);
+
 	void disconnect();
 
 private:
@@ -56,7 +68,9 @@ private:
 	std::deque<char> fullMsgBuffer;
 	std::mutex msgBufferLock;
 	unsigned int id;
+	int refID;
 	msgBase::header head;
-	UserStatus status;
+	UserType userType;
+	UserState userState;
 };
 

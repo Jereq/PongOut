@@ -12,6 +12,7 @@ GameMaster& GameMaster::getInstance()
 
 GameMaster::GameMaster(void)
 {
+	refIDCounter = 0;
 }
 
 
@@ -25,9 +26,11 @@ void GameMaster::handleGameMessage( GameMessage::ptr _message, User::ptr _initUs
 	{
 	case GameMessage::GameMsgType::CREATEGAMEREQUEST:
 		{
+			_initUser->setUserState(User::UserState::WATING_FOR_OPPONENT);
+
 			CreateGameRequest::ptr cgp = boost::static_pointer_cast<CreateGameRequest>(_message);
 
-			Referee r;
+			Referee::ptr r = Referee::ptr(new Referee());
 
 			std::unique_lock<std::mutex> lock(UserManager::getInstance()->users.getLock());
 			User::ptr opponentUser;
@@ -41,10 +44,20 @@ void GameMaster::handleGameMessage( GameMessage::ptr _message, User::ptr _initUs
 				}
 			}
 			
-			r.init(_initUser, opponentUser, cgp->getInitInfo());
+			r->init(_initUser, opponentUser, cgp->getInitInfo(), refIDCounter);
+			refIDCounter++;
+
+			referees.insert(std::pair<int, Referee::ptr>(refIDCounter, r));
 
 			break;
 		}
+	case GameMessage::GameMsgType::PADDLEUPDATEREQUEST:
+		{
+			referees.at(_initUser->getRefereeID())->addMsgToQ(std::make_pair(_message, _initUser->getUserID()));
+
+			break;
+		}
+
 	default:
 		{
 			break;

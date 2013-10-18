@@ -44,9 +44,9 @@ void UserManager::listenForNewClientConnections()
 void UserManager::handleIncomingClient( boost::shared_ptr<tcp::socket> _soc, const boost::system::error_code& _errorCode )
 {
 	User::ptr u = User::ptr(new User(_soc));
-	AcknowledgeLast::ptr ack = AcknowledgeLast::ptr(new AcknowledgeLast());
-	ack->setAck(msgBase::MsgType::CONNECTSUCCESS, false);
-	u->addMsgToMsgQueue(ack);
+	//AcknowledgeLast::ptr ack = AcknowledgeLast::ptr(new AcknowledgeLast());
+	//ack->setAck(msgBase::MsgType::CONNECTSUCCESS, false);
+	//u->addMsgToMsgQueue(ack);
 	users.insert(u);
 	u->listen();
 	Log::addLog(Log::LogType::LOG_INFO, 4, "New connection established");
@@ -72,6 +72,13 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 
 	case msgBase::MsgType::CHAT:
 		{
+			if (_user->getUserType() == User::UserType::UNVERIFIED)
+			{
+				_user->disconnect();
+				users.erase(_user);	
+				break;
+			}
+
 			Chat::ptr cp = boost::static_pointer_cast<Chat>(p);
 
 			std::unique_lock<std::mutex> lock(users.getLock());
@@ -93,26 +100,35 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 
 	case msgBase::MsgType::LOGINREQUEST:
 		{
+			if (_user->getUserState() != User::UserState::UNKNOWN)
+			{
+				_user->disconnect();
+				users.erase(_user);	
+				break;
+			}
+
 			LoginRequest::ptr lp = boost::static_pointer_cast<LoginRequest>(p);
-			AcknowledgeLast::ptr ack = AcknowledgeLast::ptr(new AcknowledgeLast());
 
 			long res = sqlManager.verifyUser(lp->getUsername(), lp->getPassword());
 
-			if (res != -1)
+			if (res != -1 && !userAllredyLogedin(res))
 			{
 				_user->setUserID(res);
-				_user->setUserStatus(User::UserStatus::USER);
+				_user->setUserType(User::UserType::USER);
+				_user->setUserState(User::UserState::AVAILABLE);
 				Log::addLog(Log::LogType::LOG_INFO, 4, "Username: " + lp->getUsername() + " Logged in");
+
+				AcknowledgeLast::ptr ack = AcknowledgeLast::ptr(new AcknowledgeLast());
 				ack->setAck(msgBase::MsgType::LOGINREQUEST, false);
+
+				_user->addMsgToMsgQueue(ack);
 			} 
 			else
 			{
 				Log::addLog(Log::LogType::LOG_INFO, 4, lp->getUsername() + " failed to login!");
-				ack->setAck(msgBase::MsgType::LOGINREQUEST, false);
+				_user->disconnect();
+				users.erase(_user);	
 			}
-
-			_user->addMsgToMsgQueue(ack);
-			
 
 			break;
 		}
@@ -135,6 +151,13 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 
 	case msgBase::MsgType::CREATEUSERREQUEST:
 		{
+			if (_user->getUserState() != User::UserState::UNKNOWN)
+			{
+				_user->disconnect();
+				users.erase(_user);	
+				break;
+			}
+
 			CreateUserRequest::ptr cu = boost::static_pointer_cast<CreateUserRequest>(p);
 			AcknowledgeLast::ptr ack = AcknowledgeLast::ptr(new AcknowledgeLast());
 
@@ -145,7 +168,8 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 			{
 				Log::addLog(Log::LogType::LOG_INFO, 3, "User created with userID: " + std::to_string(res));
 				_user->setUserID(res);
-				_user->setUserStatus(User::UserStatus::USER);
+				_user->setUserType(User::UserType::USER);
+				_user->setUserState(User::UserState::AVAILABLE);
 				ack->setAck(msgBase::MsgType::CREATEUSERREQUEST, false);
 			} 
 			else
@@ -169,9 +193,18 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 
 	case msgBase::MsgType::GAMEMESSAGE:
 		{
-			if (_user->getUserStatus() != User::UserStatus::UNVERIFIED)
+			if (_user->getUserType() != User::UserType::UNVERIFIED && (_user->getUserState() == User::UserState::AVAILABLE || _user->getUserState() == User::UserState::INGAME))
 			{
 				GameMessage::ptr gmp = boost::static_pointer_cast<GameMessage>(p);
+
+				if ((_user->getUserState() != User::UserState::AVAILABLE) == (gmp->getGameType() == GameMessage::GameMsgType::CREATEGAMEREQUEST))
+				{
+					Log::addLog(Log::LogType::LOG_INFO, 4, "UserID: " + std::to_string(_user->getUserID()) + " has tried to execute unauthorized command, user disconnected!");
+					_user->disconnect();
+					users.erase(_user);			
+					break;
+				}
+
 				GameMaster::getInstance().handleGameMessage(gmp, _user);
 				break;
 			} 
@@ -185,6 +218,8 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 		}
 	default:
 		Log::addLog(Log::LogType::LOG_ERROR, 0,"Received packet that are not yet implemented: " + p->getType());
+		_user->disconnect();
+		users.erase(_user);
 		break;
 	}
 }
@@ -224,4 +259,17 @@ void UserManager::destroy()
 	//	
 	//users.baseSet.clear();
 	ioThread.join();
+}
+
+bool UserManager::userAllredyLogedin( long _uid )
+{
+	for (User::ptr u : users.baseSet)
+	{
+		if (_uid == u->getUserID())
+		{
+			return true;
+		}
+	}
+
+	return false;
 }

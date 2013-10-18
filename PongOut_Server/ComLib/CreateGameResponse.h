@@ -14,7 +14,7 @@ public:
 	virtual std::vector<char> getData() override;
 	virtual msgBase::ptr interpretPacket(const std::deque<char>& _buffer) override;
 
-	void setResponse(const std::vector<CommonTypes::Block>& _map, const CommonTypes::GameInitInfo& _info);
+	void setResponse(const std::vector<CommonTypes::Block>& _map, const CommonTypes::GameInitInfo& _info, const CommonTypes::PlayerMatchInfo& _pmiME, const CommonTypes::PlayerMatchInfo& _pmiOP);
 
 	std::vector<CommonTypes::Block> getMap();
 
@@ -22,6 +22,6 @@ private:
 
 	std::vector<CommonTypes::Block> map;
 	CommonTypes::GameInitInfo info;
-
+	CommonTypes::PlayerMatchInfo pmiME, pmiOP;
 };
 

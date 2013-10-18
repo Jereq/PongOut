@@ -18,10 +18,14 @@
 #include "AcknowledgeLast.h"
 #include "CreateGameRequest.h"
 #include "GameMessage.h"
+#include "CreateGameResponse.h"
+#include "PaddleUpdateRequest.h"
 
 #include "SafeQueue.h"
 #include "GameHandler.h"
 #include "message.h"
+
+#include <glm/glm.hpp>
 
 using boost::asio::ip::tcp;
 
@@ -30,8 +34,6 @@ class Server : public boost::enable_shared_from_this<Server>
 public:
 
 	typedef boost::shared_ptr<Server> ptr;
-
-
 
 	Server(const std::string _ipAdress, std::uint16_t _port);
 	~Server(void);
@@ -43,6 +45,7 @@ public:
 	void sendChatMsg(std::string _name, std::string _msg);
 	void createAccount(std::string _userName, std::string _userPassword);
 	void createGame(int _mapID, int _ballSpeed, int _paddleSpeed, int _suddenDeathTime, char _fogOfWar, char _powerUps);
+	void sendPaddlePos(CommonTypes::Paddle _p);
 	message getNextMessage();
 	int getMsgQueueSize();
 
@@ -54,13 +57,14 @@ private:
 	void listen();
 	void write(msgBase::ptr _msg);
 	void handleWrite(const boost::system::error_code& _err, size_t _byte);
+	void connectResponse(const boost::system::error_code& _err);
 
 	std::thread ioThread;
 	const std::string addr;
 	std::string userName;
 	std::uint16_t port;
 	boost::asio::io_service io;
-	tcp::socket soc;
+	boost::shared_ptr<tcp::socket> soc;
 	boost::array<char, 256> msgListenBuffer;
 	std::vector<char> msgWriteBufffer;
 	std::deque<char> fullMsgBuffer;

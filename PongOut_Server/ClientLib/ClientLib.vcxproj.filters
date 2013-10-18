@@ -27,9 +27,6 @@
     <ClInclude Include="Server.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SafeQueue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
