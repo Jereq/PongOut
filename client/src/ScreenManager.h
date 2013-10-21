@@ -21,8 +21,11 @@ public:
 	bool onInput(const std::vector<IInput::Event>& _events);
 	bool removeScreen(ScreenState* _screen);
 	bool openScreen(const std::string& _stateId);
+	bool openGame(const std::string& _stateId);
+	bool goBack();
 
 	std::string getText(const std::string& _elemId) const;
+	bool registerScreenState(const std::string& _stateId, ScreenState::ptr _state);
 
 private:
 	std::vector<ScreenState::ptr> screens;
@@ -30,8 +33,7 @@ private:
 
 	FunctionHandler* funcHandler;
 
-	bool registerScreenState(const std::string& _stateId, ScreenState::ptr _state);
-	bool goBack();
+	
 
 	bool readScreens(const boost::filesystem::path& _screenFile);
 	void buttonPressed(const std::string& _func) override;

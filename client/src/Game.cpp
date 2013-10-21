@@ -12,6 +12,8 @@
 #include <chrono>
 #include <thread>
 
+
+
 bool Game::serverAllow()
 {	
 	for (int i = 0; i < server->getMsgQueueSize(); i++)
@@ -164,6 +166,11 @@ void Game::onFunction(const std::string& _func)
 	{
 		gameSettings.setMapId(stoi(_func.substr(12)));
 	}
+	else if(_func == "giveUp")
+	{
+		screenManager.goBack();
+
+	}
 }
 
 Game::Game(ICoreSystem::ptr _system)
@@ -179,6 +186,8 @@ Game::Game(ICoreSystem::ptr _system)
 void Game::run()
 {
 	server = Server::ptr(new Server("194.47.150.59", 6500));
+
+	
 
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 
@@ -218,13 +227,16 @@ void Game::run()
 		return;
 	}
 
+	gameState = GameState::ptr(new GameState());
+
+	screenManager.registerScreenState("game", gameState);
+
 	if (!screenManager.openScreen("login"))
 	{
 		std::cout << "Failed to open screen" << std::endl;
 		return;
 	}
-	
-	
+
 	while(!systemPtr->windowIsClosing() && !shouldStop)
 	{
 		if (state != UserState::IN_GAME)
@@ -325,9 +337,21 @@ void Game::handleNetworkPackages()
 			{
 			case GameMessage::GameMsgType::CREATEGAMERESPONSE:
 				state = UserState::IN_GAME;
-				screenManager.openScreen("game");
-
-				break;
+								
+				if(gameState)
+				{
+					CreateGameResponse::ptr cgrp = boost::static_pointer_cast<CreateGameResponse>(msg.gMsg);
+					if(screenManager.openScreen("game"))
+					{
+						gameState->load(cgrp);
+						gameState->addStateAction(&screenManager);
+					}
+					else
+					{
+						std::cout << "Failed to open game state" << std::endl;
+					}
+				}
+				return;
 
 			default:
 				if (msg.gMsg)

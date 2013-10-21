@@ -73,5 +73,6 @@ private:
 	std::deque<char> fullMsgBuffer;
 	msgBase::header head;	
 	SafeQueue<message> messages;
+	bool isConnected;
 };
 

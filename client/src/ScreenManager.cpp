@@ -567,12 +567,12 @@ bool ScreenManager::readScreens(const boost::filesystem::path& _screenFile)
 		}
 	}
 
-	GameState::ptr gameState = GameState::ptr(new GameState);
-	gameState->addStateAction(this);
-	if (!registerScreenState("game", gameState))
-	{
-		return false;
-	}
+	//GameState::ptr gameState = GameState::ptr(new GameState);
+	//gameState->addStateAction(this);
+	//if (!registerScreenState("game", gameState))
+	//{
+	//	return false;
+	//}
 
 	return true;
 }

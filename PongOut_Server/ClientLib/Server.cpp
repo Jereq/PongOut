@@ -5,7 +5,8 @@
 
 Server::Server(const std::string _ipAdress, std::uint16_t _port)
 	: addr(_ipAdress),
-	port(_port)
+	port(_port),
+	isConnected(false)
 {
 	 PacketHandler::getInstance().initRegister();
 }
@@ -18,7 +19,10 @@ Server::~Server(void)
 		soc->shutdown(boost::asio::socket_base::shutdown_both);
 		soc->close();
 		io.stop();
-		ioThread.join();
+		if (ioThread.joinable())
+		{
+			ioThread.join();
+		}
 	}
 }
 
@@ -62,11 +66,13 @@ void Server::logout()
 {
 	LogoutRequest::ptr p = LogoutRequest::ptr(new LogoutRequest());
 	write(p);
-	if (soc && soc->is_open())
+	if (soc && soc->is_open() && isConnected)
 	{
 		soc->shutdown(boost::asio::socket_base::shutdown_both);
 		soc->close();
 		soc.reset();
+
+		isConnected = false;
 	}
 
 	if (ioThread.joinable())
@@ -77,18 +83,22 @@ void Server::logout()
 
 void Server::write( msgBase::ptr _msg )
 {
-	if (soc && soc->is_open())
+	msgWriteBufffer = _msg->getData();
+
+	if (soc && soc->is_open() && isConnected)
 	{
-		msgWriteBufffer = _msg->getData();
 		boost::asio::async_write(*soc, boost::asio::buffer(msgWriteBufffer), boost::bind(&Server::handleWrite, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 	}
 }
 
 void Server::handleWrite( const boost::system::error_code& _err, size_t _byte )
 {
+	msgWriteBufffer.clear();
+
 	if (_err)
 	{
 		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, _err.message()));
+		isConnected = false;
 	}
 	else
 	{
@@ -98,7 +108,7 @@ void Server::handleWrite( const boost::system::error_code& _err, size_t _byte )
 
 void Server::listen()
 {
-	if (soc && soc->is_open())
+	if (soc && soc->is_open() && isConnected)
 	{
 		soc->async_read_some(boost::asio::buffer(msgListenBuffer), boost::bind(&Server::handleIncomingMessage, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 	}
@@ -109,16 +119,19 @@ void Server::handleIncomingMessage(const boost::system::error_code& _error, size
 	if (_error == boost::asio::error::eof)
 	{
 		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "disconnected by server"));
+		isConnected = false;
 		return;
 	}
 	else if (_error == boost::asio::error::operation_aborted)
 	{
 		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "disconnected by myself"));
+		isConnected = false;
 		return;
 	}
 	else if (_error)
 	{
 		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, _error.message()));
+		isConnected = false;
 		return;
 	}
 
@@ -306,6 +319,12 @@ void Server::connectResponse(const boost::system::error_code& _err)
 	else
 	{
 		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "Connection established"));
+		isConnected = true;
+
+		if (!msgWriteBufffer.empty())
+		{
+			boost::asio::async_write(*soc, boost::asio::buffer(msgWriteBufffer), boost::bind(&Server::handleWrite, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+		}
 
 		listen();
 	}

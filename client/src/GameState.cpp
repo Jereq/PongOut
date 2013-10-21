@@ -45,41 +45,13 @@ bool GameState::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::pt
 	return true;
 }
 
-void GameState::load()
+void GameState::load(CreateGameResponse::ptr _cgrp)
 {
 	std::vector<CommonTypes::Block> b;
 	std::string mapTexture = "background/ingame_01";
-	bool gameInitSuccess = false;
 
-	for (int i = 0; i < server->getMsgQueueSize(); i++)
-	{
-		message tmp = server->getNextMessage();
-
-		switch (tmp.type)
-		{	
-		case msgBase::MsgType::GAMEMESSAGE:
-			{
-				switch (tmp.gType)
-				{
-				case GameMessage::GameMsgType::CREATEGAMERESPONSE:
-					{
-						CreateGameResponse::ptr cgrp = boost::static_pointer_cast<CreateGameResponse>(tmp.gMsg);
-						b = cgrp->getMap();
-						world->loadMap(mapTexture, b, gc, ic, pc);
-						gameInitSuccess = true;
-
-						break;
-					}
-				}
-				break;
-			}
-		}
-	}
-	
-	if(!gameInitSuccess)
-	{
-		actionHandler->buttonPressed("back");
-	}
+	b = _cgrp->getMap();
+	world->loadMap(mapTexture, b, gc, ic, pc);
 
 	myMatchScore		= 0;
 	opponentMatchScore	= 0;
@@ -109,7 +81,7 @@ void GameState::onInput(const std::vector<IInput::Event> _events)
 				switch (e.keyEvent.key)
 				{
 				case IInput::KeyCode::ESCAPE:
-					actionHandler->buttonPressed("back");
+					actionHandler->buttonPressed("giveUp");
 					
 					break;
 				}
@@ -123,7 +95,6 @@ bool GameState::onEntry()
 {
 	iCoreSystem->getSounds()->changeBackgroundMusic("techno");
 
-	load();
 	return ScreenState::onEntry();
 }
 
@@ -153,6 +124,10 @@ void GameState::update(const float _dt)
 
 						pmiMe = cgrp->getMyInfo();
 						pmiOp = cgrp->getOpInfo();
+
+						myMatchScore = pmiMe.score;
+						opponentMatchScore = pmiOp.score;
+
 						std::vector<CommonTypes::Block> blocks = cgrp->getBlockList();
 
 						/* Shared data */

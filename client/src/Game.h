@@ -7,7 +7,7 @@
 
 #include "Map.h"
 #include <Server.h>
-
+#include "GameState.h"
 /**
  *  Main game class responsible for managing screens and the game loop.
  */
@@ -24,6 +24,8 @@ private:
 	void onFunction(const std::string& _func) override;
 
 	void handleNetworkPackages();
+
+	GameState::ptr gameState;
 
 public:
 

@@ -21,6 +21,7 @@ public:
 
 	virtual std::string getText(const std::string& _elemId) const;
 	void addStateAction(GUIActionHandler* _actionHandler);
+	void load(CreateGameResponse::ptr _cgrp);
 
 private:
 	virtual bool initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::ptr _server);
@@ -30,7 +31,7 @@ private:
 	virtual void update(const float _dt);
 	virtual void draw(std::shared_ptr<IGraphics> _graphics);
 
-	void load();
+	
 	std::vector<GameObject::ptr> gameObjects;
 
 	IGraphics::ptr graphics;
