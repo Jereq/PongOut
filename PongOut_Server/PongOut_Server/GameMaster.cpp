@@ -30,20 +30,26 @@ void GameMaster::handleGameMessage( GameMessage::ptr _message, User::ptr _initUs
 
 			CreateGameRequest::ptr cgp = boost::static_pointer_cast<CreateGameRequest>(_message);
 
-			Referee::ptr r = Referee::ptr(new Referee());
-
 			std::unique_lock<std::mutex> lock(UserManager::getInstance()->users.getLock());
 			User::ptr opponentUser;
 
 			for (User::ptr user : UserManager::getInstance()->users.baseSet)
 			{
-				if (user->getUserID() != _initUser->getUserID())
+				if (user->getUserID() != _initUser->getUserID() && user->getUserState() == User::UserState::AVAILABLE)
 				{
 					opponentUser = user;
 					break;
 				}
 			}
-			
+
+			if (!opponentUser)
+			{
+				Log::addLog(Log::LogType::LOG_INFO, 3, "Game hosted with no available opponent", __FILE__, __LINE__);
+				_initUser->setUserState(User::UserState::AVAILABLE);
+				return;
+			}
+
+			Referee::ptr r = Referee::ptr(new Referee());
 			r->init(_initUser, opponentUser, cgp->getInitInfo(), refIDCounter);
 			referees.insert(std::pair<int, Referee::ptr>(refIDCounter, r));
 			

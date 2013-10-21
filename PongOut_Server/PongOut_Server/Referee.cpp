@@ -206,11 +206,13 @@ void Referee::gameThreadFunc()
 
 					if (msg.second == user0->getUserID())
 					{
-						user0Info.paddle = pur->getPaddle();
+						user0Info.paddle.pos = pur->getPaddle().pos;
+						user0Info.paddle.vel = pur->getPaddle().vel;
 					}
 					else if (msg.second == user1->getUserID())
 					{
-						user1Info.paddle = pur->getPaddle();
+						user1Info.paddle.pos = pur->getPaddle().pos;
+						user1Info.paddle.vel = pur->getPaddle().vel;
 					}
 					else
 					{
@@ -254,8 +256,8 @@ void Referee::gameThreadFunc()
 			bounceOnPlayArea(user0Info.ball);
 			bounceOnPlayArea(user1Info.ball);
 
-			user0Info.ball.pos = user0Info.ball.vel * (float)info.ballSpeed * dt;
-			user1Info.ball.pos = user1Info.ball.vel * (float)info.ballSpeed * dt;
+			user0Info.ball.pos += user0Info.ball.vel * (float)info.ballSpeed * dt;
+			user1Info.ball.pos += user1Info.ball.vel * (float)info.ballSpeed * dt;
 
 			GameTickUpdate::ptr gtup0 = GameTickUpdate::ptr(new GameTickUpdate());
 			GameTickUpdate::ptr gtup1 = GameTickUpdate::ptr(new GameTickUpdate());
@@ -382,6 +384,8 @@ void Referee::bounceOnPaddle( CommonTypes::Ball& _ball, CommonTypes::Paddle _pad
 		{
 			_ball.pos.y = _paddle.pos.y + _ball.radius;
 		}
+
+		_ball.vel = _paddle.vel;
 	}
 
 	const float startVel = 1.f;
@@ -392,16 +396,15 @@ void Referee::bounceOnPaddle( CommonTypes::Ball& _ball, CommonTypes::Paddle _pad
 
 		if(_paddle.pos.y > _ball.pos.y)
 		{
-			_ball.vel.y = -startVel;
+			_ball.vel.y = -1.f;
 		}
 		else
 		{
-			_ball.vel.y = startVel;
+			_ball.vel.y = 1.f;
 		}
 
 		_ball.vel.x = _paddle.vel.x;
-
-		_ball.vel = glm::normalize(_ball.vel);
+		_ball.vel = glm::normalize(_ball.vel) * startVel;
 	}
 
 	if(_ball.inPlay == 0)
