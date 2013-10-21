@@ -23,7 +23,22 @@ private:
 	bool		serverAllow();
 	void onFunction(const std::string& _func) override;
 
+	void handleNetworkPackages();
+
 public:
+
+	enum class UserState
+	{
+		DISCONNECTED,
+		CONNECTED,
+		WAITING_FOR_LOGIN_RESPONSE,
+		AVAILABLE,
+		WAITING_FOR_OPPONENT,
+		IN_GAME,
+	};
+
+	UserState state;
+
 	/** constructor.
 	 *
 	 *  @param _system the platform dependent core system to be used by the game

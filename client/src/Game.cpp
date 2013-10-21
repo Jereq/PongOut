@@ -35,7 +35,7 @@ bool Game::serverAllow()
 			}
 		}
 	}
-	return false;//true;//
+	return true;
 }
 
 void Game::onFunction(const std::string& _func)
@@ -49,15 +49,24 @@ void Game::onFunction(const std::string& _func)
 	}
 	else if (_func == "login")
 	{
+		if (state != UserState::CONNECTED)
+		{
+			if (state == UserState::DISCONNECTED)
+			{
+				server->connect();
+			}
+			else
+			{
+				std::cout << "Wrong state for logging in!" << std::endl;
+				return;
+			}
+		}
+
 		std::string username = screenManager.getText("username");
 		std::string password = screenManager.getText("password");
 
 		server->login(username,password);
-
-		if(!serverAllow())
-		{
-			screenManager.openScreen("mainmenu");
-		}
+		state = UserState::WAITING_FOR_LOGIN_RESPONSE;
 	}
 	else if(_func == "createuser")
 	{
@@ -78,9 +87,9 @@ void Game::onFunction(const std::string& _func)
 		int timeLimit = gameSettings.getSuddenDeathTime();
 		bool fow = gameSettings.getFOW();
 		bool pow = gameSettings.getPOW();
-		server->createGame( mapId, ballSpeed, 1, timeLimit, fow, pow);
+		server->createGame( mapId, (int)ballSpeed, 1, timeLimit, fow, pow);
 
-		screenManager.openScreen("game");
+		state = UserState::WAITING_FOR_OPPONENT;
 	}
 	else if(_func.substr(0, 11) == "set/sudden/")
 	{
@@ -160,7 +169,8 @@ void Game::onFunction(const std::string& _func)
 Game::Game(ICoreSystem::ptr _system)
 	: system(_system),
 	screenManager(_system.lock()->getRootDir(), this),
-	shouldStop(false)
+	shouldStop(false),
+	state(UserState::DISCONNECTED)
 {
 	srand((unsigned int)time((NULL)));
 	rand();
@@ -169,9 +179,6 @@ Game::Game(ICoreSystem::ptr _system)
 void Game::run()
 {
 	server = Server::ptr(new Server("194.47.150.59", 6500));
-	server->connect();
-	if(serverAllow())
-		return;
 
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 
@@ -220,6 +227,10 @@ void Game::run()
 	
 	while(!systemPtr->windowIsClosing() && !shouldStop)
 	{
+		if (state != UserState::IN_GAME)
+		{
+			handleNetworkPackages();
+		}
 		systemPtr->pollEvents();
 		
 		previousTime = currentTime;
@@ -245,4 +256,102 @@ void Game::run()
 void Game::stop()
 {
 	shouldStop = true;
+}
+
+void Game::handleNetworkPackages()
+{
+	while (server->getMsgQueueSize() > 0)
+	{
+		message msg = server->getNextMessage();
+
+		switch (msg.type)
+		{
+		case msgBase::MsgType::ACKNOWLEDGELAST:
+			{
+				AcknowledgeLast::ptr ackMsg = boost::static_pointer_cast<AcknowledgeLast>(msg.msg);
+				bool success = !ackMsg->getBool();
+
+				if (state == UserState::WAITING_FOR_LOGIN_RESPONSE)
+				{
+					if (success)
+					{
+						state = UserState::AVAILABLE;
+						screenManager.openScreen("mainmenu");
+					}
+				}
+				else
+				{
+					std::cout << "Unknown acknowledge last" << std::endl;
+				}
+			}
+			break;
+
+		case msgBase::MsgType::INTERNALMESSAGE:
+			if (msg.strMsg == "Connection established")
+			{
+				if (state == UserState::DISCONNECTED)
+				{
+					state = UserState::CONNECTED;
+				}
+				else if (state != UserState::WAITING_FOR_LOGIN_RESPONSE)
+				{
+					std::cout << "Error: Received connection success while connected" << std::endl;
+				}
+			}
+			else if (msg.strMsg == "Write successful")
+			{
+				// Ignore
+			}
+			else if (msg.strMsg == "disconnected by server")
+			{
+				state = UserState::DISCONNECTED;
+			}
+			else
+			{
+				std::cout << "Unhandled internal message received: " << msg.strMsg << std::endl;
+			}
+
+			break;
+
+		case msgBase::MsgType::GAMEMESSAGE:
+			if (state != UserState::IN_GAME
+				&& !((state == UserState::AVAILABLE || state == UserState::WAITING_FOR_OPPONENT) && msg.gType == GameMessage::GameMsgType::CREATEGAMERESPONSE))
+			{
+				std::cout << "Received create game response at the wrong time" << std::endl;
+				break;
+			}
+
+			switch (msg.gType)
+			{
+			case GameMessage::GameMsgType::CREATEGAMERESPONSE:
+				state = UserState::IN_GAME;
+				screenManager.openScreen("game");
+
+				break;
+
+			default:
+				if (msg.gMsg)
+				{
+					std::cout << "Unhandled game package type received: " << (int)msg.gMsg->getGameType() << std::endl;
+				}
+				else
+				{
+					std::cout << "Unhandled game package type received" << std::endl;
+				}
+			}
+
+			break;
+
+		default:
+			if (msg.msg)
+			{
+				std::cout << "Unhandled package type received: " << msg.msg->getType() << std::endl;
+			}
+			else
+			{
+				std::cout << "Unhandled package type received" << std::endl;
+			}
+			break;
+		}
+	}
 }

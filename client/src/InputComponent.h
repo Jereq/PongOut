@@ -15,11 +15,11 @@ public:
 
 	typedef std::shared_ptr<InputComponent> ptr;
 
-	virtual bool initialize(InputState::ptr _inputState);
+	virtual bool initialize(InputState* _inputState);
 	virtual void update(GameObject* _gameObject, double _dt);
 	virtual void moveToTarget(Paddle& _paddle, double _dt);
 private:
-	InputState::ptr inputState;
+	InputState* inputState;
 
 	bool keyLeft;
 	bool keyRight;

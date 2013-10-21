@@ -33,7 +33,7 @@ bool GameState::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::pt
 	gc->initialize(iCoreSystem->getGraphics());
 
 	ic = InputComponent::ptr(new InputComponent()); 
-	ic->initialize(InputState::ptr(&inputState));
+	ic->initialize(&inputState);
 
 	pc = PhysicsComponent::ptr(new PhysicsComponent());
 	pc->initialize(world);
@@ -47,7 +47,6 @@ bool GameState::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::pt
 
 void GameState::load()
 {
-	bool res;
 	std::vector<CommonTypes::Block> b;
 	std::string mapTexture = "background/ingame_01";
 	bool gameInitSuccess = false;

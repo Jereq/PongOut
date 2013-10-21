@@ -19,7 +19,7 @@ InputComponent::~InputComponent()
 
 }
 
-bool InputComponent::initialize(InputState::ptr _inputState)
+bool InputComponent::initialize(InputState* _inputState)
 {
 	inputState = _inputState;
 

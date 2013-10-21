@@ -48,8 +48,6 @@ void Server::connect()
 		ioThread.join();
 	}
 
-	listen();
-
 	ioThread = std::thread(boost::bind(&Server::startIO, shared_from_this()));
 }
 
@@ -64,10 +62,17 @@ void Server::logout()
 {
 	LogoutRequest::ptr p = LogoutRequest::ptr(new LogoutRequest());
 	write(p);
-	soc->shutdown(boost::asio::socket_base::shutdown_both);
-	soc->close();
-	soc.reset();
-	ioThread.join();
+	if (soc && soc->is_open())
+	{
+		soc->shutdown(boost::asio::socket_base::shutdown_both);
+		soc->close();
+		soc.reset();
+	}
+
+	if (ioThread.joinable())
+	{
+		ioThread.join();
+	}
 }
 
 void Server::write( msgBase::ptr _msg )
@@ -301,6 +306,8 @@ void Server::connectResponse(const boost::system::error_code& _err)
 	else
 	{
 		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "Connection established"));
+
+		listen();
 	}
 }
 
