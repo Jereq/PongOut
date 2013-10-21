@@ -31,6 +31,7 @@ private:
 	virtual void update(const float _dt);
 	virtual void draw(std::shared_ptr<IGraphics> _graphics);
 
+	void handleNetworkMessages();
 	
 	std::vector<GameObject::ptr> gameObjects;
 
@@ -42,6 +43,7 @@ private:
 	InputComponent::ptr ic;
 	PhysicsComponent::ptr pc;
 
+	CommonTypes::PlayerMatchInfo myInfo;
 	int myMatchScore;
 	int opponentMatchScore;
 	int time;

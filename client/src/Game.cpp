@@ -169,7 +169,7 @@ void Game::onFunction(const std::string& _func)
 	else if(_func == "giveUp")
 	{
 		screenManager.goBack();
-
+		server->giveUpGame();
 	}
 }
 

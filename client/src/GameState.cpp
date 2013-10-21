@@ -51,7 +51,10 @@ void GameState::load(CreateGameResponse::ptr _cgrp)
 	std::string mapTexture = "background/ingame_01";
 
 	b = _cgrp->getMap();
+	world->setUserInfo(_cgrp->getPMIme(), _cgrp->getPMIop());
 	world->loadMap(mapTexture, b, gc, ic, pc);
+
+	myInfo = _cgrp->getPMIme();
 
 	myMatchScore		= 0;
 	opponentMatchScore	= 0;
@@ -106,7 +109,35 @@ bool GameState::onExit()
 
 void GameState::update(const float _dt)
 {
-	for (int i = 0; i < server->getMsgQueueSize(); i++)
+	handleNetworkMessages();
+
+	world->update(_dt, graphics);
+
+	CommonTypes::Paddle paddle;
+	Paddle::ptr p	= world->getPaddle(myInfo.paddle.id);
+	paddle.id		= p->getId();
+	paddle.pos		= p->getCenter().swizzle(glm::X,glm::Y);
+	paddle.vel		= p->getVelocity();
+	if(p->getInPlay())
+		paddle.inPlay	= 0;
+	else
+		paddle.inPlay	= 1;
+
+	server->sendPaddlePos(paddle);
+}
+
+void GameState::draw(std::shared_ptr<IGraphics> _graphics)
+{
+	_graphics->addText("menu_text_field", glm::vec3(-0.95,0.9,0), glm::vec2(0.07,0.07), "My Score: " + std::to_string(myMatchScore));
+	_graphics->addText("menu_text_field", glm::vec3(-0.95,-0.9,0), glm::vec2(0.07,0.07), "Opponent Score: " + std::to_string(opponentMatchScore));
+	_graphics->addText("menu_text_field", glm::vec3(-0.1,0.9,0), glm::vec2(0.07,0.07), "Time: " + std::to_string(time));
+
+	_graphics->addRectangle(glm::vec3(0,0,0.1), glm::vec2(2,2), 0, "output/chat_window");
+}
+
+void GameState::handleNetworkMessages()
+{
+	while (server->getMsgQueueSize() > 0)
 	{
 		message tmp = server->getNextMessage();
 
@@ -125,8 +156,8 @@ void GameState::update(const float _dt)
 						pmiMe = cgrp->getMyInfo();
 						pmiOp = cgrp->getOpInfo();
 
-						myMatchScore = pmiMe.score;
-						opponentMatchScore = pmiOp.score;
+						myMatchScore		= pmiMe.score;
+						opponentMatchScore	= pmiOp.score;
 
 						std::vector<CommonTypes::Block> blocks = cgrp->getBlockList();
 
@@ -146,23 +177,19 @@ void GameState::update(const float _dt)
 						//}
 					}
 					break;
+
+				case GameMessage::GameMsgType::END_GAME_RESPONSE:
+					actionHandler->buttonPressed("back");
+					break;
+
+				default:
+					break;
 				}
 			}
+			break;
+
+		default:
+			break;
 		}
 	}
-
-	world->update(_dt, graphics);
-
-	/*
-		server->sendPaddle();
-	*/
-}
-
-void GameState::draw(std::shared_ptr<IGraphics> _graphics)
-{
-	_graphics->addText("menu_text_field", glm::vec3(-0.95,0.9,0), glm::vec2(0.07,0.07), "My Score: " + std::to_string(myMatchScore));
-	_graphics->addText("menu_text_field", glm::vec3(-0.95,-0.9,0), glm::vec2(0.07,0.07), "Opponent Score: " + std::to_string(opponentMatchScore));
-	_graphics->addText("menu_text_field", glm::vec3(-0.1,0.9,0), glm::vec2(0.07,0.07), "Time: " + std::to_string(time));
-
-	_graphics->addRectangle(glm::vec3(0,0,0.1), glm::vec2(2,2), 0, "output/chat_window");
 }

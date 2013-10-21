@@ -29,6 +29,7 @@ public:
 
 	bool loadMap(std::string mapName, std::vector<CommonTypes::Block> _blocks, 
 					GraphicsComponent::ptr gc, InputComponent::ptr ic, PhysicsComponent::ptr pc);
+	void setUserInfo(const CommonTypes::PlayerMatchInfo& _me, const CommonTypes::PlayerMatchInfo& _op);
 
 	bool addObject(Paddle::ptr _paddle);
 	bool addObject(Ball::ptr _ball);
@@ -44,7 +45,7 @@ public:
 	std::string getTextureName();
 	std::string getFrameTextureName();
 	glm::vec2	getSize();
-	glm::vec3	getPaddlePosition(const int _paddleId);
+	Paddle::ptr	getPaddle(const int _paddleId);
 
 private:
 	std::vector<BlockC::ptr>	blocks;
@@ -55,6 +56,8 @@ private:
 	std::string	frameTextureName;
 	glm::vec2	playAreaSize;
 	float 		frameThickness;
+
+	CommonTypes::PlayerMatchInfo userInfos[2];
 
 	friend class PhysicsComponent;
 };

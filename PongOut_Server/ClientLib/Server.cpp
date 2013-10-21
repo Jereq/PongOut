@@ -14,7 +14,7 @@ Server::Server(const std::string _ipAdress, std::uint16_t _port)
 
 Server::~Server(void)
 {
-	if (soc)
+	if (soc && soc->is_open())
 	{
 		soc->shutdown(boost::asio::socket_base::shutdown_both);
 		soc->close();
@@ -333,4 +333,10 @@ void Server::sendPaddlePos( CommonTypes::Paddle _p )
 	PaddleUpdateRequest::ptr pur = PaddleUpdateRequest::ptr(new PaddleUpdateRequest());
 	pur->setPaddle(_p);
 	write(pur);
+}
+
+void Server::giveUpGame()
+{
+	EndGameRequest::ptr msg(new EndGameRequest());
+	write(msg);
 }

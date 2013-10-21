@@ -32,6 +32,11 @@ glm::vec3 GameObject::getCenter()const
 	return center;
 }
 
+bool GameObject::getInPlay()const
+{
+	return inPlay;
+}
+
 void GameObject::setPosition(glm::vec3 _position, glm::vec2 _velocity)
 {
 	center	= _position;

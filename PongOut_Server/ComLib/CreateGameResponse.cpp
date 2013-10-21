@@ -65,3 +65,13 @@ std::vector<CommonTypes::Block> CreateGameResponse::getMap()
 {
 	return map;
 }
+
+CommonTypes::PlayerMatchInfo CreateGameResponse::getPMIme()
+{
+	return pmiME;
+}
+
+CommonTypes::PlayerMatchInfo CreateGameResponse::getPMIop()
+{
+	return pmiOP;
+}

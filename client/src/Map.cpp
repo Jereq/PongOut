@@ -7,15 +7,13 @@
 
 #include "Map.h"
 
-#define MYID 0
-#define OPPONENTID 1
-#define BALL_Z 0.0f
-#define PADDLE_Z 0.0f
+#define BALL_Z		0.0f
+#define PADDLE_Z	0.0f
 
 Map::Map()
 {
-	frameThickness 			= 0.f;
-	bgTextureName 			= "";
+	frameThickness 	= 0.f;
+	bgTextureName 	= "";
 }
 
 Map::~Map()
@@ -23,8 +21,8 @@ Map::~Map()
 
 }
 
-void Map::initialize(	glm::vec2 _playAreaSize, float _frameThickness,
-						std::string _bgTextureName, std::string _frameTextureName							)
+void Map::initialize( glm::vec2 _playAreaSize, float _frameThickness,
+						std::string _bgTextureName, std::string _frameTextureName )
 {
 	frameThickness 			= _frameThickness;
 	bgTextureName 			= _bgTextureName;
@@ -88,23 +86,20 @@ bool Map::loadMap(std::string _mapName, std::vector<CommonTypes::Block> _blockDa
 	if(paddles.size() != 0)
 		paddles.clear();
 
-	int midX = screenWidth / 2;
 	Paddle::ptr p = Paddle::ptr(new Paddle);
-	int diff = (screenHeight - (int)playAreaSize.y) / 2 + 16;
-	p->initialize(MYID, glm::vec3(midX, diff, PADDLE_Z), glm::vec2(128, 32), 0, gc, ic, pc);
+	p->initialize(userInfos[0].paddle.id, glm::vec3(userInfos[0].paddle.pos, PADDLE_Z), glm::vec2(128, 32), 0, gc, ic, pc);
 	paddles.push_back(p);
 
 	Ball::ptr b = Ball::ptr(new Ball);
-	b->initialize(MYID, glm::vec3(midX, diff + 16, BALL_Z), glm::vec2(32,32), glm::vec2(0,0), 0, gc, pc);
+	b->initialize(userInfos[0].ball.id, glm::vec3(userInfos[0].ball.pos, BALL_Z), glm::vec2(userInfos[0].ball.radius), glm::vec2(0,0), 0, gc, pc);
 	balls.push_back(b);
 
-	diff = screenHeight - ((screenHeight - (int)playAreaSize.y) / 2) - 16;
 	p = Paddle::ptr(new Paddle);
-	p->initialize(OPPONENTID, glm::vec3(midX,diff,PADDLE_Z), glm::vec2(128, 32), 0, gc, nullptr, pc);
+	p->initialize(userInfos[1].paddle.id, glm::vec3(userInfos[1].paddle.pos,PADDLE_Z), glm::vec2(128, 32), 0, gc, nullptr, pc);
 	paddles.push_back(p);
 
 	b = Ball::ptr(new Ball);
-	b->initialize(OPPONENTID, glm::vec3(midX, diff - 16, BALL_Z), glm::vec2(32,32), glm::vec2(0,0), 0, gc, pc);
+	b->initialize(userInfos[1].ball.id, glm::vec3(userInfos[1].ball.pos, BALL_Z), glm::vec2(userInfos[0].ball.radius), glm::vec2(0,0), 0, gc, pc);
 	balls.push_back(b);
 	
 	for(CommonTypes::Block bd : _blockData)
@@ -115,6 +110,12 @@ bool Map::loadMap(std::string _mapName, std::vector<CommonTypes::Block> _blockDa
 	}
 
 	return true;
+}
+
+void Map::setUserInfo(const CommonTypes::PlayerMatchInfo& _me, const CommonTypes::PlayerMatchInfo& _op)
+{
+	userInfos[0] = _me;
+	userInfos[1] = _op;
 }
 
 void Map::resetBall(const int _id)
@@ -142,15 +143,15 @@ glm::vec2 Map::getSize()
 }
 
 
-glm::vec3 Map::getPaddlePosition(const int _paddleId)
+Paddle::ptr Map::getPaddle(const int _paddleId)
 {
-	glm::vec3 p(0.f,0.f,0.f);
+	Paddle::ptr p;
 
 	for(Paddle::ptr paddle : paddles)
 	{
 		if(paddle->getId() == _paddleId)
 		{
-			p = paddle->getCenter();
+			p = paddle;
 			break;
 		}
 	}
@@ -202,7 +203,7 @@ void Map::setBallData(const CommonTypes::Ball& _bd)
 		if(_bd.id == ball->getId())
 		{
 			ball->setPosition( glm::vec3(_bd.pos, BALL_Z), _bd.vel);
-			ball->setInPlay(_bd.inPlay);
+			ball->setInPlay(_bd.inPlay == 0);
 			break;
 		}
 	}
@@ -217,7 +218,7 @@ void Map::setBlockData(const std::vector<CommonTypes::Block>& _bd)
 			if(bd.id == block->getId())
 			{
 				block->setCollided(bd.health);
-				block->setInPlay(bd.inPlay);
+				block->setInPlay(bd.inPlay == 0);
 			}
 		}
 	}
@@ -232,7 +233,7 @@ void Map::setPaddleData(const CommonTypes::Paddle& _pd)
 		if(paddle->getId() == _pd.id)
 		{
 			paddle->setPosition( glm::vec3(_pd.pos, PADDLE_Z), _pd.vel);
-			paddle->setInPlay( _pd.inPlay );
+			paddle->setInPlay( _pd.inPlay != 0);
 		}
 	}
 }

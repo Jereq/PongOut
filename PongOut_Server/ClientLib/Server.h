@@ -52,6 +52,8 @@ public:
 	message getNextMessage();
 	int getMsgQueueSize();
 
+	void giveUpGame();
+
 private:
 
 	void handleIncomingMessage(const boost::system::error_code& _error, size_t _bytesTransferred);

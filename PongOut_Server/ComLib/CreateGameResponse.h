@@ -17,6 +17,8 @@ public:
 	void setResponse(const std::vector<CommonTypes::Block>& _map, const CommonTypes::GameInitInfo& _info, const CommonTypes::PlayerMatchInfo& _pmiME, const CommonTypes::PlayerMatchInfo& _pmiOP);
 
 	std::vector<CommonTypes::Block> getMap();
+	CommonTypes::PlayerMatchInfo getPMIme();
+	CommonTypes::PlayerMatchInfo getPMIop();
 
 private:
 

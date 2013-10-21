@@ -31,6 +31,7 @@ public:
 	int				getId()const;
 	glm::vec3		getCenter()const;
 	glm::vec2		getVelocity()const;
+	bool			getInPlay()const;
 
 	virtual void	update(double _dt);
 	void			setPosition(glm::vec3 _position, glm::vec2 _velocity);
