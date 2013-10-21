@@ -35,7 +35,7 @@ bool Game::serverAllow()
 			}
 		}
 	}
-	return false;
+	return false;//true;//
 }
 
 void Game::onFunction(const std::string& _func)
@@ -236,11 +236,12 @@ void Game::run()
 
 		graphics->drawFrame();		
 	}
-
-	//server->logout();
+	
 	sounds->shutdown();
 	graphics->destroy();
+	server->logout();
 }
+
 void Game::stop()
 {
 	shouldStop = true;

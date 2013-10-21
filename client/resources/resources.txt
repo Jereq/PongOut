@@ -122,4 +122,4 @@ music:loser				sounds/loser.mp3
 sfx:ball_vs_ball			sounds/ball_on_ball_collision.mp3
 sfx:block_explodes			sounds/block_explodes.mp3
 sfx:wall_collision			sounds/wall_collision.mp3
-font:menu_text_field			fonts/PrintedCircuitBoard.ttf
+font:menu_text_field			fonts/XoloniumRegular.otf

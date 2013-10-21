@@ -68,6 +68,7 @@ void GameState::load()
 						b = cgrp->getMap();
 						world->loadMap(mapTexture, b, gc, ic, pc);
 						gameInitSuccess = true;
+
 						break;
 					}
 				}
@@ -135,8 +136,6 @@ bool GameState::onExit()
 
 void GameState::update(const float _dt)
 {
-	SERVERFRAMEDATA sfd;
-
 	for (int i = 0; i < server->getMsgQueueSize(); i++)
 	{
 		message tmp = server->getNextMessage();
@@ -149,25 +148,24 @@ void GameState::update(const float _dt)
 				{
 				case GameMessage::GameMsgType::GAME_TICK_UPDATE:
 					{
-						CommonTypes::PlayerMatchInfo pmi;
+						CommonTypes::PlayerMatchInfo pmiMe, pmiOp;
 
 						GameTickUpdate::ptr cgrp = boost::static_pointer_cast<GameTickUpdate>(tmp.gMsg);
 
-						pmi = cgrp->getMyInfo();
+						pmiMe = cgrp->getMyInfo();
+						pmiOp = cgrp->getOpInfo();
+						std::vector<CommonTypes::Block> blocks = cgrp->getBlockList();
 
+						/* Shared data */
+						world->setBlockData(blocks);
+
+						/* My data */
+						world->setBallData(pmiMe.ball);
 						
-						//if(sfd.paddleData.id == OPPONENTID)
-						//{
-						//	world->setPaddleData(sfd.paddleData);
-						//}
-						//if(sfd.ballData.size() > 0)
-						//{
-						//	world->setBallData(sfd.ballData);
-						//}
-						//if(sfd.blockData.size() > 0)
-						//{
-						//	world->setBlockData(sfd.blockData);
-						//}
+						/* Opponent data */
+						world->setBallData(pmiOp.ball);
+						world->setPaddleData(pmiOp.paddle);
+
 						//if(sfd.time > -1)
 						//{
 						//	time = sfd.time;
@@ -179,7 +177,6 @@ void GameState::update(const float _dt)
 		}
 	}
 
-	time = sfd.time;
 	world->update(_dt, graphics);
 
 	/*

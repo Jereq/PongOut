@@ -1,8 +1,11 @@
 #ifndef __DXASSETINSTANCING_H
 #define __DXASSETINSTANCING_H
 
+#include <d3d11.h>
+#include <d3d10.h>
+#include <dxgi.h>
 #include "D3DX11.h"
-#include "D3DX10.h"
+#include <D3DX10.h>
 #include "ErrorCodeList.h"
 
 struct SpriteVertex
