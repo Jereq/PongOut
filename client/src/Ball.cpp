@@ -41,9 +41,9 @@ void Ball::setInPlay(bool _inPlayState)
 
 void Ball::update(double _dt)
 {	
-	physicsComponent->bounceOnPlayArea(this, _dt);
+	/*physicsComponent->bounceOnPlayArea(this, _dt);
 	physicsComponent->bounceOnBlock(this, _dt);
-	physicsComponent->bounceOnPaddle(this, _dt);
+	physicsComponent->bounceOnPaddle(this, _dt);*/
 	
 	center = center + glm::vec3(velocity, 0) * acceleration * (float)_dt;
 	graphicsComponent->addSpriteToFrame("player/ball", center, size, rotation);

@@ -203,7 +203,6 @@ void Map::setBallData(const CommonTypes::Ball& _bd)
 		if(_bd.id == ball->getId())
 		{
 			ball->setPosition( glm::vec3(_bd.pos, BALL_Z), _bd.vel);
-			ball->setInPlay(_bd.inPlay == 0);
 			break;
 		}
 	}
@@ -218,7 +217,6 @@ void Map::setBlockData(const std::vector<CommonTypes::Block>& _bd)
 			if(bd.id == block->getId())
 			{
 				block->setCollided(bd.health);
-				block->setInPlay(bd.inPlay == 0);
 			}
 		}
 	}
@@ -233,7 +231,6 @@ void Map::setPaddleData(const CommonTypes::Paddle& _pd)
 		if(paddle->getId() == _pd.id)
 		{
 			paddle->setPosition( glm::vec3(_pd.pos, PADDLE_Z), _pd.vel);
-			paddle->setInPlay( _pd.inPlay != 0);
 		}
 	}
 }

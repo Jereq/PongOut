@@ -31,4 +31,5 @@ add_library(ComLib
 	GameTickUpdate.cpp GameTickUpdate.h
 	EndGameRequest.cpp EndGameRequest.h
 	EndGameResponse.cpp EndGameResponse.h
+	LaunchBallRequest.cpp LaunchBallRequest.h
 )

@@ -7,7 +7,6 @@ namespace CommonTypes
 	{
 		int id, type, health;
 		glm::vec2 pos;
-		char inPlay;
 		std::vector<std::string> textures;
 
 		int getSize()
@@ -21,7 +20,6 @@ namespace CommonTypes
 
 			res += sizeof(int) * 3;
 			res += sizeof(glm::vec2);
-			res += sizeof(char);
 			res += sizeof(uint16_t); //size of vector
 
 			return res;
@@ -39,7 +37,6 @@ namespace CommonTypes
 	{
 		glm::vec2 pos, vel;
 		uint32_t id;
-		char inPlay;
 	};
 
 	struct Ball
@@ -47,7 +44,6 @@ namespace CommonTypes
 		glm::vec2 pos, vel;
 		uint32_t id;
 		float radius;
-		char inPlay;
 	};
 
 	struct PlayerMatchInfo

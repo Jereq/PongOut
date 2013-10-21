@@ -85,8 +85,12 @@ void GameState::onInput(const std::vector<IInput::Event> _events)
 				{
 				case IInput::KeyCode::ESCAPE:
 					actionHandler->buttonPressed("giveUp");
-					
 					break;
+				case IInput::KeyCode::SPACE:
+					{
+						server->sendLaunchBall();
+						break;
+					}
 				}
 			}
 			break;
@@ -118,10 +122,6 @@ void GameState::update(const float _dt)
 	paddle.id		= p->getId();
 	paddle.pos		= p->getCenter().swizzle(glm::X,glm::Y);
 	paddle.vel		= p->getVelocity();
-	if(p->getInPlay())
-		paddle.inPlay	= 0;
-	else
-		paddle.inPlay	= 1;
 
 	server->sendPaddlePos(paddle);
 }

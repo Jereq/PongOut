@@ -35,14 +35,14 @@ void Paddle::update(double _dt)
 	
 
 	float speedMult = 2.f;
-	float maxSpeed = 1.f;
+	float maxSpeed = 600.f;
 	float accelaration = 2.f;
 
 	if(inputComponent != nullptr)
 	{
 		inputComponent->moveToTarget(*this, _dt);
 
-		float KEY_ACCELERATION = 0.001f;
+		float KEY_ACCELERATION = 0.6f;
 	
 		if (currentInput == InputType::KEYBOARD)
 		{

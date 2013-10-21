@@ -78,7 +78,9 @@ void InputComponent::moveToTarget(Paddle& _paddle, double _dt)
 				double y = e.mouseMoveEvent.posY;
 
 				_paddle.currentInput = Paddle::InputType::MOUSE;
-				_paddle.targetPos = glm::vec2(x,y);
+
+				const static glm::vec2 mapSize(1200.f, 600.f);
+				_paddle.targetPos = (glm::vec2(x,y) + glm::vec2(1.f)) * mapSize * 0.5f;
 				//_gameObject->velocity = glm::vec2(x,y);
 			}
 			break;

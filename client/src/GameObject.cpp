@@ -51,8 +51,8 @@ glm::vec2 GameObject::getVelocity()const
 bool GameObject::initialize(const int _id, glm::vec3 _center, glm::vec2 _size, float _rotation, GraphicsComponent::ptr _graphicsComponent)
 {
 	objectId			= _id;
-	center				= screenPositionToClip(glm::vec2(screenWidth,screenHeight), _center);
-	size				= screenSizeToClip(glm::vec2(screenWidth,screenHeight), _size);
+	center				= _center;
+	size				= _size;
 	rotation			= _rotation;
 	graphicsComponent	= _graphicsComponent;
 	velocity			= glm::vec2(0,0);

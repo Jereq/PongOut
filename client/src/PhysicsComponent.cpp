@@ -170,11 +170,12 @@ void PhysicsComponent::bounceOnPlayArea(GameObject* _gameObject, double _dt)
 
 void PhysicsComponent::restrictToPlayArea(GameObject* _gameObject, double _dt)
 {
-	glm::vec2 playArea = map->getSize();
-	glm::vec2 clipArea = glm::vec2( playArea.x / screenWidth * 2.f, playArea.y / screenHeight * 2.f);
+	//glm::vec2 playArea = map->getSize();
+	//glm::vec2 clipArea = glm::vec2( playArea.x / screenWidth * 2.f, playArea.y / screenHeight * 2.f);
+	const static glm::vec2 MAP_SIZE(1200.f, 600.f);
 
-	glm::vec2 min = glm::vec2(-clipArea.x / 2,-clipArea.y / 2);
-	glm::vec2 max = glm::vec2(clipArea.x / 2,clipArea.y / 2);
+	glm::vec2 min = glm::vec2(0.f, 0.f);
+	glm::vec2 max = glm::vec2(MAP_SIZE.x, MAP_SIZE.y);
 
 	if(_gameObject->center.x - _gameObject->size.x / 2 < min.x)
 	{

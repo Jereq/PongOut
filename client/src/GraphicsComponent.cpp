@@ -11,6 +11,19 @@ inline glm::vec3 screenPositionToClip( const glm::vec2 _screenDimension, const g
 	return glm::vec3(_screenPosition.x / _screenDimension.x * 2.f - 1.f, _screenPosition.y / _screenDimension.y * 2.f - 1.f, _screenPosition.z);
 }
 
+const static glm::vec2 MAP_SIZE(1200.f, 600.f);
+const static float BORDER_COOF = 0.9f;
+
+inline glm::vec2 gameSizeToClip( const glm::vec2 _gameSize )
+{
+	return glm::vec2( _gameSize.x / MAP_SIZE.x * 2.f, _gameSize.y / MAP_SIZE.y * 2.f) * BORDER_COOF;
+}
+
+inline glm::vec3 gamePositionToClip(  const glm::vec3 _gamePosition )
+{
+	return glm::vec3((_gamePosition.x / MAP_SIZE.x * 2.f - 1.f) * BORDER_COOF, (_gamePosition.y / MAP_SIZE.y * 2.f - 1.f) * BORDER_COOF, _gamePosition.z);
+}
+
 bool GraphicsComponent::initialize(std::shared_ptr<IGraphics> _graphics)
 {
 	graphics = _graphics;
@@ -20,8 +33,8 @@ bool GraphicsComponent::initialize(std::shared_ptr<IGraphics> _graphics)
 
 void GraphicsComponent::addSpriteToFrame(const std::string& _textureId, glm::vec3 _center, glm::vec2 _size, float _rotation)
 {
-	//glm::vec3 center = screenPositionToClip(glm::vec2(1280,1024), _center);
-	//glm::vec2 size = screenSizeToClip(glm::vec2(1280,1024), _size);
+	glm::vec3 center = gamePositionToClip(_center);
+	glm::vec2 size = gameSizeToClip(_size);
 
-	graphics->addRectangle(_center, _size, _rotation, _textureId);
+	graphics->addRectangle(center, size, _rotation, _textureId);
 }
