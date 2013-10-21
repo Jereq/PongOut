@@ -44,11 +44,9 @@ void Server::connect()
 	tcp::resolver::iterator resIt = res.resolve(q);	
 
 	soc->async_connect(resIt->endpoint(), boost::bind(&Server::connectResponse, shared_from_this(), boost::asio::placeholders::error));
-	//boost::asio::async_connect(*soc, resIt, boost::bind(&Server::connectResponse, shared_from_this(), boost::asio::placeholders::error));
 
 	if (ioThread.joinable())
 	{
-		//messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "Waiting for previous connection to end..."));
 		ioThread.join();
 	}
 

@@ -24,6 +24,13 @@ std::vector<char> GameMessage::getData()
 
 msgBase::ptr GameMessage::interpretPacket( const std::deque<char>& _buffer )
 {
+	if (_buffer.size() < sizeof(msgHeader) + sizeof(GameMsgType))
+	{
+		std::cout << "GAME MESSAGE FUBAR!!" << std::endl;
+		return msgBase::ptr();
+	}
+
+
 	std::deque<char>::const_iterator it = _buffer.begin() + sizeof(header);
 
 	GameMsgType childHead;

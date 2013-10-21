@@ -7,6 +7,7 @@
 #include "EndGameRequest.h"
 
 #include <chrono>
+#include <thread>
 
 Referee::Referee(void)
 {
@@ -15,7 +16,14 @@ Referee::Referee(void)
 
 Referee::~Referee(void)
 {
-	gameThread.join();
+	if (gameThread.get_id() == std::this_thread::get_id())
+	{
+		gameThread.detach();
+	}
+	else if (gameThread.joinable())
+	{
+		gameThread.join();
+	}
 }
 
 void Referee::init( User::ptr _u0, User::ptr _u1, CommonTypes::GameInitInfo _info, int _refID)
@@ -26,7 +34,9 @@ void Referee::init( User::ptr _u0, User::ptr _u1, CommonTypes::GameInitInfo _inf
 	refID = _refID;
 
 	user0->setReffereeID(_refID);
-	user1->setReffereeID(_refID);	
+	user1->setReffereeID(_refID);
+
+#pragma region TrollML
 
 	TMLReader tml;
 	tml.readFile("../test.tml");
@@ -124,6 +134,8 @@ void Referee::init( User::ptr _u0, User::ptr _u1, CommonTypes::GameInitInfo _inf
 		offY++;
 	}	
 
+#pragma endregion TrollML
+
 	user0Info.ball.id = 0;
 	user0Info.ball.pos = glm::vec2(0.0f, 0.0f);
 	user0Info.ball.vel = glm::vec2(0.0f, 0.0f);
@@ -196,12 +208,12 @@ void Referee::gameThreadFunc()
 					}
 					else
 					{
-						Log::addLog(Log::LogType::LOG_ERROR, 1, "Error in code at:" + std::to_string(__LINE__));
+						Log::addLog(Log::LogType::LOG_ERROR, 1, "Referee gale loop", __FILE__, __LINE__);
 					}
 				}
 				else
 				{
-					Log::addLog(Log::LogType::LOG_ERROR, 1, "Error in code at:" + std::to_string(__LINE__));
+					Log::addLog(Log::LogType::LOG_ERROR, 1, "Referee gale loop", __FILE__, __LINE__);
 				}
 			}
 
@@ -272,7 +284,7 @@ void Referee::gameThreadFunc()
 	}
 	catch (...)
 	{
-		Log::addLog(Log::LogType::LOG_ERROR, 1, "Referee rage quit!");
+		Log::addLog(Log::LogType::LOG_ERROR, 1, "Referee rage quit!", __FILE__, __LINE__);
 	}
 }
 

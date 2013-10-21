@@ -26,8 +26,8 @@ Log::Log(void)
 {
 	enumMap.insert(pair<LogType, string>(LogType::LOG_INFO, "INFO"));
 	enumMap.insert(pair<LogType, string>(LogType::LOG_ERROR, "ERROR"));
-	enumMap.insert(pair<LogType, string>(LogType::LOG_DEBUG, "DEBUG"));
 	currentLogFile = boost::shared_ptr<Log::logFile>();
+	debugOn = true;
 }
 
 
@@ -36,7 +36,7 @@ Log::~Log(void)
 	int i = 42;
 }
 
-void Log::addLog( LogType _type, int _prio, std::string _msg )
+void Log::addLog( LogType _type, int _prio, std::string _msg, char* _file, int _line )
 {
 	boost::shared_ptr<Log> p = getInstance();
 	lock_guard<std::mutex> lock(p->queueLock);
@@ -45,6 +45,8 @@ void Log::addLog( LogType _type, int _prio, std::string _msg )
 	m.type = _type;
 	m.prio = _prio;
 	m.msg = _msg;
+	m.file = _file;
+	m.line = _line;
 
 	p->msgQueue.push(m);
 }
@@ -53,6 +55,12 @@ void Log::setPrioLevel( int _prio )
 {
 	boost::shared_ptr<Log> p = getInstance();
 	p->prio = _prio;
+}
+
+void Log::setDebugOn( bool _debug )
+{
+	boost::shared_ptr<Log> p = getInstance();
+	p->debugOn = _debug;
 }
 
 void Log::printFromQueue()
@@ -68,9 +76,16 @@ void Log::printFromQueue()
 				if (prio > msgQueue.front().prio)
 				{
 					ostringstream outStr;
-					outStr << ct.time_of_day() <<  " ## " << enumMap.at(msgQueue.front().type) <<  " : " << msgQueue.front().msg << endl;
+					message m = msgQueue.front();
 
-					cout << outStr.str();
+					outStr << ct.time_of_day() <<  " ## " << enumMap.at(msgQueue.front().type) <<  " : " << m.msg;
+
+					if (debugOn)
+					{
+						outStr << endl << "Line: " << m.line << endl << "File: " << m.file << endl << "======================================================================================";
+					}
+
+					cout << outStr.str() << endl;
 					writeToLogFile(outStr.str());
 				}				
 				lock_guard<std::mutex> lock(queueLock);
@@ -78,7 +93,7 @@ void Log::printFromQueue()
 			}
 		}
 
-		chrono::milliseconds pause(1000);
+		chrono::milliseconds pause(100);
 		this_thread::sleep_for(pause);
 	}
 }
@@ -120,5 +135,4 @@ void Log::destroy()
 	ptr->logThread.join();
 	ptr.reset();
 }
-
 

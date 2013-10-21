@@ -16,7 +16,7 @@ void PaddleUpdateRequest::setPaddle( const CommonTypes::Paddle& _p )
 {
 	p = _p;
 
-	msgHeader.length = sizeof(CommonTypes::Paddle);
+	msgHeader.length = sizeof(CommonTypes::Paddle) + sizeof(GameMsgType);
 }
 
 CommonTypes::Paddle PaddleUpdateRequest::getPaddle()

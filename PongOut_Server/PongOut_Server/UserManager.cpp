@@ -11,6 +11,9 @@
 #include <GameMessage.h>
 #include <stdexcept>
 
+static const int loginAtemptesAlowed = 3;
+static const int hammerTime = 30;
+
 boost::shared_ptr<UserManager> UserManager::ptr;
 
 boost::shared_ptr<UserManager> UserManager::getInstance()
@@ -43,14 +46,18 @@ void UserManager::listenForNewClientConnections()
 
 void UserManager::handleIncomingClient( boost::shared_ptr<tcp::socket> _soc, const boost::system::error_code& _errorCode )
 {
-	User::ptr u = User::ptr(new User(_soc));
-	//AcknowledgeLast::ptr ack = AcknowledgeLast::ptr(new AcknowledgeLast());
-	//ack->setAck(msgBase::MsgType::CONNECTSUCCESS, false);
-	//u->addMsgToMsgQueue(ack);
-	users.insert(u);
-	u->listen();
-	Log::addLog(Log::LogType::LOG_INFO, 4, "New connection established");
-	listenForNewClientConnections();
+	if (checkIfIPAlowed(_soc->remote_endpoint().address()))
+	{
+		User::ptr u = User::ptr(new User(_soc));
+		users.insert(u);
+		u->listen();
+		std::string ip = _soc->remote_endpoint().address().to_string();
+		Log::addLog(Log::LogType::LOG_INFO, 4, "New connection established from: " + ip, __FILE__, __LINE__);
+		listenForNewClientConnections();
+	} 
+	else
+	{
+	}
 }
 
 void UserManager::messageActionSwitch( const msgBase::header& _header, const std::deque<char>& _meassage, boost::shared_ptr<User> _user )
@@ -63,7 +70,7 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 	}
 	catch(const std::out_of_range&)
 	{
-		Log::addLog(Log::LogType::LOG_ERROR, 0, "Received unregistered packet: " + (int)_header.type);
+		Log::addLog(Log::LogType::LOG_ERROR, 0, "Received unregistered packet: " + (int)_header.type, __FILE__, __LINE__);
 		return;
 	}
 
@@ -116,7 +123,7 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 				_user->setUserID(res);
 				_user->setUserType(User::UserType::USER);
 				_user->setUserState(User::UserState::AVAILABLE);
-				Log::addLog(Log::LogType::LOG_INFO, 4, "Username: " + lp->getUsername() + " Logged in");
+				Log::addLog(Log::LogType::LOG_INFO, 4, "Username: " + lp->getUsername() + " Logged in", __FILE__, __LINE__);
 
 				AcknowledgeLast::ptr ack = AcknowledgeLast::ptr(new AcknowledgeLast());
 				ack->setAck(msgBase::MsgType::LOGINREQUEST, false);
@@ -125,7 +132,9 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 			} 
 			else
 			{
-				Log::addLog(Log::LogType::LOG_INFO, 4, lp->getUsername() + " failed to login!");
+				Log::addLog(Log::LogType::LOG_INFO, 4, lp->getUsername() + " failed to login!", __FILE__, __LINE__);
+				addIPtoBlackList(_user->getSocket()->remote_endpoint().address());
+
 				_user->disconnect();
 				users.erase(_user);	
 			}
@@ -166,7 +175,7 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 
 			if (res != -1)
 			{
-				Log::addLog(Log::LogType::LOG_INFO, 3, "User created with userID: " + std::to_string(res));
+				Log::addLog(Log::LogType::LOG_INFO, 3, "User created with userID: " + std::to_string(res), __FILE__, __LINE__);
 				_user->setUserID(res);
 				_user->setUserType(User::UserType::USER);
 				_user->setUserState(User::UserState::AVAILABLE);
@@ -174,7 +183,7 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 			} 
 			else
 			{
-				Log::addLog(Log::LogType::LOG_ERROR, 1, "Failed to create user with username: " + cu->getUserName());
+				Log::addLog(Log::LogType::LOG_ERROR, 1, "Failed to create user with username: " + cu->getUserName(), __FILE__, __LINE__);
 				ack->setAck(msgBase::MsgType::CREATEUSERREQUEST, true);
 			}
 
@@ -185,7 +194,7 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 
 	case msgBase::MsgType::LOGOUTREQUEST:
 		{
-			Log::addLog(Log::LogType::LOG_INFO, 4, "UserID: " + std::to_string(_user->getUserID()) + " has disconnected!");
+			Log::addLog(Log::LogType::LOG_INFO, 4, "UserID: " + std::to_string(_user->getUserID()) + " has disconnected!", __FILE__, __LINE__);
 			_user->disconnect();
 			users.erase(_user);			
 			break;
@@ -199,7 +208,7 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 
 				if ((_user->getUserState() != User::UserState::AVAILABLE) == (gmp->getGameType() == GameMessage::GameMsgType::CREATEGAMEREQUEST))
 				{
-					Log::addLog(Log::LogType::LOG_INFO, 4, "UserID: " + std::to_string(_user->getUserID()) + " has tried to execute unauthorized command, user disconnected!");
+					Log::addLog(Log::LogType::LOG_INFO, 4, "UserID: " + std::to_string(_user->getUserID()) + " has tried to execute unauthorized command, user disconnected!", __FILE__, __LINE__);
 					_user->disconnect();
 					users.erase(_user);			
 					break;
@@ -210,14 +219,14 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 			} 
 			else
 			{
-				Log::addLog(Log::LogType::LOG_INFO, 4, "UserID: " + std::to_string(_user->getUserID()) + " has tried to execute unauthorized command, user disconnected!");
+				Log::addLog(Log::LogType::LOG_INFO, 4, "UserID: " + std::to_string(_user->getUserID()) + " has tried to execute unauthorized command, user disconnected! ## Line: ", __FILE__, __LINE__);
 				_user->disconnect();
 				users.erase(_user);
 				break;
 			}			
 		}
 	default:
-		Log::addLog(Log::LogType::LOG_ERROR, 0,"Received packet that are not yet implemented: " + p->getType());
+		Log::addLog(Log::LogType::LOG_ERROR, 0,"Received packet that are not yet implemented: " + p->getType(), __FILE__, __LINE__);
 		_user->disconnect();
 		users.erase(_user);
 		break;
@@ -235,15 +244,15 @@ void UserManager::startIOPrivate()
 	{
 		ioService->run();
 
-		Log::addLog(Log::LogType::LOG_DEBUG, 3,"IO services stopped");
+		Log::addLog(Log::LogType::LOG_INFO, 3,"IO services stopped", __FILE__, __LINE__);
 	}
 	catch (const boost::system::error_code& err)
 	{
-		Log::addLog(Log::LogType::LOG_ERROR, 2, err.message());
+		Log::addLog(Log::LogType::LOG_ERROR, 2, err.message(), __FILE__, __LINE__);
 	}
 	catch (...)
 	{
-		Log::addLog(Log::LogType::LOG_ERROR, 0, "Uncaught exception in IO thread. Fix!");
+		Log::addLog(Log::LogType::LOG_ERROR, 0, "Uncaught exception in IO thread. Fix!", __FILE__, __LINE__);
 	}
 }
 
@@ -272,4 +281,42 @@ bool UserManager::userAllredyLogedin( long _uid )
 	}
 
 	return false;
+}
+
+bool UserManager::checkIfIPAlowed( boost::asio::ip::address _addr )
+{
+	if (ipBlackList.count(_addr) > 0)
+	{
+		userIP uip = ipBlackList.at(_addr);
+		boost::posix_time::ptime pt = boost::posix_time::second_clock::local_time();
+
+		if ((pt - uip.firstConnect).total_seconds() < hammerTime && uip.connectAtempts >= loginAtemptesAlowed) //user last login attempt time are within hammer time and attempt count are higher then allowed count. 
+		{
+			return false;
+		}
+		else if ((pt - uip.firstConnect).total_seconds() > hammerTime) // user hammer timer has expired
+		{
+			ipBlackList.erase(_addr);
+			return true;
+
+		}
+	}
+	return true;
+}
+
+void UserManager::addIPtoBlackList( boost::asio::ip::address _addr )
+{
+	if (ipBlackList.count(_addr) > 0)
+	{
+		ipBlackList.at(_addr).connectAtempts++;
+		return;
+	}
+
+	userIP newUser;
+	newUser.connectAtempts = 1;
+	newUser.firstConnect = boost::posix_time::second_clock::local_time();
+
+	ipBlackList.insert(std::make_pair(_addr, newUser));
+
+	return;
 }

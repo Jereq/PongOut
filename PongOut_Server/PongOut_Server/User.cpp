@@ -26,7 +26,7 @@ void User::handleWrite( const boost::system::error_code& _err, size_t _byte )
 
 	if (_err)
 	{
-		Log::addLog(Log::LogType::LOG_ERROR, 4, _err.message());
+		Log::addLog(Log::LogType::LOG_ERROR, 4, _err.message(), __FILE__, __LINE__); //TODO: solve funky shit! ERROR : The file handle supplied is not valid
 		disconnect();
 	}
 
@@ -42,7 +42,7 @@ void User::sendMsg()
 	msgWriteBuffer = packet->getData();
 	if (msgWriteBuffer.size() != packet->getHeader().length + sizeof(msgBase::header))
 	{
-		Log::addLog(Log::LogType::LOG_ERROR, 1, "Packet (" + packet->getType() + ") has incorrect size: " + std::to_string(msgWriteBuffer.size()) + " is not " + std::to_string(packet->getHeader().length + sizeof(msgBase::header)));
+		Log::addLog(Log::LogType::LOG_ERROR, 1, "Packet (" + packet->getType() + ") has incorrect size: " + std::to_string(msgWriteBuffer.size()) + " is not " + std::to_string(packet->getHeader().length + sizeof(msgBase::header)), __FILE__, __LINE__);
 		return;
 	}
 	boost::asio::async_write(*socket, boost::asio::buffer(msgWriteBuffer), boost::bind(&User::handleWrite, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
@@ -72,14 +72,14 @@ void User::handleIncomingMeassage( const boost::system::error_code& _error, size
 	{
 		disconnect();
 		UserManager::getInstance()->users.erase(shared_from_this());
-		Log::addLog(Log::LogType::LOG_INFO, 1, "User " + std::to_string(getUserID()) + " disconnected: end of stream");
+		Log::addLog(Log::LogType::LOG_INFO, 1, "User " + std::to_string(getUserID()) + " disconnected: end of stream", __FILE__, __LINE__);
 		return;
 	} 
 	else if (_error)
 	{
 		disconnect();
 		UserManager::getInstance()->users.erase(shared_from_this());
-		Log::addLog(Log::LogType::LOG_INFO, 1, "User " + std::to_string(getUserID()) + " Aborted connection");
+		Log::addLog(Log::LogType::LOG_INFO, 1, "User " + std::to_string(getUserID()) + " Aborted connection", __FILE__, __LINE__);
 		return;
 	}
 
@@ -142,8 +142,11 @@ unsigned int User::getUserID()
 
 void User::disconnect()
 {
-	socket->shutdown(boost::asio::socket_base::shutdown_both);
-	socket->close();
+	if (socket && socket->is_open())
+	{
+		socket->shutdown(boost::asio::socket_base::shutdown_both);
+		socket->close();
+	}
 }
 
 void User::setUserType( UserType _type )

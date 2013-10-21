@@ -40,7 +40,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	Log::setPrioLevel(5); // the higher to number the more log messages are logged max = 5, min = 0;
 
-	Log::addLog(Log::LogType::LOG_INFO, 0, "PongOut server started!");//high priority log message
+	Log::addLog(Log::LogType::LOG_INFO, 0, "PongOut server started!", __FILE__, __LINE__);//high priority log message
 
 	UserManager::getInstance()->listenForNewClientConnections();
 	UserManager::getInstance()->startIO();

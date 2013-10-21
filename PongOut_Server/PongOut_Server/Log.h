@@ -17,16 +17,16 @@ public:
 	{
 		LOG_INFO,
 		LOG_ERROR,
-		LOG_DEBUG,
 	};
 
 	static boost::shared_ptr<Log> getInstance();
 	
 	~Log(void);
 
-	static void addLog(LogType _type, int _prio, std::string _msg);
+	static void addLog(LogType _type, int _prio, std::string _msg, char* _file, int _line );
 	static void destroy();
 	static void setPrioLevel(int _prio);
+	static void setDebugOn(bool _debug);
 
 private:
 
@@ -35,6 +35,8 @@ private:
 		LogType type;
 		int prio;
 		std::string msg;
+		char* file;
+		int line;
 	};
 
 	struct logFile
@@ -59,5 +61,6 @@ private:
 	void printFromQueue();
 	void writeToLogFile(std::string _msg);
 	boost::shared_ptr<logFile> createLogFile(); 
+	bool debugOn;
 };
 

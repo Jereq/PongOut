@@ -45,10 +45,11 @@ void GameMaster::handleGameMessage( GameMessage::ptr _message, User::ptr _initUs
 			}
 			
 			r->init(_initUser, opponentUser, cgp->getInitInfo(), refIDCounter);
-			refIDCounter++;
-
 			referees.insert(std::pair<int, Referee::ptr>(refIDCounter, r));
+			
+			Log::addLog(Log::LogType::LOG_INFO, 4, "Created new game between " + std::to_string(_initUser->getUserID()) + " and " + std::to_string(opponentUser->getUserID()) + " with referee " + std::to_string(refIDCounter), __FILE__, __LINE__);
 
+			refIDCounter++;
 			break;
 		}
 	case GameMessage::GameMsgType::PADDLEUPDATEREQUEST:
