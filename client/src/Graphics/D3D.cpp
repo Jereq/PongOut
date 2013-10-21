@@ -1,5 +1,6 @@
 #include "D3D.h"
 
+#include <d3d11.h>
 #include <dxgi.h>
 #include <D3DX11.h>
 

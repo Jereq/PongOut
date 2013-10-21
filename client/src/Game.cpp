@@ -35,7 +35,7 @@ bool Game::serverAllow()
 			}
 		}
 	}
-	return false;
+	return false;//true;//
 }
 
 void Game::onFunction(const std::string& _func)
@@ -169,9 +169,9 @@ Game::Game(ICoreSystem::ptr _system)
 void Game::run()
 {
 	server = Server::ptr(new Server("194.47.150.59", 6500));
-	//server->connect();
-	//if(serverAllow())
-	//	return;
+	server->connect();
+	if(serverAllow())
+		return;
 
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 
@@ -211,7 +211,7 @@ void Game::run()
 		return;
 	}
 
-	if (!screenManager.openScreen("gamelobby"))
+	if (!screenManager.openScreen("login"))
 	{
 		std::cout << "Failed to open screen" << std::endl;
 		return;
@@ -236,11 +236,12 @@ void Game::run()
 
 		graphics->drawFrame();		
 	}
-
-	//server->logout();
+	
 	sounds->shutdown();
 	graphics->destroy();
+	server->logout();
 }
+
 void Game::stop()
 {
 	shouldStop = true;

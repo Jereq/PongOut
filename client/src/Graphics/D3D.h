@@ -1,7 +1,7 @@
 #ifndef __D3D_H
 #define __D3D_H
 
-#include <D3DCommon.h>
+//#include <D3DCommon.h>
 #include <d3d11.h>
 #include "ErrorCodeList.h"
 

@@ -1,8 +1,10 @@
 #include "TestShader.h"
 
-#include <D3DX10.h>
+#include <d3d11.h>
+#include <dxgi.h>
+//#include <D3DX10.h>
 #include <D3DX11.h>
-#include <D3DX11async.h>
+//#include <D3DX11async.h>
 #include <fstream>
 #include "DXAssetInstancing.h"
 #include <CoreSystem/ICoreSystem.h>

@@ -6,12 +6,11 @@
  */
 
 #include "Map.h"
-//#include <iostream>
-//#include <boost/filesystem/fstream.hpp>
-#include "TMLReader.h"
 
 #define MYID 0
 #define OPPONENTID 1
+#define BALL_Z 0.0f
+#define PADDLE_Z 0.0f
 
 Map::Map()
 {
@@ -21,7 +20,7 @@ Map::Map()
 
 Map::~Map()
 {
-	//remBlockArray();
+
 }
 
 void Map::initialize(	glm::vec2 _playAreaSize, float _frameThickness,
@@ -91,21 +90,21 @@ bool Map::loadMap(std::string _mapName, std::vector<CommonTypes::Block> _blockDa
 
 	int midX = screenWidth / 2;
 	Paddle::ptr p = Paddle::ptr(new Paddle);
-	int diff = (screenHeight - playAreaSize.y) / 2 + 16;
-	p->initialize(MYID, glm::vec3(midX, diff, 0), glm::vec2(128, 32), 0, gc, ic, pc);
+	int diff = (screenHeight - (int)playAreaSize.y) / 2 + 16;
+	p->initialize(MYID, glm::vec3(midX, diff, PADDLE_Z), glm::vec2(128, 32), 0, gc, ic, pc);
 	paddles.push_back(p);
 
 	Ball::ptr b = Ball::ptr(new Ball);
-	b->initialize(MYID, glm::vec3(midX, diff + 16, 0), glm::vec2(32,32), glm::vec2(0,0), 0, gc, pc);
+	b->initialize(MYID, glm::vec3(midX, diff + 16, BALL_Z), glm::vec2(32,32), glm::vec2(0,0), 0, gc, pc);
 	balls.push_back(b);
 
-	diff = screenHeight - ((screenHeight - playAreaSize.y) / 2) - 16;
+	diff = screenHeight - ((screenHeight - (int)playAreaSize.y) / 2) - 16;
 	p = Paddle::ptr(new Paddle);
-	p->initialize(OPPONENTID, glm::vec3(midX,diff,0), glm::vec2(128, 32), 0, gc, nullptr, pc);
+	p->initialize(OPPONENTID, glm::vec3(midX,diff,PADDLE_Z), glm::vec2(128, 32), 0, gc, nullptr, pc);
 	paddles.push_back(p);
 
 	b = Ball::ptr(new Ball);
-	b->initialize(OPPONENTID, glm::vec3(midX, diff - 16, 0), glm::vec2(32,32), glm::vec2(0,0), 0, gc, pc);
+	b->initialize(OPPONENTID, glm::vec3(midX, diff - 16, BALL_Z), glm::vec2(32,32), glm::vec2(0,0), 0, gc, pc);
 	balls.push_back(b);
 	
 	for(CommonTypes::Block bd : _blockData)
@@ -195,45 +194,45 @@ void Map::update(double _dt, IGraphics::ptr _graphics)
 
 }
 
-void Map::setBallData(const std::vector<BPD>& _bd)
+void Map::setBallData(const CommonTypes::Ball& _bd)
 {
-	for(BPD bd : _bd)
+	/* set data for any ball that serverFrameData provides */
+	for(GameObject::ptr ball : balls)
 	{
-		/* set data for any ball that serverFrameData provides */
-		for(GameObject::ptr ball : balls)
+		if(_bd.id == ball->getId())
 		{
-			if(bd.id == ball->getId())
-			{
-				ball->setPosition(bd.p, bd.v);
-				break;
-			}
+			ball->setPosition( glm::vec3(_bd.pos, BALL_Z), _bd.vel);
+			ball->setInPlay(_bd.inPlay);
+			break;
 		}
 	}
 }
 
-void Map::setBlockData(const std::vector<BLOCKD>& _bd)
+void Map::setBlockData(const std::vector<CommonTypes::Block>& _bd)
 {
-	for(BLOCKD bd : _bd)
+	for(CommonTypes::Block bd : _bd)
 	{
 		for(BlockC::ptr block : blocks)
 		{
 			if(bd.id == block->getId())
 			{
 				block->setCollided(bd.health);
+				block->setInPlay(bd.inPlay);
 			}
 		}
 	}
 }
 
 /* set data from serverFrameData before update if paddle is opponent */
-void Map::setPaddleData(const BPD& _pd)
+void Map::setPaddleData(const CommonTypes::Paddle& _pd)
 {
 	for(GameObject::ptr paddle : paddles)
 	{
 		/* set data from serverFrameData before update if paddle is opponent */
 		if(paddle->getId() == _pd.id)
 		{
-			paddle->setPosition(_pd.p, _pd.v);
+			paddle->setPosition( glm::vec3(_pd.pos, PADDLE_Z), _pd.vel);
+			paddle->setInPlay( _pd.inPlay );
 		}
 	}
 }
