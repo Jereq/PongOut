@@ -13,10 +13,13 @@ Server::Server(const std::string _ipAdress, std::uint16_t _port)
 
 Server::~Server(void)
 {
-	soc->shutdown(boost::asio::socket_base::shutdown_both);
-	soc->close();
-	io.stop();
-	ioThread.join();
+	if (soc)
+	{
+		soc->shutdown(boost::asio::socket_base::shutdown_both);
+		soc->close();
+		io.stop();
+		ioThread.join();
+	}
 }
 
 void Server::connect()
