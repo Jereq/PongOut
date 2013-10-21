@@ -87,6 +87,7 @@
     <ClInclude Include="EndGameResponse.h" />
     <ClInclude Include="GameMessage.h" />
     <ClInclude Include="GameTickUpdate.h" />
+    <ClInclude Include="LaunchBallRequest.h" />
     <ClInclude Include="LogoutRequest.h" />
     <ClInclude Include="AcknowledgeLast.h" />
     <ClInclude Include="FriendlistResponse.h" />
@@ -109,6 +110,7 @@
     <ClCompile Include="EndGameResponse.cpp" />
     <ClCompile Include="GameMessage.cpp" />
     <ClCompile Include="GameTickUpdate.cpp" />
+    <ClCompile Include="LaunchBallRequest.cpp" />
     <ClCompile Include="LogoutRequest.cpp" />
     <ClCompile Include="AcknowledgeLast.cpp" />
     <ClCompile Include="FriendlistResponse.cpp" />

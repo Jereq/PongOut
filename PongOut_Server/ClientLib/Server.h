@@ -23,6 +23,7 @@
 #include "EndGameRequest.h"
 #include "EndGameResponse.h"
 #include "GameTickUpdate.h"
+#include "LaunchBallRequest.h"
 
 #include "SafeQueue.h"
 #include "GameHandler.h"
@@ -49,6 +50,7 @@ public:
 	void createAccount(std::string _userName, std::string _userPassword);
 	void createGame(int _mapID, int _ballSpeed, int _paddleSpeed, int _suddenDeathTime, char _fogOfWar, char _powerUps);
 	void sendPaddlePos(CommonTypes::Paddle _p);
+	void sendLaunchBall();
 	message getNextMessage();
 	int getMsgQueueSize();
 

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "GameMessage.h"
-
+#include <iostream>
 
 GameMessage::GameMessage() : msgBase(msgBase::MsgType::GAMEMESSAGE)
 {

@@ -41,6 +41,9 @@ private:
 	bool circleCirleIntersect(glm::vec2 _center1, float _radius1, glm::vec2 _center2, float _radius2);
 
 	User::ptr user0, user1;
+
+	const static glm::vec2 mapSize;
+
 	CommonTypes::GameInitInfo info;
 	CommonTypes::PlayerMatchInfo user0Info, user1Info;
 	int refID;

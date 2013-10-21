@@ -340,3 +340,9 @@ void Server::giveUpGame()
 	EndGameRequest::ptr msg(new EndGameRequest());
 	write(msg);
 }
+
+void Server::sendLaunchBall()
+{
+	LaunchBallRequest::ptr msg(new LaunchBallRequest());
+	write(msg);
+}

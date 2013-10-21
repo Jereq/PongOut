@@ -93,6 +93,9 @@
     <ClInclude Include="EndGameResponse.h">
       <Filter>Header Files\Msg sub clases\Game messages</Filter>
     </ClInclude>
+    <ClInclude Include="LaunchBallRequest.h">
+      <Filter>Header Files\Msg sub clases\Game messages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -144,6 +147,9 @@
       <Filter>Source Files\Msg sub clases\Game messages</Filter>
     </ClCompile>
     <ClCompile Include="EndGameRequest.cpp">
+      <Filter>Source Files\Msg sub clases\Game messages</Filter>
+    </ClCompile>
+    <ClCompile Include="LaunchBallRequest.cpp">
       <Filter>Source Files\Msg sub clases\Game messages</Filter>
     </ClCompile>
   </ItemGroup>

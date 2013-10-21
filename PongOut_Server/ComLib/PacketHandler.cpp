@@ -14,6 +14,7 @@
 #include "GameTickUpdate.h"
 #include "EndGameRequest.h"
 #include "EndGameResponse.h"
+#include "LaunchBallRequest.h"
 
 PacketHandler& PacketHandler::getInstance()
 {
@@ -57,6 +58,7 @@ void PacketHandler::initRegister()
 	gameMsg->registerChild(GameMessage::ptr(new GameTickUpdate()));
 	gameMsg->registerChild(GameMessage::ptr(new EndGameRequest()));
 	gameMsg->registerChild(GameMessage::ptr(new EndGameResponse()));
+	gameMsg->registerChild(GameMessage::ptr(new LaunchBallRequest()));
 
 	registerPacket(gameMsg);
 }
