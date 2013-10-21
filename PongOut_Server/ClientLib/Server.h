@@ -20,6 +20,9 @@
 #include "GameMessage.h"
 #include "CreateGameResponse.h"
 #include "PaddleUpdateRequest.h"
+#include "EndGameRequest.h"
+#include "EndGameResponse.h"
+#include "GameTickUpdate.h"
 
 #include "SafeQueue.h"
 #include "GameHandler.h"

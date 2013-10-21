@@ -64,3 +64,8 @@ void GameMaster::handleGameMessage( GameMessage::ptr _message, User::ptr _initUs
 		}
 	}
 }
+
+void GameMaster::removeReferee( int _key )
+{
+	referees.erase(_key);
+}

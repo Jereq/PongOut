@@ -13,6 +13,8 @@
 static const glm::vec2 blockSize(64.0f, 32.0f);
 static const float dt(0.05f);
 
+class GameMaster;
+
 class Referee : public boost::enable_shared_from_this<Referee>
 {
 public:
@@ -41,7 +43,7 @@ private:
 	User::ptr user0, user1;
 	CommonTypes::GameInitInfo info;
 	CommonTypes::PlayerMatchInfo user0Info, user1Info;
-	int id;
+	int refID;
 	std::thread gameThread;
 	SafeQueue<std::pair<GameMessage::ptr, int>> refMsgQ;
 	std::vector<CommonTypes::Block> mapData;

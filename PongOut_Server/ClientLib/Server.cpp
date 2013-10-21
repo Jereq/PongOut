@@ -13,6 +13,10 @@ Server::Server(const std::string _ipAdress, std::uint16_t _port)
 
 Server::~Server(void)
 {
+	soc->shutdown(boost::asio::socket_base::shutdown_both);
+	soc->close();
+	io.stop();
+	ioThread.join();
 }
 
 void Server::connect()
@@ -164,7 +168,17 @@ void Server::handleIncomingMessage(const boost::system::error_code& _error, size
 
 void Server::messageActionSwitch( const msgBase::header& _header, const std::deque<char>& _meassage )
 {
-	msgBase::ptr p = PacketHandler::getInstance().interpretMessage(_header.type, _meassage);
+	msgBase::ptr p;
+
+	try
+	{
+		p = PacketHandler::getInstance().interpretMessage(_header.type, _meassage);
+	}
+	catch(const std::out_of_range&)
+	{
+		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "Received unregistered packet: " + (int)_header.type));
+		return;
+	}
 
 	switch (_header.type)
 	{
@@ -214,10 +228,21 @@ void Server::createAccount( std::string _userName, std::string _userPassword )
 
 void Server::startIO()
 {
-	io.run();
-	std::cout << "IO thread done." << std::endl;
-
-	io.reset();
+	try
+	{
+		io.run();
+		std::cout << "IO thread done." << std::endl;
+		io.reset();
+	}
+	catch (const boost::system::error_code& err)
+	{
+		std::cout << "Error: " << err.message() << std::endl;
+	}
+	catch (...)
+	{
+		std::cout << "Unknown IO thread error!" << std::endl;
+		io.reset();
+	}
 }
 
 //void Server::sendChatMsg( std::string _name, std::string _msg )

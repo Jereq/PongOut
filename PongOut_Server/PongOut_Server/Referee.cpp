@@ -2,6 +2,9 @@
 #include "Referee.h"
 #include "TMLReader.h"
 #include "CreateGameResponse.h"
+#include "GameMaster.h"
+#include "EndGameResponse.h"
+#include "EndGameRequest.h"
 
 #include <chrono>
 
@@ -12,6 +15,7 @@ Referee::Referee(void)
 
 Referee::~Referee(void)
 {
+	gameThread.join();
 }
 
 void Referee::init( User::ptr _u0, User::ptr _u1, CommonTypes::GameInitInfo _info, int _refID)
@@ -19,6 +23,7 @@ void Referee::init( User::ptr _u0, User::ptr _u1, CommonTypes::GameInitInfo _inf
 	user0 = _u0;
 	user1 = _u1;
 	info = _info;
+	refID = _refID;
 
 	user0->setReffereeID(_refID);
 	user1->setReffereeID(_refID);	
@@ -222,6 +227,42 @@ void Referee::gameThreadFunc()
 			gtup0->setTickUpdate(user0Info, user1Info, std::vector<CommonTypes::Block>());
 			gtup1->setTickUpdate(user1Info, user0Info, std::vector<CommonTypes::Block>());
 
+			if (!user1->getSocket()->is_open())
+			{
+				EndGameResponse::ptr egrp = EndGameResponse::ptr(new EndGameResponse());
+
+				CommonTypes::MatchResult mr;
+				mr.loserScore = user1Info.score;
+				mr.winnerScore = user0Info.score;
+				mr.winnerID = user0->getUserID();
+
+				egrp->setResult(mr);
+				user0->addMsgToMsgQueue(egrp);
+				user0->setUserState(User::UserState::AVAILABLE);
+
+				GameMaster::getInstance().removeReferee(refID);
+
+				break;
+			}
+
+			if (!user0->getSocket()->is_open())
+			{
+				EndGameResponse::ptr egrp = EndGameResponse::ptr(new EndGameResponse());
+
+				CommonTypes::MatchResult mr;
+				mr.loserScore = user0Info.score;
+				mr.winnerScore = user1Info.score;
+				mr.winnerID = user1->getUserID();
+
+				egrp->setResult(mr);
+				user1->addMsgToMsgQueue(egrp);
+				user1->setUserState(User::UserState::AVAILABLE);
+
+				GameMaster::getInstance().removeReferee(refID);
+
+				break;
+			}
+
 			user0->addMsgToMsgQueue(gtup0);
 			user1->addMsgToMsgQueue(gtup1);
 
@@ -278,7 +319,7 @@ void Referee::bounceOnBlock( CommonTypes::PlayerMatchInfo& _pmi )
 
 	for (CommonTypes::Block b : mapData)
 	{
-		if ((bool)b.inPlay)
+		if (b.inPlay)
 		{
 			continue;
 		}
@@ -296,7 +337,7 @@ void Referee::bounceOnBlock( CommonTypes::PlayerMatchInfo& _pmi )
 void Referee::bounceOnPaddle( CommonTypes::Ball& _ball, CommonTypes::Paddle _paddle )
 {
 
-	if((bool)_ball.inPlay && (_ball.id == _paddle.id))
+	if(_ball.inPlay && (_ball.id == _paddle.id))
 	{
 		_ball.pos.x = _paddle.pos.x;
 
@@ -310,7 +351,7 @@ void Referee::bounceOnPaddle( CommonTypes::Ball& _ball, CommonTypes::Paddle _pad
 		}
 	}
 
-	if(!(bool)_paddle.inPlay && (bool)_ball.inPlay && (_ball.id == _paddle.id))
+	if(!_paddle.inPlay && _ball.inPlay && (_ball.id == _paddle.id))
 	{
 		_ball.inPlay = false;
 
@@ -326,7 +367,7 @@ void Referee::bounceOnPaddle( CommonTypes::Ball& _ball, CommonTypes::Paddle _pad
 		_ball.vel.x = _paddle.vel.x;
 	}
 
-	if(!(bool)_ball.inPlay)
+	if(!_ball.inPlay)
 	{
 		glm::vec2 reflectDir;
 		if (ballRectCollide(reflectDir, _ball, _paddle.pos))

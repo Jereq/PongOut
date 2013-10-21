@@ -27,6 +27,7 @@ void User::handleWrite( const boost::system::error_code& _err, size_t _byte )
 	if (_err)
 	{
 		Log::addLog(Log::LogType::LOG_ERROR, 4, _err.message());
+		disconnect();
 	}
 
 	if (!msgWriteBufferQueue.empty())
@@ -69,12 +70,14 @@ void User::handleIncomingMeassage( const boost::system::error_code& _error, size
 {
 	if (_error == boost::asio::error::eof)
 	{
+		disconnect();
 		UserManager::getInstance()->users.erase(shared_from_this());
 		Log::addLog(Log::LogType::LOG_INFO, 1, "User " + std::to_string(getUserID()) + " disconnected: end of stream");
 		return;
 	} 
 	else if (_error)
 	{
+		disconnect();
 		UserManager::getInstance()->users.erase(shared_from_this());
 		Log::addLog(Log::LogType::LOG_INFO, 1, "User " + std::to_string(getUserID()) + " Aborted connection");
 		return;

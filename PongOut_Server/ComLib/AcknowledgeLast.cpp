@@ -26,7 +26,7 @@ msgBase::MsgType AcknowledgeLast::getType()
 
 bool AcknowledgeLast::getBool()
 {
-	return (bool)ackBool;
+	return ackBool != 0;
 }
 
 std::vector<char> AcknowledgeLast::getData()

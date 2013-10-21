@@ -83,6 +83,8 @@
     <ClInclude Include="CreateGameRequest.h" />
     <ClInclude Include="CreateGameResponse.h" />
     <ClInclude Include="CreateUserRequest.h" />
+    <ClInclude Include="EndGameRequest.h" />
+    <ClInclude Include="EndGameResponse.h" />
     <ClInclude Include="GameMessage.h" />
     <ClInclude Include="GameTickUpdate.h" />
     <ClInclude Include="LogoutRequest.h" />
@@ -93,6 +95,7 @@
     <ClInclude Include="PacketHandler.h" />
     <ClInclude Include="FriendlistRequest.h" />
     <ClInclude Include="PaddleUpdateRequest.h" />
+    <ClInclude Include="SafeMap.h" />
     <ClInclude Include="SafeQueue.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -102,6 +105,8 @@
     <ClCompile Include="CreateGameRequest.cpp" />
     <ClCompile Include="CreateGameResponse.cpp" />
     <ClCompile Include="CreateUserRequest.cpp" />
+    <ClCompile Include="EndGameRequest.cpp" />
+    <ClCompile Include="EndGameResponse.cpp" />
     <ClCompile Include="GameMessage.cpp" />
     <ClCompile Include="GameTickUpdate.cpp" />
     <ClCompile Include="LogoutRequest.cpp" />

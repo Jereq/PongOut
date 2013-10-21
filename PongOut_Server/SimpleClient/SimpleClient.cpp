@@ -11,6 +11,8 @@ void waitForMsg(Server::ptr _s, int _timeToWait)
 {
 	auto start = chrono::high_resolution_clock::now();
 
+	static int gameTickUpdates = 0;
+
 	while (_s->getMsgQueueSize() < 1)
 	{
 		chrono::milliseconds pause(20);
@@ -76,10 +78,40 @@ void waitForMsg(Server::ptr _s, int _timeToWait)
 						cout << "Map size: " << cgrp->getMap().size() << endl; 
 						break;
 					}
+				case GameMessage::GameMsgType::END_GAME_RESPONSE:
+					{
+						EndGameResponse::ptr egrp = boost::static_pointer_cast<EndGameResponse>(tmp.gMsg);
+
+						cout << "Match results: " << endl 
+							 << "Loser score: " << egrp->getResult().loserScore << endl
+							 << "Winner score: " << egrp->getResult().winnerScore << endl
+							 << "Winner user ID: " << egrp->getResult().winnerID << endl;
+						break;
+					}
+				case GameMessage::GameMsgType::GAME_TICK_UPDATE:
+					{
+						gameTickUpdates++;
+						break;
+					}
+
+				default:
+					std::cout << "Unknown game packet received" << std::endl;
+					break;
 				}
+
+				break;
 			}
+		default:
+			std::cout << "Unknown packet received" << std::endl;
+			break;
 		}
 	}
+
+	if (gameTickUpdates > 0)
+	{
+		cout << "game updates received: " << gameTickUpdates << endl;
+	}
+
 }
 
 
@@ -89,7 +121,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	Server::ptr s(new Server("127.0.0.1", 6500));
 
 	string command, userName, password;
-	bool firstRun = true;	
+	bool firstRun = true;
+
+	cout << "Provide username: ";
+	cin >> userName;
+	cout << "Provide password: ";
+	cin >> password;
+	s->connect();
+	s->login(userName, password);
 
 	for (ever)
 	{
@@ -105,7 +144,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << "======== Commands list ========" << endl 
 			 << "# Check \t : \t Check for new messages in msgQ" << endl  
 			 << "# Create \t\t : \t Create account" << endl
-			 << "# Login \t\t : \t Login to existing account" << endl
+			 //<< "# Login \t\t : \t Login to existing account" << endl
 			 << "# Logout \t\t : \t Logout from account" << endl
 			 << "# Game \t\t : \t Create new game" << endl;
 		cin >> command;
@@ -114,16 +153,16 @@ int _tmain(int argc, _TCHAR* argv[])
 		{
 			continue;			
 		}
-		if (command == "Login" || command == "login")
-		{
-			system("CLS");
-			cout << "Provide username: ";
-			cin >> userName;
-			cout << "Provide password: ";
-			cin >> password;
-			s->connect();
-			s->login(userName, password);
-		}
+		//if (command == "Login" || command == "login")
+		//{
+		//	system("CLS");
+		//	cout << "Provide username: ";
+		//	cin >> userName;
+		//	cout << "Provide password: ";
+		//	cin >> password;
+		//	s->connect();
+		//	s->login(userName, password);
+		//}
 		else if (command == "Logout" || command == "logout")
 		{
 			system("CLS");

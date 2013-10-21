@@ -20,7 +20,8 @@ namespace CommonTypes
 			}
 
 			res += sizeof(int) * 3;
-			res += sizeof(float) * 3;
+			res += sizeof(glm::vec2);
+			res += sizeof(char);
 			res += sizeof(uint16_t); //size of vector
 
 			return res;
@@ -54,5 +55,10 @@ namespace CommonTypes
 		uint32_t userID, score;
 		Paddle paddle;
 		Ball ball;
+	};
+
+	struct MatchResult
+	{
+		uint32_t winnerID, winnerScore, loserScore;
 	};
 }

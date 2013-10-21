@@ -22,18 +22,14 @@ void GameHandler::handleGameMessage( GameMessage::ptr _gmp, SafeQueue<message>& 
 	switch (_gmp->getGameType())
 	{
 	case GameMessage::GameMsgType::CREATEGAMERESPONSE:
-		{
-			CreateGameResponse::ptr cgrp = boost::static_pointer_cast<CreateGameResponse>(_gmp);
-			
-			_msgQueue.push(message(GameMessage::GameMsgType::CREATEGAMERESPONSE, cgrp));
-			break;
-		}
 	case GameMessage::GameMsgType::GAME_TICK_UPDATE:
+	case GameMessage::GameMsgType::END_GAME_RESPONSE:
 		{
-			GameTickUpdate::ptr gtup = boost::static_pointer_cast<GameTickUpdate>(_gmp);
-
-			_msgQueue.push(message(GameMessage::GameMsgType::GAME_TICK_UPDATE, gtup));
+			_msgQueue.push(message(_gmp->getGameType(), _gmp));
 			break;
 		}
+
+	default:
+		_msgQueue.push(message(msgBase::MsgType::INTERNALMESSAGE, "Unhandled game message received"));
 	}
 }

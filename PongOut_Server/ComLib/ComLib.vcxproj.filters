@@ -84,6 +84,15 @@
     <ClInclude Include="GameTickUpdate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SafeMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EndGameRequest.h">
+      <Filter>Header Files\Msg sub clases\Game messages</Filter>
+    </ClInclude>
+    <ClInclude Include="EndGameResponse.h">
+      <Filter>Header Files\Msg sub clases\Game messages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -130,6 +139,12 @@
     </ClCompile>
     <ClCompile Include="GameTickUpdate.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EndGameResponse.cpp">
+      <Filter>Source Files\Msg sub clases\Game messages</Filter>
+    </ClCompile>
+    <ClCompile Include="EndGameRequest.cpp">
+      <Filter>Source Files\Msg sub clases\Game messages</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
