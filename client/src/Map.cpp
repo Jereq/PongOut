@@ -91,7 +91,7 @@ bool Map::loadMap(std::string _mapName, std::vector<CommonTypes::Block> _blockDa
 	paddles.push_back(p);
 
 	Ball::ptr b = Ball::ptr(new Ball);
-	b->initialize(userInfos[0].ball.id, glm::vec3(userInfos[0].ball.pos, BALL_Z), glm::vec2(userInfos[0].ball.radius), glm::vec2(0,0), 0, gc, pc);
+	b->initialize(userInfos[0].ball.id, glm::vec3(userInfos[0].ball.pos, BALL_Z), glm::vec2(userInfos[0].ball.radius * 2.f), glm::vec2(0,0), 0, gc, pc);
 	balls.push_back(b);
 
 	p = Paddle::ptr(new Paddle);
@@ -99,7 +99,7 @@ bool Map::loadMap(std::string _mapName, std::vector<CommonTypes::Block> _blockDa
 	paddles.push_back(p);
 
 	b = Ball::ptr(new Ball);
-	b->initialize(userInfos[1].ball.id, glm::vec3(userInfos[1].ball.pos, BALL_Z), glm::vec2(userInfos[0].ball.radius), glm::vec2(0,0), 0, gc, pc);
+	b->initialize(userInfos[1].ball.id, glm::vec3(userInfos[1].ball.pos, BALL_Z), glm::vec2(userInfos[0].ball.radius * 2.f), glm::vec2(0,0), 0, gc, pc);
 	balls.push_back(b);
 	
 	for(CommonTypes::Block bd : _blockData)

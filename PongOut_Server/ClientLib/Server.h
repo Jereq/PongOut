@@ -63,6 +63,7 @@ private:
 	void startIO();
 	void listen();
 	void write(msgBase::ptr _msg);
+	void doWrite();
 	void handleWrite(const boost::system::error_code& _err, size_t _byte);
 	void connectResponse(const boost::system::error_code& _err);
 
@@ -73,7 +74,9 @@ private:
 	boost::asio::io_service io;
 	boost::shared_ptr<tcp::socket> soc;
 	boost::array<char, 256> msgListenBuffer;
-	std::vector<char> msgWriteBufffer;
+	std::mutex writeBufferMutex;
+	std::queue<std::vector<char>> msgWriteBufffer;
+	std::vector<char> currentWriteBuffer;
 	std::deque<char> fullMsgBuffer;
 	msgBase::header head;	
 	SafeQueue<message> messages;

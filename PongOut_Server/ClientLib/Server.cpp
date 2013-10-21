@@ -81,18 +81,28 @@ void Server::logout()
 
 void Server::write( msgBase::ptr _msg )
 {
-	msgWriteBufffer = _msg->getData();
+	std::lock_guard<std::mutex> lock(writeBufferMutex);
+	msgWriteBufffer.push(_msg->getData());
+
+	if (msgWriteBufffer.size() == 1)
+	{
+		doWrite();
+	}
+}
+
+void Server::doWrite()
+{
+	currentWriteBuffer = std::move(msgWriteBufffer.front());
+	msgWriteBufffer.pop();
 
 	if (soc && soc->is_open() && isConnected)
 	{
-		boost::asio::async_write(*soc, boost::asio::buffer(msgWriteBufffer), boost::bind(&Server::handleWrite, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+		boost::asio::async_write(*soc, boost::asio::buffer(currentWriteBuffer), boost::bind(&Server::handleWrite, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 	}
 }
 
 void Server::handleWrite( const boost::system::error_code& _err, size_t _byte )
 {
-	msgWriteBufffer.clear();
-
 	if (_err)
 	{
 		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, _err.message()));
@@ -101,6 +111,12 @@ void Server::handleWrite( const boost::system::error_code& _err, size_t _byte )
 	else
 	{
 		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "Write successful"));
+
+		std::lock_guard<std::mutex> lock(writeBufferMutex);
+		if (!msgWriteBufffer.empty())
+		{
+			doWrite();
+		}
 	}
 }
 
@@ -257,6 +273,10 @@ void Server::startIO()
 	{
 		std::cout << "Error: " << err.message() << std::endl;
 	}
+	catch (const std::system_error& err)
+	{
+		std::cout << "Error: " << err.what() << std::endl;
+	}
 	catch (...)
 	{
 		std::cout << "Unknown IO thread error!" << std::endl;
@@ -319,9 +339,10 @@ void Server::connectResponse(const boost::system::error_code& _err)
 		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "Connection established"));
 		isConnected = true;
 
+		std::lock_guard<std::mutex> lock(writeBufferMutex);
 		if (!msgWriteBufffer.empty())
 		{
-			boost::asio::async_write(*soc, boost::asio::buffer(msgWriteBufffer), boost::bind(&Server::handleWrite, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+			doWrite();
 		}
 
 		listen();

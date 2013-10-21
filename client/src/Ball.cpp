@@ -20,7 +20,7 @@ bool Ball::initialize(const int _id, glm::vec3 _center, glm::vec2 _size, glm::ve
 
 	physicsComponent= _physicsComponent;
 	velocity		= _velocity;
-	acceleration	= 2.f;
+	acceleration	= 1.f;
 	radius			= size.x * 0.5f;
 	inPlay			= false;
 	return true;
@@ -45,6 +45,6 @@ void Ball::update(double _dt)
 	physicsComponent->bounceOnBlock(this, _dt);
 	physicsComponent->bounceOnPaddle(this, _dt);*/
 	
-	center = center + glm::vec3(velocity, 0) * acceleration * (float)_dt;
+	center += glm::vec3(velocity * acceleration, 0) * (float)_dt;
 	graphicsComponent->addSpriteToFrame("player/ball", center, size, rotation);
 }

@@ -49,5 +49,5 @@ bool BlockC::initialize(const CommonTypes::Block& _blockData, float _rotation, G
 void BlockC::update(double _dt)
 {
 	if(inPlay)
-		graphicsComponent->addSpriteToFrame(textures[health], center, size, rotation);
+		graphicsComponent->addSpriteToFrame(textures[health - 1], center, size, rotation);
 }
