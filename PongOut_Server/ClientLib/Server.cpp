@@ -92,7 +92,7 @@ void Server::write( msgBase::ptr _msg )
 
 void Server::doWrite()
 {
-	currentWriteBuffer = std::move(msgWriteBufffer.front());
+	currentWriteBuffer = msgWriteBufffer.front();
 
 	if (soc && soc->is_open() && isConnected)
 	{

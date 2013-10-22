@@ -467,5 +467,5 @@ void GraphicsLinux::drawFrame()
 
 bool GraphicsLinux::windowIsClosing() const
 {
-	return glfwWindowShouldClose(window) || glfwGetKey(window, GLFW_KEY_ESCAPE);
+	return glfwWindowShouldClose(window);
 }
