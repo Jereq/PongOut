@@ -150,23 +150,23 @@ void GameState::draw(std::shared_ptr<IGraphics> _graphics)
 	}
 	else
 	{
-		_graphics->addText("menu_text_field", glm::vec3(0.f,-0.1f,0), glm::vec2(0.07,0.07), "My Score: " + std::to_string(myMatchScore));
-		_graphics->addText("menu_text_field", glm::vec3(0.f,-0.2,0), glm::vec2(0.07,0.07), "Opponent Score: " + std::to_string(opponentMatchScore));
+		_graphics->addText("menu_text_field", glm::vec3(-0.5f,-0.1f,0), glm::vec2(0.07,0.07), "My Score: " + std::to_string(myMatchScore));
+		_graphics->addText("menu_text_field", glm::vec3(-0.5f,-0.2,0), glm::vec2(0.07,0.07), "Opponent Score: " + std::to_string(opponentMatchScore));
 
 		if(myMatchScore > opponentMatchScore)
 		{
-			_graphics->addText("menu_text_field", glm::vec3(0.f,0.1f,0), glm::vec2(0.09,0.09), "You Win!");
+			_graphics->addText("menu_text_field", glm::vec3(-0.5f,0.1f,0), glm::vec2(0.09,0.09), "You Win!");
 		}
 		else if(myMatchScore < opponentMatchScore)
 		{
-			_graphics->addText("menu_text_field", glm::vec3(0.f,0.1f,0), glm::vec2(0.09,0.09), "You Lose!");
+			_graphics->addText("menu_text_field", glm::vec3(-0.5f,0.1f,0), glm::vec2(0.09,0.09), "You Lose!");
 		}
 		else
 		{
-			_graphics->addText("menu_text_field", glm::vec3(0.f,0.1f,0), glm::vec2(0.09,0.09), "Draw!");
+			_graphics->addText("menu_text_field", glm::vec3(-0.5f,0.1f,0), glm::vec2(0.09,0.09), "Draw!");
 		}
 
-		_graphics->addText("menu_text_field", glm::vec3(0.f,0.9,0), glm::vec2(0.1,0.1), "Press Enter to Return to the Gamelobby");
+		_graphics->addText("menu_text_field", glm::vec3(-0.5f,0.9,0), glm::vec2(0.1,0.1), "Press Enter to Return to the Gamelobby");
 	}
 	_graphics->addRectangle(glm::vec3(0,0,0.1), glm::vec2(2,2), 0, "output/chat_window");
 }
