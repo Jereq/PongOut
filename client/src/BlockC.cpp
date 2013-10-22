@@ -46,13 +46,13 @@ bool BlockC::initialize(const CommonTypes::Block& _blockData, float _rotation, G
 		return false;
 
 	textures = _blockData.textures;
-	health = _blockData.health - 1;
+	health = _blockData.health;
 	inPlay = true;
 	return true;
 }
 
 void BlockC::update(double _dt)
 {
-	if(inPlay)
+	if(health > 0)
 		graphicsComponent->addSpriteToFrame(textures[health - 1], center, size, rotation);
 }
