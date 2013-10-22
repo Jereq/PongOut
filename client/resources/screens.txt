@@ -473,7 +473,7 @@ screen
 		textureNormal button/level01
 		position 1350/500/0
 		size 128/72
-		func set/level/id1
+		func set/level/id0
 	/button
 
 	button
@@ -481,7 +481,7 @@ screen
 		textureNormal button/level02
 		position 1482/500/0
 		size 128/72
-		func set/level/id2
+		func set/level/id1
 	/button
 
 	button
@@ -489,7 +489,7 @@ screen
 		textureNormal button/level03
 		position 1614/500/0
 		size 128/72
-		func set/level/id3
+		func set/level/id2
 	/button
 
 	button
@@ -497,7 +497,7 @@ screen
 		textureNormal button/level04
 		position 1746/500/0
 		size 128/72
-		func set/level/id4
+		func set/level/id3
 	/button
 
 	button
@@ -505,7 +505,7 @@ screen
 		textureNormal button/level05
 		position 1350/424/0
 		size 128/72
-		func set/level/id5
+		func set/level/id4
 	/button
 
 	button
@@ -513,7 +513,7 @@ screen
 		textureNormal button/level06
 		position 1482/424/0
 		size 128/72
-		func set/level/id6
+		func set/level/id5
 	/button
 
 	button
@@ -521,7 +521,7 @@ screen
 		textureNormal button/level07
 		position 1614/424/0
 		size 128/72
-		func set/level/id7
+		func set/level/id6
 	/button
 
 	button
@@ -529,7 +529,7 @@ screen
 		textureNormal button/level08
 		position 1746/424/0
 		size 128/72
-		func set/level/id8
+		func set/level/id7
 	/button
 
 	button
@@ -537,7 +537,7 @@ screen
 		textureNormal button/level09
 		position 1548/348/0
 		size 128/72
-		func set/level/id9
+		func set/level/id8
 	/button
 
 	image
