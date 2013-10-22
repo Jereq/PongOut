@@ -19,7 +19,6 @@ public:
 	void setInPlay(bool _inPlayState)override;
 private:
 	float radius;
-	float acceleration;
 	PhysicsComponent::ptr physicsComponent;
 
 	

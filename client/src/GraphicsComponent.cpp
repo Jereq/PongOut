@@ -12,16 +12,22 @@ inline glm::vec3 screenPositionToClip( const glm::vec2 _screenDimension, const g
 }
 
 const static glm::vec2 MAP_SIZE(1200.f, 600.f);
-const static float BORDER_COOF = 0.9f;
+const static glm::vec2 MAP_SCREEN_SIZE(1200.f, 600.f);
+
+inline glm::vec2 getScale()
+{
+	return MAP_SCREEN_SIZE / (glm::vec2(screenWidth, screenHeight) * MAP_SIZE) * 2.f;
+}
 
 inline glm::vec2 gameSizeToClip( const glm::vec2 _gameSize )
 {
-	return glm::vec2( _gameSize.x / MAP_SIZE.x * 2.f, _gameSize.y / MAP_SIZE.y * 2.f) * BORDER_COOF;
+	return _gameSize * getScale();
 }
 
 inline glm::vec3 gamePositionToClip(  const glm::vec3 _gamePosition )
 {
-	return glm::vec3((_gamePosition.x / MAP_SIZE.x * 2.f - 1.f) * BORDER_COOF, (_gamePosition.y / MAP_SIZE.y * 2.f - 1.f) * BORDER_COOF, _gamePosition.z);
+	glm::vec2 scale = getScale();
+	return glm::vec3(_gamePosition.swizzle(glm::X, glm::Y) * scale - MAP_SCREEN_SIZE / glm::vec2(screenWidth, screenHeight), _gamePosition.z);
 }
 
 bool GraphicsComponent::initialize(std::shared_ptr<IGraphics> _graphics)
