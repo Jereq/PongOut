@@ -84,7 +84,7 @@ void Server::write( msgBase::ptr _msg )
 	std::lock_guard<std::mutex> lock(writeBufferMutex);
 	msgWriteBufffer.push(_msg->getData());
 
-	if (msgWriteBufffer.size() == 1)
+	if (msgWriteBufffer.size() == 1 && isConnected)
 	{
 		doWrite();
 	}
