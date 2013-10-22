@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gamemessage.h"
+#include "GameMessage.h"
 
 class CreateGameRequest : 	public GameMessage
 {
