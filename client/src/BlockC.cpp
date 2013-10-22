@@ -19,13 +19,18 @@ BlockC::~BlockC()
 
 void BlockC::setCollided(const int _health)
 {
+	if (_health < health)
+	{
+		ICoreSystem::getInstance().lock()->getSounds()->playSfx("block_explodes");
+	}
+
 	health = _health;
+
 	if(health <= 0)
 	{
 		inPlay = false;
 		health = 0;	
 	}
-	ICoreSystem::getInstance().lock()->getSounds()->playSfx("block_explodes");
 }
 
 void BlockC::setInPlay(bool _inPlayState)

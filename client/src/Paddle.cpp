@@ -42,17 +42,18 @@ void Paddle::update(double _dt)
 	{
 		inputComponent->moveToTarget(*this, _dt);
 
-		float KEY_ACCELERATION = 0.6f;
+		float KEY_ACCELERATION = 3000.f;
+		float KEY_DEACCELERATION = 0.001f;
 	
 		if (currentInput == InputType::KEYBOARD)
 		{
 			if (keyDir != 0.f)
 			{
-				velocity.x += (float)(keyDir * 5.f * _dt);
+				velocity.x += (float)(keyDir * KEY_ACCELERATION * _dt);
 			}
 			else
 			{
-				velocity.x *= glm::pow(KEY_ACCELERATION, (float)_dt);
+				velocity.x *= glm::pow(KEY_DEACCELERATION, (float)_dt);
 			}
 		}
 		else

@@ -93,7 +93,6 @@ void Server::write( msgBase::ptr _msg )
 void Server::doWrite()
 {
 	currentWriteBuffer = std::move(msgWriteBufffer.front());
-	msgWriteBufffer.pop();
 
 	if (soc && soc->is_open() && isConnected)
 	{
@@ -103,6 +102,11 @@ void Server::doWrite()
 
 void Server::handleWrite( const boost::system::error_code& _err, size_t _byte )
 {
+	{
+		std::lock_guard<std::mutex> lock(writeBufferMutex);
+		msgWriteBufffer.pop();
+	}
+
 	if (_err)
 	{
 		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, _err.message()));
