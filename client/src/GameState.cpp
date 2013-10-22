@@ -171,13 +171,13 @@ void GameState::handleNetworkMessages()
 						world->setBallData(pmiOp.ball);
 						world->setPaddleData(pmiOp.paddle);
 
-						if(time > -1)
+						if(cgrp->getSuddenDeathTime() > -1)
 						{
 							time = cgrp->getSuddenDeathTime();
 						}
 						else
 						{
-							actionHandler->buttonPressed("giveUp");
+							//actionHandler->buttonPressed("giveUp");
 						}
 					}
 					break;
