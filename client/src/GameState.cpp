@@ -7,7 +7,7 @@
 #include <boost/smart_ptr.hpp>
 
 GameState::GameState(const std::string _screenName)
-	: ScreenState(_screenName), gc(0), ic(0), pc(0)
+	: ScreenState(_screenName), gc(0), ic(0), pc(0), inGame(false)
 {
 	world = new Map();
 }
@@ -58,7 +58,8 @@ void GameState::load(CreateGameResponse::ptr _cgrp)
 
 	myMatchScore		= 0;
 	opponentMatchScore	= 0;
-	time				= -1;
+	time				= 99;
+	inGame = true;
 }
 
 std::string GameState::getText(const std::string& _elemId) const
@@ -91,6 +92,14 @@ void GameState::onInput(const std::vector<IInput::Event> _events)
 						server->sendLaunchBall();
 						break;
 					}
+				case IInput::KeyCode::RETURN:
+					{
+						if(!inGame)
+						{
+							actionHandler->buttonPressed("giveUp");
+						}
+					}
+					break;
 				}
 			}
 			break;
@@ -113,25 +122,52 @@ bool GameState::onExit()
 
 void GameState::update(const float _dt)
 {
-	handleNetworkMessages();
+	if(inGame)
+	{
+		handleNetworkMessages();
 
-	world->update(_dt, graphics);
+		world->update(_dt, graphics);
 
-	CommonTypes::Paddle paddle;
-	Paddle::ptr p	= world->getPaddle(myInfo.paddle.id);
-	paddle.id		= p->getId();
-	paddle.pos		= p->getCenter().swizzle(glm::X,glm::Y);
-	paddle.vel		= p->getVelocity();
+		CommonTypes::Paddle paddle;
+		Paddle::ptr p	= world->getPaddle(myInfo.paddle.id);
+		paddle.id		= p->getId();
+		paddle.pos		= p->getCenter().swizzle(glm::X,glm::Y);
+		paddle.vel		= p->getVelocity();
 
-	server->sendPaddlePos(paddle);
+		server->sendPaddlePos(paddle);
+	}
 }
 
 void GameState::draw(std::shared_ptr<IGraphics> _graphics)
 {
-	_graphics->addText("menu_text_field", glm::vec3(-0.95,0.9,0), glm::vec2(0.07,0.07), "My Score: " + std::to_string(myMatchScore));
-	_graphics->addText("menu_text_field", glm::vec3(-0.95,-0.9,0), glm::vec2(0.07,0.07), "Opponent Score: " + std::to_string(opponentMatchScore));
-	_graphics->addText("menu_text_field", glm::vec3(-0.1,0.9,0), glm::vec2(0.07,0.07), "Time: " + std::to_string(time));
+	if(inGame)
+	{
+		_graphics->addText("menu_text_field", glm::vec3(-0.95,0.9,0), glm::vec2(0.07,0.07), "My Score: " + std::to_string(myMatchScore));
+		_graphics->addText("menu_text_field", glm::vec3(-0.95,-0.9,0), glm::vec2(0.07,0.07), "Opponent Score: " + std::to_string(opponentMatchScore));
+		_graphics->addText("menu_text_field", glm::vec3(-0.1,0.9,0), glm::vec2(0.07,0.07), "Time: " + std::to_string(time));
 
+		
+	}
+	else
+	{
+		_graphics->addText("menu_text_field", glm::vec3(0.f,-0.1f,0), glm::vec2(0.07,0.07), "My Score: " + std::to_string(myMatchScore));
+		_graphics->addText("menu_text_field", glm::vec3(0.f,-0.2,0), glm::vec2(0.07,0.07), "Opponent Score: " + std::to_string(opponentMatchScore));
+
+		if(myMatchScore > opponentMatchScore)
+		{
+			_graphics->addText("menu_text_field", glm::vec3(0.f,0.1f,0), glm::vec2(0.09,0.09), "You Win!");
+		}
+		else if(myMatchScore < opponentMatchScore)
+		{
+			_graphics->addText("menu_text_field", glm::vec3(0.f,0.1f,0), glm::vec2(0.09,0.09), "You Lose!");
+		}
+		else
+		{
+			_graphics->addText("menu_text_field", glm::vec3(0.f,0.1f,0), glm::vec2(0.09,0.09), "Draw!");
+		}
+
+		_graphics->addText("menu_text_field", glm::vec3(0.f,0.9,0), glm::vec2(0.1,0.1), "Press Enter to Return to the Gamelobby");
+	}
 	_graphics->addRectangle(glm::vec3(0,0,0.1), glm::vec2(2,2), 0, "output/chat_window");
 }
 
@@ -175,15 +211,12 @@ void GameState::handleNetworkMessages()
 						{
 							time = cgrp->getSuddenDeathTime();
 						}
-						else
-						{
-							//actionHandler->buttonPressed("giveUp");
-						}
 					}
 					break;
 
 				case GameMessage::GameMsgType::END_GAME_RESPONSE:
-					actionHandler->buttonPressed("back");
+					//actionHandler->buttonPressed("back");
+					inGame = false;
 					break;
 
 				default:

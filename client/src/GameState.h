@@ -47,6 +47,7 @@ private:
 	int myMatchScore;
 	int opponentMatchScore;
 	int time;
+	bool inGame;
 };
 
 #endif
