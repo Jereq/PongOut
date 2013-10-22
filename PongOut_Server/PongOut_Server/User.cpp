@@ -3,8 +3,7 @@
 
 #include "UserManager.h"
 
-User::User(boost::shared_ptr<tcp::socket> _socket)
-	: socket(_socket), userType(UserType::UNVERIFIED), userState(UserState::UNKNOWN)
+User::User(boost::shared_ptr<tcp::socket> _socket) : socket(_socket), userType(UserType::UNVERIFIED), userState(UserState::UNKNOWN)
 {
 }
 
@@ -29,8 +28,7 @@ void User::handleWrite( const boost::system::error_code& _err, size_t _byte )
 		Log::addLog(Log::LogType::LOG_ERROR, 4, _err.message(), __FILE__, __LINE__); //TODO: solve funky shit! ERROR : The file handle supplied is not valid
 		disconnect();
 	}
-
-	if (!msgWriteBufferQueue.empty())
+	else if (!msgWriteBufferQueue.empty())
 	{
 		sendMsg();
 	}
@@ -51,7 +49,17 @@ void User::sendMsg()
 void User::addMsgToMsgQueue(const msgBase::ptr& _msgPtr )
 {
 	std::lock_guard<std::mutex> lock(msgBufferLock);
+
+	if (msgWriteBufferQueue.size() > 100)
+	{
+		Log::addLog(Log::LogType::LOG_ERROR, 1, "User: " + std::to_string(id) + "has to many messages in msgQ", __FILE__, __LINE__);
+		return;
+	}
+
+	//Log::addLog(Log::LogType::LOG_INFO, 1, "User: " + std::to_string(id) + " has:\t" + std::to_string(msgWriteBufferQueue.size()) + " in msgQ", __FILE__, __LINE__);
+
 	msgWriteBufferQueue.push(_msgPtr);
+
 	if (msgWriteBufferQueue.size() == 1)
 	{
 		sendMsg();

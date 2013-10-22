@@ -35,6 +35,8 @@ UserManager::UserManager(void)
 
 UserManager::~UserManager(void)
 {
+	acceptor->close();
+	ioService->stop();
 }
 
 void UserManager::listenForNewClientConnections()

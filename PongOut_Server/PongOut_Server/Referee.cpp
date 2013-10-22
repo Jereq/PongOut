@@ -193,6 +193,8 @@ void Referee::init( User::ptr _u0, User::ptr _u1, CommonTypes::GameInitInfo _inf
 	user0->setUserState(User::UserState::INGAME);
 	user1->setUserState(User::UserState::INGAME);
 
+	suddenDeathTime = info.suddenDeathTime;
+
 	startGame();
 }
 
@@ -247,15 +249,10 @@ void Referee::gameThreadFunc()
 				}
 			}
 
-			//TODO: add ball and block logic!
-
 			bounceOnPaddle(user0Info.ball, user0Info.paddle, user0HoldingBall);
 			bounceOnPaddle(user0Info.ball, user1Info.paddle, false);
 			bounceOnPaddle(user1Info.ball, user0Info.paddle, false);
 			bounceOnPaddle(user1Info.ball, user1Info.paddle, user1HoldingBall);
-
-			//user0Info.ball.pos = glm::vec2(-0.5f, -0.5f);
-			//user1Info.ball.pos = glm::vec2(0.5f, 0.5f);
 
 			bounceOnBlock(user0Info);
 			bounceOnBlock(user1Info);
@@ -287,8 +284,16 @@ void Referee::gameThreadFunc()
 			GameTickUpdate::ptr gtup0 = GameTickUpdate::ptr(new GameTickUpdate());
 			GameTickUpdate::ptr gtup1 = GameTickUpdate::ptr(new GameTickUpdate());
 
-			gtup0->setTickUpdate(user0Info, user1Info, mapData);
-			gtup1->setTickUpdate(user1Info, user0Info, mapData);
+			second += dt;
+
+			if (second >= 1.0f)
+			{
+				suddenDeathTime--;
+				second = 0.0f;
+			}
+
+			gtup0->setTickUpdate(user0Info, user1Info, mapData, suddenDeathTime);
+			gtup1->setTickUpdate(user1Info, user0Info, mapData, suddenDeathTime);
 
 			if (!user1->getSocket()->is_open())
 			{
@@ -329,8 +334,8 @@ void Referee::gameThreadFunc()
 			user0->addMsgToMsgQueue(gtup0);
 			user1->addMsgToMsgQueue(gtup1);
 
-			//std::chrono::milliseconds pause(20);
-			//std::this_thread::sleep_for(pause);
+			std::chrono::milliseconds pause(20);
+			std::this_thread::sleep_for(pause);
 		}
 	}
 	catch (...)
@@ -388,7 +393,7 @@ void Referee::bounceOnBlock( CommonTypes::PlayerMatchInfo& _pmi )
 
 		glm::vec2 reflectDir;
 
-		if (ballRectCollide(reflectDir, _pmi.ball, b.pos))
+		if (ballRectCollide(reflectDir, _pmi.ball, b.pos, blockSize))
 		{
 			_pmi.ball.vel = glm::reflect(_pmi.ball.vel, reflectDir);
 			_pmi.score++;
@@ -399,19 +404,17 @@ void Referee::bounceOnBlock( CommonTypes::PlayerMatchInfo& _pmi )
 
 void Referee::bounceOnPaddle( CommonTypes::Ball& _ball, CommonTypes::Paddle _paddle, bool _heldOnPaddle)
 {
-	const static float PADDLE_HEIGHT = 32.f;
-
 	if(_heldOnPaddle && (_ball.id == _paddle.id))
 	{
 		_ball.pos.x = _paddle.pos.x;
 
 		if(_paddle.pos.y > _ball.pos.y)
 		{
-			_ball.pos.y = _paddle.pos.y - _ball.radius - PADDLE_HEIGHT / 2.f;
+			_ball.pos.y = _paddle.pos.y - _ball.radius - paddleSize.y / 2.f;
 		}
 		else
 		{
-			_ball.pos.y = _paddle.pos.y + _ball.radius + PADDLE_HEIGHT / 2.f;
+			_ball.pos.y = _paddle.pos.y + _ball.radius + paddleSize.y / 2.f;
 		}
 
 		_ball.vel = _paddle.vel;
@@ -419,7 +422,7 @@ void Referee::bounceOnPaddle( CommonTypes::Ball& _ball, CommonTypes::Paddle _pad
 	else
 	{
 		glm::vec2 reflectDir;
-		if (ballRectCollide(reflectDir, _ball, _paddle.pos))
+		if (ballRectCollide(reflectDir, _ball, _paddle.pos, paddleSize))
 		{
 			_ball.vel = glm::normalize(glm::vec2(_ball.pos - _paddle.pos)) * glm::length(_ball.vel);
 		}
@@ -438,14 +441,14 @@ void Referee::bindInPlayState( CommonTypes::Ball& _ball )
 	}
 }
 
-bool Referee::ballRectCollide( glm::vec2& _reflectDir, CommonTypes::Ball& _ball, glm::vec2& _rect )
+bool Referee::ballRectCollide( glm::vec2& _reflectDir, CommonTypes::Ball& _ball, glm::vec2& _rectPos, glm::vec2 _rectSize )
 {
 	glm::vec2 center(_ball.pos);
 
-	float rleftX	= _rect.x - blockSize.x * 0.5f;
-	float rrightX	= _rect.x + blockSize.x * 0.5f;
-	float rTopY		= _rect.y + blockSize.y * 0.5f;
-	float rBottomY	= _rect.y - blockSize.y * 0.5f;
+	float rleftX	= _rectPos.x - _rectSize.x * 0.5f;
+	float rrightX	= _rectPos.x + _rectSize.x * 0.5f;
+	float rTopY		= _rectPos.y + _rectSize.y * 0.5f;
+	float rBottomY	= _rectPos.y - _rectSize.y * 0.5f;
 
 	glm::vec2 corners[4] = {
 		glm::vec2(rleftX, rTopY),

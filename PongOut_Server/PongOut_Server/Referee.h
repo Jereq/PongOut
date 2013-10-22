@@ -11,6 +11,7 @@
 #include <SafeQueue.h>
 
 static const glm::vec2 blockSize(64.0f, 32.0f);
+static const glm::vec2 paddleSize(128.0f, 32.0f);
 static const float dt(0.05f);
 
 class GameMaster;
@@ -36,7 +37,7 @@ private:
 	void bounceOnBlock(CommonTypes::PlayerMatchInfo& _pmi);
 	void bounceOnPaddle(CommonTypes::Ball& _ball, CommonTypes::Paddle _paddle, bool _heldOnPaddle);
 	void bindInPlayState(CommonTypes::Ball& _ball);
-	bool ballRectCollide(glm::vec2& _reflectDir, CommonTypes::Ball& _ball, glm::vec2& _rect);
+	bool ballRectCollide(glm::vec2& _reflectDir, CommonTypes::Ball& _ball, glm::vec2& _rectPos, glm::vec2 _rectSize );
 	bool circleLineIntersect(glm::vec2 _circleCenter, float _circleRadius, glm::vec2 _lineStart, glm::vec2 _lineEnd);
 	bool circleCirleIntersect(glm::vec2 _center1, float _radius1, glm::vec2 _center2, float _radius2);
 
@@ -48,7 +49,8 @@ private:
 	CommonTypes::PlayerMatchInfo user0Info, user1Info;
 	bool user0LaunchingBall, user1LaunchingBall;
 	bool user0HoldingBall, user1HoldingBall;
-	int refID;
+	int refID, suddenDeathTime;
+	float second;
 	std::thread gameThread;
 	SafeQueue<std::pair<GameMessage::ptr, int>> refMsgQ;
 	std::vector<CommonTypes::Block> mapData;
