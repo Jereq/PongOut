@@ -31,6 +31,11 @@ void GameTickUpdate::setTickUpdate( CommonTypes::PlayerMatchInfo _pmiME, CommonT
 	msgHeader.length = sizeof(CommonTypes::PlayerMatchInfo) * 2 + sizeof(GameMsgType) + mapSize + sizeof(std::uint16_t );
 }
 
+std::uint16_t GameTickUpdate::getSuddenDeathTime()
+{
+	return suddenDeathTime;
+}
+
 CommonTypes::PlayerMatchInfo GameTickUpdate::getMyInfo()
 {
 	return pmiME;

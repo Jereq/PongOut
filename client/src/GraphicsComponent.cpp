@@ -24,7 +24,7 @@ inline glm::vec2 gameSizeToClip( const glm::vec2 _gameSize )
 	return _gameSize * getScale();
 }
 
-inline glm::vec3 gamePositionToClip(  const glm::vec3 _gamePosition )
+inline glm::vec3 gamePositionToClip(  const glm::vec3 _gamePosition ) 
 {
 	glm::vec2 scale = getScale();
 	return glm::vec3(_gamePosition.swizzle(glm::X, glm::Y) * scale - MAP_SCREEN_SIZE / glm::vec2(screenWidth, screenHeight), _gamePosition.z);

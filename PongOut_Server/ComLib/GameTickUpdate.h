@@ -19,6 +19,8 @@ public:
 	CommonTypes::PlayerMatchInfo getOpInfo();
 	std::vector<CommonTypes::Block> getBlockList();
 
+	std::uint16_t getSuddenDeathTime();
+
 private:
 
 	CommonTypes::PlayerMatchInfo pmiME, pmiOP;
