@@ -13,7 +13,7 @@ struct PSIN
 float4 PShader(PSIN input) : SV_TARGET
 {
 	float4 color = shaderTexture.Sample(SampleType, input.t); //
-	if( color.a < 1.0)
+	if( color.a < 0.35f)
 		discard;
 
 	return color;
