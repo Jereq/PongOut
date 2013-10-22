@@ -59,6 +59,7 @@ void GameMaster::handleGameMessage( GameMessage::ptr _message, User::ptr _initUs
 			break;
 		}
 	case GameMessage::GameMsgType::PADDLEUPDATEREQUEST:
+	case GameMessage::GameMsgType::LAUNCH_BALL_REQUEST:
 		{
 			referees.at(_initUser->getRefereeID())->addMsgToQ(std::make_pair(_message, _initUser->getUserID()));
 
@@ -67,6 +68,7 @@ void GameMaster::handleGameMessage( GameMessage::ptr _message, User::ptr _initUs
 
 	default:
 		{
+			Log::addLog(Log::LogType::LOG_ERROR, 3, "Unhandled game message", __FILE__, __LINE__);
 			break;
 		}
 	}

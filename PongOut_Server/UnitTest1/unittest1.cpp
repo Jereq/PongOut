@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include <msgBase.h>
-#include <Chat.h>
+#include "..\ComLib\msgBase.h"
+#include "..\ComLib\Chat.h"
 #include <vector>
-#include <boost/shared_ptr.hpp>
+#include "boost/shared_ptr.hpp"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

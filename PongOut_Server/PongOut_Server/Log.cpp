@@ -73,12 +73,18 @@ void Log::printFromQueue()
 
 			while (!msgQueue.empty())
 			{
-				if (prio > msgQueue.front().prio)
+				message m;
+				{
+					lock_guard<std::mutex> lock(queueLock);
+					m = msgQueue.front();
+					msgQueue.pop();
+				}
+
+				if (prio > m.prio)
 				{
 					ostringstream outStr;
-					message m = msgQueue.front();
 
-					outStr << ct.time_of_day() <<  " ## " << enumMap.at(msgQueue.front().type) <<  " : " << m.msg;
+					outStr << ct.time_of_day() <<  " ## " << enumMap.at(m.type) <<  " : " << m.msg;
 
 					if (debugOn)
 					{
@@ -88,12 +94,10 @@ void Log::printFromQueue()
 					cout << outStr.str() << endl;
 					writeToLogFile(outStr.str());
 				}				
-				lock_guard<std::mutex> lock(queueLock);
-				msgQueue.pop();
 			}
 		}
 
-		chrono::milliseconds pause(100);
+		chrono::milliseconds pause(1000);
 		this_thread::sleep_for(pause);
 	}
 }

@@ -46,18 +46,18 @@ void UserManager::listenForNewClientConnections()
 
 void UserManager::handleIncomingClient( boost::shared_ptr<tcp::socket> _soc, const boost::system::error_code& _errorCode )
 {
-	if (checkIfIPAlowed(_soc->remote_endpoint().address()))
-	{
+	//if (checkIfIPAlowed(_soc->remote_endpoint().address()))
+	//{
 		User::ptr u = User::ptr(new User(_soc));
 		users.insert(u);
 		u->listen();
 		std::string ip = _soc->remote_endpoint().address().to_string();
 		Log::addLog(Log::LogType::LOG_INFO, 4, "New connection established from: " + ip, __FILE__, __LINE__);
 		listenForNewClientConnections();
-	} 
-	else
-	{
-	}
+	//} 
+	//else
+	//{
+	//}
 }
 
 void UserManager::messageActionSwitch( const msgBase::header& _header, const std::deque<char>& _meassage, boost::shared_ptr<User> _user )
@@ -132,8 +132,8 @@ void UserManager::messageActionSwitch( const msgBase::header& _header, const std
 			} 
 			else
 			{
-				Log::addLog(Log::LogType::LOG_INFO, 4, lp->getUsername() + " failed to login!", __FILE__, __LINE__);
-				addIPtoBlackList(_user->getSocket()->remote_endpoint().address());
+				//Log::addLog(Log::LogType::LOG_INFO, 4, lp->getUsername() + " failed to login!", __FILE__, __LINE__);
+				//addIPtoBlackList(_user->getSocket()->remote_endpoint().address());
 
 				_user->disconnect();
 				users.erase(_user);	

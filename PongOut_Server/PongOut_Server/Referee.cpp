@@ -106,32 +106,41 @@ void Referee::init( User::ptr _u0, User::ptr _u1, CommonTypes::GameInitInfo _inf
 			CommonTypes::Block bd;
 			bd.health = 0;
 			std::vector<std::string> textures;
+			std::string id = "0";
 			for(TMLNODE n : blockNode.nodes)
 			{
 				for(std::pair<std::string,std::string> m : n.members)
 				{
+					//std::string id;
 					if(m.first == "id")
 					{
-						std::string id = m.second;
+						id = m.second;
 						if(id == val)
 						{
 							bd.pos.x = startPosX + BLOCK_SIZE.x * i;
 							bd.pos.y = startPosY + BLOCK_SIZE.y * offY;
 							bd.type = stoi(val);
 							bd.id = blockUniqeID;
-							bd.inPlay = false;
 							blockUniqeID++;
 						}
 					}
-					if(m.first == "texture")
+					if(m.first == "texture" && id == val)
 					{
 						textures.push_back(m.second);
 					}
 				}
+
 			}
 			bd.health = textures.size();
 			bd.textures = textures;
 			mapData.push_back(bd);
+
+			//Log::addLog(Log::LogType::LOG_INFO,4, std::to_string(bd.id), __FILE__, __LINE__);
+			//for(std::string t : textures)
+			//{
+			//	Log::addLog(Log::LogType::LOG_INFO,4,t, __FILE__,__LINE__);
+			//}
+
 		}
 
 		offY++;
@@ -139,36 +148,38 @@ void Referee::init( User::ptr _u0, User::ptr _u1, CommonTypes::GameInitInfo _inf
 
 #pragma endregion TrollML
 
-	const static float BALL_RADIUS = 32.f;
+	const static float BALL_RADIUS = 16.f;
 	const static float PADDLE_HEIGHT = 32.f;
 
 	user0Info.paddle.id = user0->getUserID();
 	user0Info.paddle.pos = glm::vec2(mapSize.x / 2.f, PADDLE_HEIGHT / 2.f);
 	user0Info.paddle.vel = glm::vec2(0.0f, 0.0f);
-	user0Info.paddle.inPlay = true;
 
 	user0Info.ball.id = user0->getUserID();
-	user0Info.ball.pos = user0Info.paddle.pos + glm::vec2(0.0f, PADDLE_HEIGHT / 2.f + BALL_RADIUS / 2.f);
+	user0Info.ball.pos = user0Info.paddle.pos + glm::vec2(0.0f, PADDLE_HEIGHT / 2.f + BALL_RADIUS);
 	user0Info.ball.vel = glm::vec2(0.0f, 0.0f);
 	user0Info.ball.radius = BALL_RADIUS;
-	user0Info.ball.inPlay = true;
 
 	user0Info.score = 0;
 	user0Info.userID = user0->getUserID();
 
+	user0HoldingBall = true;
+	user0LaunchingBall = false;
+
 	user1Info.paddle.id = user1->getUserID();
 	user1Info.paddle.pos = glm::vec2(mapSize.x / 2.f, mapSize.y - PADDLE_HEIGHT / 2.f);
 	user1Info.paddle.vel = glm::vec2(0.0f, 0.0f);
-	user1Info.paddle.inPlay = true;
 
 	user1Info.ball.id = user1->getUserID();
-	user1Info.ball.pos = user0Info.paddle.pos + glm::vec2(0.0f, PADDLE_HEIGHT / 2.f - BALL_RADIUS / 2.f);
+	user1Info.ball.pos = user1Info.paddle.pos - glm::vec2(0.0f, PADDLE_HEIGHT / 2.f + BALL_RADIUS);
 	user1Info.ball.vel = glm::vec2(0.0f, 0.0f);
 	user1Info.ball.radius = BALL_RADIUS;
-	user1Info.ball.inPlay = true;
 
 	user1Info.score = 0;
 	user1Info.userID = user1->getUserID();
+
+	user1HoldingBall = true;
+	user1LaunchingBall = false;
 
 	CreateGameResponse::ptr cgrp0 = CreateGameResponse::ptr(new CreateGameResponse());
 	CreateGameResponse::ptr cgrp1 = CreateGameResponse::ptr(new CreateGameResponse());
@@ -221,17 +232,13 @@ void Referee::gameThreadFunc()
 				}
 				else if (msg.first->getGameType() == GameMessage::GameMsgType::LAUNCH_BALL_REQUEST)
 				{
-					if (msg.second == user0->getUserID())
+					if (msg.second == user0->getUserID() && user0HoldingBall)
 					{
-						user0Info.paddle.inPlay = 0;
+						user0LaunchingBall = true;
 					}
-					else if (msg.second == user1->getUserID())
+					else if (msg.second == user1->getUserID() && user1HoldingBall)
 					{
-						user1Info.paddle.inPlay = 0;
-					}
-					else
-					{
-						Log::addLog(Log::LogType::LOG_ERROR, 1, "Referee gale loop", __FILE__, __LINE__);
+						user1LaunchingBall = true;
 					}
 				}
 				else
@@ -242,10 +249,10 @@ void Referee::gameThreadFunc()
 
 			//TODO: add ball and block logic!
 
-			bounceOnPaddle(user0Info.ball, user0Info.paddle);
-			bounceOnPaddle(user0Info.ball, user1Info.paddle);
-			bounceOnPaddle(user1Info.ball, user0Info.paddle);
-			bounceOnPaddle(user1Info.ball, user1Info.paddle);
+			bounceOnPaddle(user0Info.ball, user0Info.paddle, user0HoldingBall);
+			bounceOnPaddle(user0Info.ball, user1Info.paddle, false);
+			bounceOnPaddle(user1Info.ball, user0Info.paddle, false);
+			bounceOnPaddle(user1Info.ball, user1Info.paddle, user1HoldingBall);
 
 			//user0Info.ball.pos = glm::vec2(-0.5f, -0.5f);
 			//user1Info.ball.pos = glm::vec2(0.5f, 0.5f);
@@ -256,14 +263,32 @@ void Referee::gameThreadFunc()
 			bounceOnPlayArea(user0Info.ball);
 			bounceOnPlayArea(user1Info.ball);
 
+			const static float START_VEL = 300.f;
+
+			if (user0LaunchingBall)
+			{
+				user0Info.ball.vel = glm::normalize(glm::vec2(user0Info.paddle.vel.x, 100.f)) * START_VEL;
+
+				user0HoldingBall = false;
+				user0LaunchingBall = false;
+			}
+
+			if (user1LaunchingBall)
+			{
+				user1Info.ball.vel = glm::normalize(glm::vec2(user1Info.paddle.vel.x, -100.f)) * START_VEL;
+
+				user1HoldingBall = false;
+				user1LaunchingBall = false;
+			}
+
 			user0Info.ball.pos += user0Info.ball.vel * (float)info.ballSpeed * dt;
 			user1Info.ball.pos += user1Info.ball.vel * (float)info.ballSpeed * dt;
 
 			GameTickUpdate::ptr gtup0 = GameTickUpdate::ptr(new GameTickUpdate());
 			GameTickUpdate::ptr gtup1 = GameTickUpdate::ptr(new GameTickUpdate());
 
-			gtup0->setTickUpdate(user0Info, user1Info, std::vector<CommonTypes::Block>());
-			gtup1->setTickUpdate(user1Info, user0Info, std::vector<CommonTypes::Block>());
+			gtup0->setTickUpdate(user0Info, user1Info, mapData);
+			gtup1->setTickUpdate(user1Info, user0Info, mapData);
 
 			if (!user1->getSocket()->is_open())
 			{
@@ -304,8 +329,8 @@ void Referee::gameThreadFunc()
 			user0->addMsgToMsgQueue(gtup0);
 			user1->addMsgToMsgQueue(gtup1);
 
-			std::chrono::milliseconds pause(20);
-			std::this_thread::sleep_for(pause);
+			//std::chrono::milliseconds pause(20);
+			//std::this_thread::sleep_for(pause);
 		}
 	}
 	catch (...)
@@ -324,27 +349,29 @@ void Referee::bounceOnPlayArea( CommonTypes::Ball& _ball )
 	glm::vec2 min = glm::vec2(0,0);
 	glm::vec2 max = mapSize;
 
-	if(_ball.pos.x - _ball.radius / 2 < min.x)
+	if(_ball.pos.x - _ball.radius < min.x)
 	{
-		_ball.pos.x = min.x + _ball.radius / 2.0f;
+		_ball.pos.x = min.x + _ball.radius;
 		_ball.vel.x *= -1;
 	}
-	else if (_ball.pos.x + _ball.radius / 2 > max.x)
+	else if (_ball.pos.x + _ball.radius > max.x)
 	{
-		_ball.pos.x = max.x - _ball.radius / 2.0f;
+		_ball.pos.x = max.x - _ball.radius;
 		_ball.vel.x *= -1;
 	}
-	if(_ball.pos.y - _ball.radius / 2 < min.y)
+	if(_ball.pos.y - _ball.radius < min.y)
 	{
-		_ball.pos.y = min.y + _ball.radius / 2.0f;
+		_ball.pos.y = min.y + _ball.radius;
 		_ball.vel.y *= -1;
 		bindInPlayState(_ball);
+		user1Info.score += 10;
 	}
-	else if(_ball.pos.y + _ball.radius / 2 > max.y)
+	else if(_ball.pos.y + _ball.radius > max.y)
 	{
-		_ball.pos.y = max.y - _ball.radius / 2.0f;
+		_ball.pos.y = max.y - _ball.radius;
 		_ball.vel.y *= -1;
 		bindInPlayState(_ball);
+		user0Info.score += 10;
 	}
 }
 
@@ -352,9 +379,9 @@ void Referee::bounceOnBlock( CommonTypes::PlayerMatchInfo& _pmi )
 {
 	glm::vec2 center(_pmi.ball.pos.swizzle(glm::X, glm::Y));
 
-	for (CommonTypes::Block b : mapData)
+	for (CommonTypes::Block& b : mapData)
 	{
-		if (b.inPlay)
+		if (b.health <= 0)
 		{
 			continue;
 		}
@@ -365,49 +392,31 @@ void Referee::bounceOnBlock( CommonTypes::PlayerMatchInfo& _pmi )
 		{
 			_pmi.ball.vel = glm::reflect(_pmi.ball.vel, reflectDir);
 			_pmi.score++;
+			b.health--;
 		}
 	}
 }
 
-void Referee::bounceOnPaddle( CommonTypes::Ball& _ball, CommonTypes::Paddle _paddle )
+void Referee::bounceOnPaddle( CommonTypes::Ball& _ball, CommonTypes::Paddle _paddle, bool _heldOnPaddle)
 {
+	const static float PADDLE_HEIGHT = 32.f;
 
-	if(_ball.inPlay && (_ball.id == _paddle.id))
+	if(_heldOnPaddle && (_ball.id == _paddle.id))
 	{
 		_ball.pos.x = _paddle.pos.x;
 
 		if(_paddle.pos.y > _ball.pos.y)
 		{
-			_ball.pos.y = _paddle.pos.y - _ball.radius;
+			_ball.pos.y = _paddle.pos.y - _ball.radius - PADDLE_HEIGHT / 2.f;
 		}
 		else
 		{
-			_ball.pos.y = _paddle.pos.y + _ball.radius;
+			_ball.pos.y = _paddle.pos.y + _ball.radius + PADDLE_HEIGHT / 2.f;
 		}
 
 		_ball.vel = _paddle.vel;
 	}
-
-	const float startVel = 1.f;
-
-	if(!_paddle.inPlay && _ball.inPlay && (_ball.id == _paddle.id))
-	{
-		_ball.inPlay = 0;
-
-		if(_paddle.pos.y > _ball.pos.y)
-		{
-			_ball.vel.y = -1.f;
-		}
-		else
-		{
-			_ball.vel.y = 1.f;
-		}
-
-		_ball.vel.x = _paddle.vel.x;
-		_ball.vel = glm::normalize(_ball.vel) * startVel;
-	}
-
-	if(_ball.inPlay == 0)
+	else
 	{
 		glm::vec2 reflectDir;
 		if (ballRectCollide(reflectDir, _ball, _paddle.pos))
@@ -419,15 +428,13 @@ void Referee::bounceOnPaddle( CommonTypes::Ball& _ball, CommonTypes::Paddle _pad
 
 void Referee::bindInPlayState( CommonTypes::Ball& _ball )
 {
-	_ball.inPlay = true;
-
 	if (_ball.id == user0->getUserID())
 	{
-		user0Info.paddle.inPlay = true;
+		user0HoldingBall = true;
 	} 
 	else if (_ball.id == user1->getUserID())
 	{
-		user1Info.paddle.inPlay = true;
+		user1HoldingBall = true;
 	}
 }
 

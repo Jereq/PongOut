@@ -34,7 +34,7 @@ private:
 
 	void bounceOnPlayArea(CommonTypes::Ball& _ball);
 	void bounceOnBlock(CommonTypes::PlayerMatchInfo& _pmi);
-	void bounceOnPaddle(CommonTypes::Ball& _ball, CommonTypes::Paddle _paddle);
+	void bounceOnPaddle(CommonTypes::Ball& _ball, CommonTypes::Paddle _paddle, bool _heldOnPaddle);
 	void bindInPlayState(CommonTypes::Ball& _ball);
 	bool ballRectCollide(glm::vec2& _reflectDir, CommonTypes::Ball& _ball, glm::vec2& _rect);
 	bool circleLineIntersect(glm::vec2 _circleCenter, float _circleRadius, glm::vec2 _lineStart, glm::vec2 _lineEnd);
@@ -46,6 +46,8 @@ private:
 
 	CommonTypes::GameInitInfo info;
 	CommonTypes::PlayerMatchInfo user0Info, user1Info;
+	bool user0LaunchingBall, user1LaunchingBall;
+	bool user0HoldingBall, user1HoldingBall;
 	int refID;
 	std::thread gameThread;
 	SafeQueue<std::pair<GameMessage::ptr, int>> refMsgQ;

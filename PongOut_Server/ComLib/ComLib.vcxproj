@@ -43,6 +43,10 @@
     <IncludePath>C:\glm;C:\Program Files %28x86%29\Microsoft Visual Studio 11.0\VC\UnitTest\include;C:\Boost\include;C:\Boost\include\boost;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files %28x86%29\Microsoft Visual Studio 11.0\VC\UnitTest\lib;C:\Boost\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>C:\glm;C:\Program Files %28x86%29\Microsoft Visual Studio 11.0\VC\UnitTest\include;C:\Boost\include;C:\Boost\include\boost;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Microsoft Visual Studio 11.0\VC\UnitTest\lib;C:\Boost\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
