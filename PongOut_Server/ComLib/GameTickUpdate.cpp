@@ -12,11 +12,12 @@ GameTickUpdate::~GameTickUpdate(void)
 {
 }
 
-void GameTickUpdate::setTickUpdate( CommonTypes::PlayerMatchInfo _pmiME, CommonTypes::PlayerMatchInfo _pmiOP, std::vector<CommonTypes::Block> _blocks )
+void GameTickUpdate::setTickUpdate( CommonTypes::PlayerMatchInfo _pmiME, CommonTypes::PlayerMatchInfo _pmiOP, std::vector<CommonTypes::Block> _blocks, std::uint16_t  _sudenDeath )
 {
 	pmiME = _pmiME;
 	pmiOP = _pmiOP;
 	blocks = _blocks;
+	suddenDeathTime = _sudenDeath;
 
 	int mapSize = 0;
 
@@ -27,7 +28,7 @@ void GameTickUpdate::setTickUpdate( CommonTypes::PlayerMatchInfo _pmiME, CommonT
 
 	mapSize += sizeof(uint16_t);
 
-	msgHeader.length = sizeof(CommonTypes::PlayerMatchInfo) * 2 + sizeof(GameMsgType) + mapSize;
+	msgHeader.length = sizeof(CommonTypes::PlayerMatchInfo) * 2 + sizeof(GameMsgType) + mapSize + sizeof(std::uint16_t );
 }
 
 CommonTypes::PlayerMatchInfo GameTickUpdate::getMyInfo()
@@ -55,6 +56,7 @@ std::vector<char> GameTickUpdate::getData()
 	pack(pmiME, it);
 	pack(pmiOP, it);
 	pack(blocks, it);
+	pack(suddenDeathTime, it);
 
 	return res;
 }
@@ -69,6 +71,7 @@ msgBase::ptr GameTickUpdate::interpretPacket( const std::deque<char>& _buffer )
 	it = unpack(gtup->pmiME, it);
 	it = unpack(gtup->pmiOP, it);
 	it = unpack(gtup->blocks, it);
+	it = unpack(gtup->suddenDeathTime, it);
 
 	return gtup;
 }

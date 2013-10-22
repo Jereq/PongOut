@@ -14,7 +14,7 @@ public:
 	virtual std::vector<char> getData() override;
 	virtual msgBase::ptr interpretPacket(const std::deque<char>& _buffer) override;
 
-	void setTickUpdate(CommonTypes::PlayerMatchInfo _pmiME, CommonTypes::PlayerMatchInfo _pmiOP, std::vector<CommonTypes::Block> _blocks);
+	void setTickUpdate(CommonTypes::PlayerMatchInfo _pmiME, CommonTypes::PlayerMatchInfo _pmiOP, std::vector<CommonTypes::Block> _blocks, std::uint16_t  _sudenDeath);
 	CommonTypes::PlayerMatchInfo getMyInfo();
 	CommonTypes::PlayerMatchInfo getOpInfo();
 	std::vector<CommonTypes::Block> getBlockList();
@@ -23,5 +23,6 @@ private:
 
 	CommonTypes::PlayerMatchInfo pmiME, pmiOP;
 	std::vector<CommonTypes::Block> blocks;
+	std::uint16_t suddenDeathTime;
 };
 
