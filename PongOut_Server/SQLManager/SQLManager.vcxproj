@@ -85,6 +85,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="VerifyUser.h" />
+    <ClInclude Include="VerifyUser2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SQLManager.cpp" />

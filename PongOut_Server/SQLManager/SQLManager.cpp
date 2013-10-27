@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "SQLManager.h"
 #include "CreateUser.h"
-#include "VerifyUser.h"
+#include "VerifyUser2.h"
 #include "AddFriend.h"
 #include "DeleteUser.h"
 #include "GetFriends.h"
@@ -41,7 +41,7 @@ long SQLManager::verifyUser( std::string _userName, std::string _userPassword )
 {
 	HRESULT hr = CoInitialize(NULL); 
 
-	 CVerifyUser vu;
+	 CVerifyUser2 vu;
 
 	CString username = _userName.c_str();
 	CString userPassword = _userPassword.c_str();	

@@ -30,7 +30,7 @@ public:
 // other sensitive information. Please remove the #error after reviewing
 // the connection string for any security related issues. You may want to
 // store the password in some other form or use a different user authentication.
-		hr = _db.OpenFromInitializationString(L"Provider=MSDASQL.1;Password=galenpannan87(/;Persist Security Info=True;User ID=Skola;Extended Properties=\"Description=test;DRIVER=ODBC Driver 11 for SQL Server;SERVER=error404.nu;UID=Skola;PWD=galenpannan87(/;APP=Microsoft\x00ae Visual Studio\x00ae 2012;WSID=OSSIAN-PC;DATABASE=PongOut;\";Initial Catalog=PongOut");
+		hr = _db.OpenFromInitializationString(L"Provider=SQLOLEDB.1;Password=galenpannan87(/;Persist Security Info=True;User ID=Skola;Initial Catalog=PongOut;Data Source=85.24.168.163;Use Procedure for Prepare=1;Auto Translate=True;Packet Size=4096;Workstation ID=OSSIAN-PC;Use Encryption for Data=False;Tag with column collation when possible=False");
 		if (FAILED(hr))
 		{
 #ifdef _DEBUG

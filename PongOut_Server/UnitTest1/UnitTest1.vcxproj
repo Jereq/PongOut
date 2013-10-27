@@ -43,12 +43,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\glm;C:\Boost\include\boost;C:\Boost\include;E:\Projekt\PongOut\PongOut_Server\ComLib;C:\Program Files %28x86%29\Microsoft Visual Studio 11.0\VC\UnitTest\include;E:\Projekt\PongOut\PongOut_Server\PongOut_Server;$(IncludePath)</IncludePath>
+    <IncludePath>C:\glm;C:\Boost\include\boost;C:\Boost\include;D:\Code\PongOut\PongOut\PongOut_Server\ComLib;C:\Program Files %28x86%29\Microsoft Visual Studio 11.0\VC\UnitTest\include;D:\Code\PongOut\PongOut\PongOut_Server\PongOut_Server;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Boost\lib;C:\Program Files %28x86%29\Microsoft Visual Studio 11.0\VC\UnitTest\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\glm;C:\Boost\include\boost;C:\Boost\include;E:\Projekt\PongOut\PongOut_Server\ComLib;C:\Program Files %28x86%29\Microsoft Visual Studio 11.0\VC\UnitTest\include;E:\Projekt\PongOut\PongOut_Server\PongOut_Server;$(IncludePath)</IncludePath>
+    <IncludePath>C:\glm;C:\Boost\include\boost;C:\Boost\include;D:\Code\PongOut\PongOut\PongOut_Server\ComLib;C:\Program Files %28x86%29\Microsoft Visual Studio 11.0\VC\UnitTest\include;D:\Code\PongOut\PongOut\PongOut_Server\PongOut_Server;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Boost\lib;C:\Program Files %28x86%29\Microsoft Visual Studio 11.0\VC\UnitTest\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

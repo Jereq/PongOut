@@ -1,10 +1,10 @@
-// DeleteUser.h : Declaration of the CDeleteUser
+// VerifyUser2.h : Declaration of the CVerifyUser2
 
 #pragma once
 
-// code generated on den 9 oktober 2013, 10:46
+// code generated on den 27 oktober 2013, 14:21
 
-class CDeleteUserAccessor
+class CVerifyUser2Accessor
 {
 public:
 
@@ -12,7 +12,8 @@ public:
 
 
 	LONG m_RETURN_VALUE;
-	LONG m_userID;
+	TCHAR m_userName[51];
+	TCHAR m_userPassword[51];
 
 	void GetRowsetProperties(CDBPropSet* pPropSet)
 	{
@@ -52,18 +53,20 @@ public:
 
 	CSession m_session;
 
-	DEFINE_COMMAND_EX(CDeleteUserAccessor, L"{ ? = CALL dbo.DeleteUser(?) }")
+	DEFINE_COMMAND_EX(CVerifyUser2Accessor, L"{ ? = CALL dbo.VerifyUser(?,?) }")
 
 
-	BEGIN_PARAM_MAP(CDeleteUserAccessor)
+	BEGIN_PARAM_MAP(CVerifyUser2Accessor)
 		SET_PARAM_TYPE(DBPARAMIO_OUTPUT)
 		COLUMN_ENTRY(1, m_RETURN_VALUE)
 		SET_PARAM_TYPE(DBPARAMIO_INPUT)
-		COLUMN_ENTRY(2, m_userID)
+		COLUMN_ENTRY(2, m_userName)
+		SET_PARAM_TYPE(DBPARAMIO_INPUT)
+		COLUMN_ENTRY(3, m_userPassword)
 	END_PARAM_MAP()
 };
 
-class CDeleteUser : public CCommand<CAccessor<CDeleteUserAccessor>, CNoRowset >
+class CVerifyUser2 : public CCommand<CAccessor<CVerifyUser2Accessor>, CNoRowset >
 {
 public:
 	HRESULT OpenAll()
