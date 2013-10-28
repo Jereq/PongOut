@@ -12,34 +12,6 @@
 #include <chrono>
 #include <thread>
 
-
-
-bool Game::serverAllow()
-{	
-	for (int i = 0; i < server->getMsgQueueSize(); i++)
-	{
-		message tmp = server->getNextMessage();
-
-		switch (tmp.type)
-		{
-		case msgBase::MsgType::ACKNOWLEDGELAST:
-			{
-				AcknowledgeLast::ptr rc = boost::static_pointer_cast<AcknowledgeLast>(tmp.msg);
-				
-				switch(rc->getType())
-				{
-				case msgBase::MsgType::LOGINREQUEST:
-				case msgBase::MsgType::CREATEUSERREQUEST:
-					bool allowed = rc->getBool();
-					return allowed;
-					break;		
-				}			
-			}
-		}
-	}
-	return true;
-}
-
 void Game::onFunction(const std::string& _func)
 
 {
@@ -72,15 +44,10 @@ void Game::onFunction(const std::string& _func)
 	}
 	else if(_func == "createuser")
 	{
-		std::string username = screenManager.getText("username");
-		std::string password = screenManager.getText("password");
-
-		server->createAccount(username, password);
-
-		if(!serverAllow())
-		{
-			onFunction("login");
-		}
+//		std::string username = screenManager.getText("username");
+//		std::string password = screenManager.getText("password");
+//
+//		server->createAccount(username, password);
 	}
 	else if(_func == "host")
 	{
@@ -185,9 +152,7 @@ Game::Game(ICoreSystem::ptr _system)
 
 void Game::run()
 {
-	server = Server::ptr(new Server("194.47.150.59", 6500));
-
-	
+	server = Server::ptr(new Server("85.24.168.163", 6500));
 
 	std::cout << "PongOut " << PongOut_VERSION_MAJOR << "." << PongOut_VERSION_MINOR << "." << PongOut_VERSION_PATCH << std::endl;
 
@@ -260,9 +225,11 @@ void Game::run()
 		graphics->drawFrame();		
 	}
 	
+	screenManager.destroy();
 	sounds->shutdown();
 	graphics->destroy();
 	server->logout();
+	server.reset();
 }
 
 void Game::stop()

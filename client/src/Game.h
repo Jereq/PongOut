@@ -20,7 +20,6 @@ private:
 	GameSettings		gameSettings;
 	bool				shouldStop;
 	Server::ptr			server;
-	bool		serverAllow();
 	void onFunction(const std::string& _func) override;
 
 	void handleNetworkPackages();

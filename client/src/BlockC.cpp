@@ -53,6 +53,6 @@ bool BlockC::initialize(const CommonTypes::Block& _blockData, float _rotation, G
 
 void BlockC::update(double _dt)
 {
-	if(health > 0)
+	if(health > 0 && health <= textures.size())
 		graphicsComponent->addSpriteToFrame(textures[health - 1], center, size, rotation);
 }

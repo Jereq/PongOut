@@ -46,6 +46,15 @@ bool ScreenManager::initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server
 	return true;
 }
 
+void ScreenManager::destroy()
+{
+	screens.clear();
+	registeredStates.clear();
+
+	server.reset();
+	iCoreSystem.reset();
+}
+
 bool readFloats(std::vector<float>& _ret, const std::string& _strVal)
 {
 	std::vector<float> ret;

@@ -17,6 +17,7 @@ public:
 	~ScreenManager();
 
 	bool initialize(std::shared_ptr<ICoreSystem> _iCoreSystem, Server::ptr _server);
+	void destroy();
 	void update(float _dt, std::shared_ptr<IGraphics> _graphics);
 	bool onInput(const std::vector<IInput::Event>& _events);
 	bool removeScreen(ScreenState* _screen);
