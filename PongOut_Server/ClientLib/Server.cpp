@@ -6,7 +6,8 @@
 Server::Server(const std::string _ipAdress, std::uint16_t _port)
 	: addr(_ipAdress),
 	port(_port),
-	isConnected(false)
+	isConnected(false),
+	isWriting(false)
 {
 	 PacketHandler::getInstance().initRegister();
 }
@@ -81,10 +82,12 @@ void Server::logout()
 
 void Server::write( msgBase::ptr _msg )
 {
-	std::lock_guard<std::mutex> lock(writeBufferMutex);
-	msgWriteBufffer.push(_msg->getData());
+	std::vector<char> data(_msg->getData());
 
-	if (msgWriteBufffer.size() == 1 && isConnected)
+	std::lock_guard<std::mutex> lock(writeBufferMutex);
+	msgWriteBufffer.push(std::move(data));
+
+	if (!isWriting && isConnected)
 	{
 		doWrite();
 	}
@@ -92,7 +95,8 @@ void Server::write( msgBase::ptr _msg )
 
 void Server::doWrite()
 {
-	currentWriteBuffer = msgWriteBufffer.front();
+	isWriting = true;
+	currentWriteBuffer.swap(msgWriteBufffer.front());
 
 	if (soc && soc->is_open() && isConnected)
 	{
@@ -102,10 +106,8 @@ void Server::doWrite()
 
 void Server::handleWrite( const boost::system::error_code& _err, size_t _byte )
 {
-	{
-		std::lock_guard<std::mutex> lock(writeBufferMutex);
-		msgWriteBufffer.pop();
-	}
+	std::lock_guard<std::mutex> lock(writeBufferMutex);
+	msgWriteBufffer.pop();
 
 	if (_err)
 	{
@@ -116,8 +118,11 @@ void Server::handleWrite( const boost::system::error_code& _err, size_t _byte )
 	{
 		messages.push(message(msgBase::MsgType::INTERNALMESSAGE, "Write successful"));
 
-		std::lock_guard<std::mutex> lock(writeBufferMutex);
-		if (!msgWriteBufffer.empty())
+		if (msgWriteBufffer.empty())
+		{
+			isWriting = false;
+		}
+		else
 		{
 			doWrite();
 		}

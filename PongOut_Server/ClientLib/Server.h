@@ -81,5 +81,6 @@ private:
 	msgBase::header head;	
 	SafeQueue<message> messages;
 	bool isConnected;
+	bool isWriting;
 };
 
